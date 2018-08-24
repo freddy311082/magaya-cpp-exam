@@ -1,2 +1,3 @@
-# cpp-exam
+# Magaya C++ Exam
+
 C++ Exam for applicants
