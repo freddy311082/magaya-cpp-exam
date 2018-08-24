@@ -57,6 +57,12 @@ demo-config.cfg
 0:localhost:6110
 ```
 
+## GOODS hints
+- every database class must derived from `object`
+- `wstring_t`: used for text fields
+- `set_owner`: used for sequential containers
+- `B_tree`: used for creating indexes
+
 ## Some useful links
 You can find the full source code of GOODS database [here](https://sourceforge.net/projects/goods-oodbms/) as well as some examples of how to use it following this [link](https://sourceforge.net/p/goods-oodbms/code/HEAD/tree/examples/)
 
