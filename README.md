@@ -38,9 +38,10 @@ The application will be a simple order management system to control orders place
 3. Use goods-demo as a template for your project.
 
 ## Steps to run the demo project
-1. Run the goods-server from command line: goods-server.exe "path-to-config-file"
+1. Run the goods-server from command line: `goods-server.exe <path-to-config-file>`
   
-  e.g: goods-server.exe C:\Projects\magaya-cpp-exam\Debug\data\demo-config
+  e.g: 
+  `goods-server.exe C:\Projects\magaya-cpp-exam\Debug\data\demo-config`
   
 2. Run the goods-demo 
 
