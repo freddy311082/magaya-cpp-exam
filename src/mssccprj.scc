@@ -1,0 +1,5 @@
+SCC = This is a Source Code Control file
+
+[windows.mak]
+SCC_Aux_Path = "\\sc-server\vss"
+SCC_Project_Name = "$/DstFrei/Goods/src", KRSAAAAA
