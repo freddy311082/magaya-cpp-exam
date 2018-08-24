@@ -45,6 +45,18 @@ The application will be a simple order management system to control orders place
   
 2. Run the goods-demo 
 
+The server and the client will use the same configuration file to open and connect to the database.
+The server will log any activity from the client in the console.
+
+## Configuration file
+The configuration file should look like this:
+
+demo-config.cfg
+```
+1
+0:localhost:6110
+```
+
 ## Some useful links
 You can find the full source code of GOODS database [here](https://sourceforge.net/projects/goods-oodbms/) as well as some examples of how to use it following this [link](https://sourceforge.net/p/goods-oodbms/code/HEAD/tree/examples/)
 
