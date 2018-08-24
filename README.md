@@ -2,7 +2,7 @@
 
 ## C++ Exam for applicants
 
-The purpose of this exam is to measure the developer’s technical knowledge and creativity to build an application across the different architectural layers.
+The purpose of this exam is to measure the developer’s technical knowledge and creativity to build an application across the different architectural layers. What we are looking for is Modern C++ code which is well organized and easy to maintain.
 
 The application will be a simple order management system to control orders placed from customers. It must include the following:
 - Add, modify or delete customers
