@@ -12,6 +12,8 @@
 #include "confgrtr.h"
 #include "server.h"
 
+#pragma comment(lib, "wsock32.lib")
+
 USE_GOODS_NAMESPACE
 
 int main(int argc, char* argv[]) 
