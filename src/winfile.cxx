@@ -23,15 +23,15 @@ BEGIN_GOODS_NAMESPACE
 #define MMAP_EXTEND_QUANTUM     64*1024*1024      /* 64Mb */
 #define MMAP_DOUBLE_THRESHOLD 1024*1024*1024      /* 1Gb */
 
-static int win_access_mode[] = {
+static unsigned int win_access_mode[] = {
     GENERIC_READ, GENERIC_WRITE, GENERIC_READ | GENERIC_WRITE 
 };
 
-static int win_open_flags[] = {
+static unsigned int win_open_flags[] = {
     OPEN_EXISTING, TRUNCATE_EXISTING, OPEN_ALWAYS, CREATE_ALWAYS
 };
 
-static int win_open_attrs[] = {
+static unsigned int win_open_attrs[] = {
     FILE_FLAG_SEQUENTIAL_SCAN,
     FILE_FLAG_SEQUENTIAL_SCAN|FILE_FLAG_WRITE_THROUGH, 
     FILE_FLAG_RANDOM_ACCESS,
@@ -42,11 +42,11 @@ static int win_open_attrs[] = {
     FILE_FLAG_NO_BUFFERING|FILE_FLAG_RANDOM_ACCESS|FILE_FLAG_WRITE_THROUGH    
 };
 
-static int win_page_access[] = {
+static unsigned int win_page_access[] = {
     PAGE_READONLY, PAGE_READWRITE, PAGE_READWRITE 
 };
 
-static int win_map_access[] = {
+static unsigned int win_map_access[] = {
     FILE_MAP_READ, FILE_MAP_WRITE, FILE_MAP_ALL_ACCESS 
 };
 

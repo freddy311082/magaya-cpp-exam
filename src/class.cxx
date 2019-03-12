@@ -33,6 +33,26 @@ void  field_descriptor::operator delete(void* p)
     ::operator delete(p);
 }
 
+inline static field_type extract_field_type(field_descriptor* f_components)
+{
+	if (f_components == NULL || reinterpret_cast<size_t>(f_components) > size_t(fld_last))
+	{
+		return fld_structure;
+	}
+
+#ifdef _WIN64
+	struct _deconstruct
+	{
+		int hi;
+		int low;
+	};
+	return static_cast<field_type>(reinterpret_cast<_deconstruct*>(f_components)->low);
+#else
+	return static_cast<field_type>(int(f_components));
+#endif
+	
+}
+
 field_descriptor::field_descriptor(const char* f_name,
                                    int size, 
                                    int n_items, 
@@ -42,9 +62,7 @@ field_descriptor::field_descriptor(const char* f_name,
 {
     assert(f_name != NULL);
     name = f_name;
-    loc.type = (f_components == NULL || (unsigned long)f_components > fld_last)
-        ? fld_structure 
-        : (field_type)long(f_components);
+	loc.type = extract_field_type(f_components);
     loc.size = size;
     loc.n_items  = n_items;
     loc.offs = offs;

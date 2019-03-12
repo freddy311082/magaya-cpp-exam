@@ -176,7 +176,7 @@ inline void bitmap_file_memory_manager::update_bitmap_position(size_t size, fpos
     if (kind == alk_blob) {
         blob_bitmap_cur = bitmap_cur;
     } else { 
-        size_t step = 1 << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
+        size_t step = size_t(1) << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
         if (kind == alk_page) {
             aligned_bitmap_cur = DOALIGN(bitmap_cur, step);
         } else {
@@ -264,7 +264,7 @@ inline boolean bitmap_file_memory_manager::find_hole(size_t size, int obj_bit_si
 
 inline boolean bitmap_file_memory_manager::find_aligned_hole(size_t size, int obj_bit_size, fposi_t& pos, nat1* cur, nat1* end)
 {
-    size_t step = 1 << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
+    size_t step = size_t(1) << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
     int hole_bit_size = 0;
     fposi_t quant_no; // offset to object in allocation quants
     nat1* beg = area_beg;
@@ -323,7 +323,7 @@ boolean bitmap_file_memory_manager::alloc(size_t size, fposi_t& pos, int flags)
         if (flags & aof_clustered) {
             fposi_t cluster_pos = (pos >> page_bits) << page_bits;
             size_t cluster_offs = (size_t)(cluster_pos >> (MEMORY_ALLOC_QUANT_LOG+3));
-            size_t step = 1 << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
+            size_t step = size_t(1) << (page_bits - MEMORY_ALLOC_QUANT_LOG - 3);
             cur = beg + cluster_offs;
             internal_assert(cur <= end);
             if (find_hole(size, obj_bit_size, pos, cur, cur + step)) { 
@@ -978,7 +978,7 @@ void gc_memory_manager::bulk_alloc(nat4* sizeBuf, nat2* cpidBuf, size_t nObjects
             }
         }                
     } else { 
-        size_t page_size = 1 << page_bits;
+        size_t page_size = size_t(1) << page_bits;
         size_t total_size = 0;
         size_t unalignedOffs = 0;
         for (i = 0; i < nObjects; i++) {

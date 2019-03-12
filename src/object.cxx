@@ -228,9 +228,11 @@ void object_handle::dump(void)
     } else {
         sprintf(storageID, "none");
 	}
+#ifndef _WIN64
 	console::output("Object %s:%08x at (%08x) of class \"%s\" "
 					"has %ld references.\n", storageID, (opid_t)opid, (nat4)obj, type,
                     access);
+#endif
 }
 
 

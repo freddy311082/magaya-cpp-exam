@@ -1,5 +1,9 @@
-Debug
 .vs
-client-lib/Debug
-goods-demo/Debug
-goods-server/Debug
+client-lib/Win32
+goods-demo/Win32
+goods-server/Win32
+client-lib/x64
+goods-demo/x64
+goods-server/x64
+Debug
+Release
