@@ -147,6 +147,16 @@ GOODS provides some built-in containers to store collections of objects.
 #### Simple Collection
 `set_owner` is provided to store a group of objects without any specific order. Do not get confused with the name of the type: `set_owner` is just a double-linked list of objects and not a set of unique objects as its name implies.
 
+The following example shows how to iterate a `set_owner` 
+
+```cpp
+for (auto mbr = list->first; !mbr.is_nil(); mbr = mbr->next)
+{
+	ref<my_object> obj = mbr->obj;
+	// -- do something with obj
+}
+```
+
 #### Sorted Collection
 `B_tree` are provides to stored objects in an specific order. Objects are sorted according to its insertion key.
 
