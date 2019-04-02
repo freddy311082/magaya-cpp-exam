@@ -66,15 +66,42 @@ demo-config.cfg
 ## GOODS client fundamentals
 ### Persistent object
 GOODS has specific requirements to allow a class to persist:
-1. Use the **METACLASS_DECLARATIONS** macro in the class declaration to bring in the required functions
-2. Use the **REGISTER** macro in the class implementation file in the global scope to create the default implementation for the function brought by the METACLASS_DECLARATIONS macro
-3. Implement the **describe_components()** function for the class specifying the fields that need to persist using predefined macros like FIELD or ARRAY (see example)
+1. Use the `METACLASS_DECLARATIONS` macro in the class declaration to bring in the required functions
+2. Use the `REGISTER` macro in the class implementation file in the global scope to create the default implementation for the function brought by the `METACLASS_DECLARATIONS` macro
+3. Implement the `describe_components()` function for the class specifying the fields that need to persist using predefined macros like `FIELD` or `ARRAY` (see example)
 
 The requirements above qualify a class as *persistable* but to actually persist in the database; an instance of the class must be referred by an object that is already persistent.
 
 The root of the database has a special way of becoming persistent, since it is always the first persistent object. All objects (other than the root itself) are directly or indirectly linked to the root, and reachable from the root.
 
 ### Data field types
+The following types are available in GOODS:
+#### Integer types
+|Data Type     | C++ Type          | Size  |
+|------------- |:------------------| -----:|
+|int1      	   | char              | 1     |
+|nat1      	   | unsigned char     | 1     |
+|int2      	   | short             | 2     |
+|nat2      	   | unsigned short    | 2     |
+|int4      	   | int               | 4     |
+|nat4      	   | unsigned int      | 4     |
+|int8      	   | long long         | 8     |
+|nat8      	   | unsigned long long| 8     |
+
+#### Floating point types
+|Data Type     | C++ Type          | Size  |
+|------------- |:------------------| -----:|
+|real4    	   | float             | 4     |
+|real8     	   | double            | 8     |
+
+#### Other types
+|Data Type     | Description        | Size  |
+|------------- |:-------------------| -----:|
+|wstring_t	   | string             |varies |
+|raw_binary_t  | bytes array        |varies |
+|ref<T>        | reference to object| 6     |
+
+
 ### Meta-objects
 Metaobjects handle the interaction of client applications with the database. They allow the programmer to extend the functionality and the behavior of the application depending on specific requirements.
 
