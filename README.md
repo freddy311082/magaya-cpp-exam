@@ -1,5 +1,3 @@
-
-
 # Magaya C++ Exam
 
 ## C++ Exam for applicants
@@ -20,7 +18,8 @@ The application will be a simple order management system to control orders place
 - Order: Number, Date, Customer, Shipping Address, Payment Type (Cash, Credit Card, Check, Other), List of products with quantities/prices and Total Value. 
 
 ## The business logic:
-- Customer’s Phone as well as customer's email must be unique.
+- Customer’s phone number must be unique. 
+- Customer's email must be unique.
 - Product’s SKU must be unique.
 - Order’s Number must be unique.
 - An order can contain multiple products. It has to have at least one product.
@@ -74,6 +73,34 @@ The requirements above qualify a class as *persistable* but to actually persist 
 
 The root of the database has a special way of becoming persistent, since it is always the first persistent object. All objects (other than the root itself) are directly or indirectly linked to the root, and reachable from the root.
 
+
+#### Example class
+```cpp
+    class my_object : public object 
+    {
+    private:
+	    nat4 my_field;
+    public:
+	    METACLASS_DECLARATIONS(my_object, object);
+    
+	    my_object(class_descriptor& desc) : object(desc), my_field(0)
+	    {
+	    }    
+	    static ref<my_object> create() 
+	    {
+		    return NEW my_object(self_class);
+	    }
+    };
+    
+    REGISTER(my_object, object, pessimistic_scheme);
+    
+    field_descriptor& my_object::describe_components()
+    {
+	    return FIELD(my_field);
+    }
+```
+
+
 ### Data field types
 The following types are available in GOODS:
 #### Integer types
@@ -99,8 +126,19 @@ The following types are available in GOODS:
 |------------- |:-------------------| -----:|
 |wstring_t	   | string             |varies |
 |raw_binary_t  | bytes array        |varies |
-|ref<T>        | reference to object| 6     |
+|ref\<T>        | reference to object| 6     |
 
+
+### Container classes
+GOODS provides some built-in containers to store collections of objects.
+
+#### Simple Collection
+`set_owner` is provided to store a group of objects without any specific order. Do not get confused with the name of the type: `set_owner` is just a double-linked list of objects and not a set of unique objects as its name implies.
+
+#### Sorted Collection
+`B_tree` are provides to stored objects in an specific order. Objects are sorted according to its insertion key.
+
+`B_tree` is a multi-branch balanced tree that provides fast access to objects in the database. This class is derived from `set_owner` and uses  `set_member` instances to connect the inserted objects.
 
 ### Meta-objects
 Metaobjects handle the interaction of client applications with the database. They allow the programmer to extend the functionality and the behavior of the application depending on specific requirements.
@@ -114,36 +152,8 @@ Metaobjects cover the following aspects :
 For the scope of this assignment the pessimistic metaobject  (pessimistic_schema) schema will suffice.
 
     pessimistic_metaobject pessimistic_scheme;
-
-#### Example use
-```cpp
-    class my_object : public object 
-    {
-    private:
-	    nat4 my_field;
-    public:
-	    METACLASS_DECLARATIONS(my_object, object);
-    
-	    my_object(class_descriptor& desc) : object(desc), my_field(0)
-	    {
-	    }    
-	    static ref<my_object> create() 
-	    {
-		    return NEW my_object(self_class);
-	    }
-    };
-    
-    REGISTER(my_object, object, pessimistic_scheme);
-    
-    field_descriptor& my_object::describe_components()
-    {
-	    return FIELD(my_field);
-    }
-```
 > In our example the metaobject is specified in the line:
 > REGISTER(my_object, object, **pessimistic_scheme**);
-
-
 
 ### Objects and Classes Identifiers
 *CPID*: Class persistent identifier
