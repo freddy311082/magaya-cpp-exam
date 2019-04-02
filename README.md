@@ -57,6 +57,20 @@ demo-config.cfg
 0:localhost:6110
 ```
 
+## What is GOODS?
+GOODS is a distributed Generic Object Oriented Database System with an active-client model where all application logic is implemented, interpreted and executed at client side.
+
+### GOODS Database Files
+- WH.CFG: Specifies how many storages are used and the connection point for each storage. 
+- WH.IDX: Contains information about each class and object stored in the database except its content.
+- WH.ODB: Contains the data that describes classes and the content of each object.
+- WH.MAP: This is the bitmap allocator, it is used to determine the location in the OBJ file for a new or relocated object or class. It also has the information about the fragmented spaces of the OBJ file.
+- WH.LOG: Contains all committed transactions between checkpoints. Its main purpose is to restore the database to a consistent state after a system crash.
+- WH.HIS: It is used for coordination of distributed transactions across multiple storages. 
+- WH.IBM: It is used to support incremental backups. It contains the last timestamp for each modified page in the storage.
+- WH.PWD: Contains authorized users and passwords. When this file is present the server enforces authentication.
+
+
 ## GOODS hints
 - every database class must derived from `object`
 - `wstring_t`: used for text fields
