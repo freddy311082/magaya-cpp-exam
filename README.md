@@ -1,3 +1,5 @@
+
+
 # Magaya C++ Exam
 
 ## C++ Exam for applicants
@@ -48,6 +50,11 @@ The application will be a simple order management system to control orders place
 The server and the client will use the same configuration file to open and connect to the database.
 The server will log any activity from the client in the console.
 
+## GOODS Database
+
+### What is GOODS?
+GOODS is a distributed **G**eneric **O**bject **O**riented **D**atabase **S**ystem with an active-client model where all application logic is implemented, interpreted and executed at client side.
+
 ## Configuration file
 The configuration file should look like this:
 
@@ -56,20 +63,85 @@ demo-config.cfg
 1
 0:localhost:6110
 ```
+## GOODS client fundamentals
+### Persistent object
+GOODS has specific requirements to allow a class to persist:
+1. Use the **METACLASS_DECLARATIONS** macro in the class declaration to bring in the required functions
+2. Use the **REGISTER** macro in the class implementation file in the global scope to create the default implementation for the function brought by the METACLASS_DECLARATIONS macro
+3. Implement the **describe_components()** function for the class specifying the fields that need to persist using predefined macros like FIELD or ARRAY (see example)
 
-## What is GOODS?
-GOODS is a distributed Generic Object Oriented Database System with an active-client model where all application logic is implemented, interpreted and executed at client side.
+The requirements above qualify a class as *persistable* but to actually persist in the database; an instance of the class must be referred by an object that is already persistent.
+
+The root of the database has a special way of becoming persistent, since it is always the first persistent object. All objects (other than the root itself) are directly or indirectly linked to the root, and reachable from the root.
+
+### Data field types
+### Meta-objects
+Metaobjects handle the interaction of client applications with the database. They allow the programmer to extend the functionality and the behavior of the application depending on specific requirements.
+
+Metaobjects cover the following aspects :
+- Inter-task synchronization of object access.
+- Synchronization of object access by different database clients.
+- Handling of database transactions.
+- Management of the client’s object cache
+
+For the scope of this assignment the pessimistic metaobject  (pessimistic_schema) schema will suffice.
+
+    pessimistic_metaobject pessimistic_scheme;
+
+#### Example use
+```cpp
+    class my_object : public object 
+    {
+    private:
+	    nat4 my_field;
+    public:
+	    METACLASS_DECLARATIONS(my_object, object);
+    
+	    my_object(class_descriptor& desc) : object(desc), my_field(0)
+	    {
+	    }    
+	    static ref<my_object> create() 
+	    {
+		    return NEW my_object(self_class);
+	    }
+    };
+    
+    REGISTER(my_object, object, pessimistic_scheme);
+    
+    field_descriptor& my_object::describe_components()
+    {
+	    return FIELD(my_field);
+    }
+```
+> In our example the metaobject is specified in the line:
+> REGISTER(my_object, object, **pessimistic_scheme**);
+
+
+
+### Objects and Classes Identifiers
+*CPID*: Class persistent identifier
+
+ - The valid range is from 2 to 65535 (0xFFFF). It is a WORD. CPID 1 is
+-  Abstract root class when the database is not initialized. Each
+-  Different version of a class has a different identifier. Non used
+-  Classes are garbage collected.
+
+*OPID*: Object persistent identifier
+
+- The valid range is from 65536 (0x10000) to 4294967295 (0xFFFFFFFF). It is a DWORD.
+- Object 0x10000 is the database root.
+- Each object in the database knows its CPID.
+- Non referenced objects from root are garbage collected.
 
 ### GOODS Database Files
-- WH.CFG: Specifies how many storages are used and the connection point for each storage. 
-- WH.IDX: Contains information about each class and object stored in the database except its content.
-- WH.ODB: Contains the data that describes classes and the content of each object.
-- WH.MAP: This is the bitmap allocator, it is used to determine the location in the OBJ file for a new or relocated object or class. It also has the information about the fragmented spaces of the OBJ file.
-- WH.LOG: Contains all committed transactions between checkpoints. Its main purpose is to restore the database to a consistent state after a system crash.
-- WH.HIS: It is used for coordination of distributed transactions across multiple storages. 
-- WH.IBM: It is used to support incremental backups. It contains the last timestamp for each modified page in the storage.
-- WH.PWD: Contains authorized users and passwords. When this file is present the server enforces authentication.
-
+- *WH.CFG*: Specifies how many storages are used and the connection point for each storage. 
+- *WH.IDX*: Contains information about each class and object stored in the database except its content.
+- *WH.ODB*: Contains the data that describes classes and the content of each object.
+- *WH.MAP*: This is the bitmap allocator, it is used to determine the location in the OBJ file for a new or relocated object or class. It also has the information about the fragmented spaces of the OBJ file.
+- *WH.LOG*: Contains all committed transactions between checkpoints. Its main purpose is to restore the database to a consistent state after a system crash.
+- *WH.HIS*: It is used for coordination of distributed transactions across multiple storages. 
+- *WH.IBM*: It is used to support incremental backups. It contains the last timestamp for each modified page in the storage.
+- *WH.PWD*: Contains authorized users and passwords. When this file is present the server enforces authentication.
 
 ## GOODS hints
 - every database class must derived from `object`
