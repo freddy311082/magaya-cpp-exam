@@ -63,11 +63,23 @@ demo-config.cfg
 0:localhost:6110
 ```
 ## GOODS client fundamentals
+### object
+`object` is the base class for GOODS persistent objects. 
+
+`ref` is the smart pointer that GOODS uses to control access to every persistable object. 
+
+`write_access` is also a smart pointer that creates a transaction scope for modifying a GOODS object. The `modify()` function can be used to obtain write_access object and thus start a database transaction. 
+
+```
+auto w_obj = modify(obj);
+```
+
 ### Persistent object
 GOODS has specific requirements to allow a class to persist:
-1. Use the `METACLASS_DECLARATIONS` macro in the class declaration to bring in the required functions
-2. Use the `REGISTER` macro in the class implementation file in the global scope to create the default implementation for the function brought by the `METACLASS_DECLARATIONS` macro
-3. Implement the `describe_components()` function for the class specifying the fields that need to persist using predefined macros like `FIELD` or `ARRAY` (see example)
+1. Must inherit from `object` at any level.
+2. Use the `METACLASS_DECLARATIONS` macro in the class declaration to bring in the required functions
+3. Use the `REGISTER` macro in the class implementation file in the global scope to create the default implementation for the function brought by the `METACLASS_DECLARATIONS` macro
+4. Implement the `describe_components()` function for the class specifying the fields that need to persist using predefined macros like `FIELD` or `ARRAY` (see example)
 
 The requirements above qualify a class as *persistable* but to actually persist in the database; an instance of the class must be referred by an object that is already persistent.
 
@@ -76,28 +88,28 @@ The root of the database has a special way of becoming persistent, since it is a
 
 #### Example class
 ```cpp
-    class my_object : public object 
+class my_object : public object 
+{
+private:
+    nat4 my_field;
+public:
+    METACLASS_DECLARATIONS(my_object, object);
+
+    my_object(class_descriptor& desc) : object(desc), my_field(0)
     {
-    private:
-	    nat4 my_field;
-    public:
-	    METACLASS_DECLARATIONS(my_object, object);
-    
-	    my_object(class_descriptor& desc) : object(desc), my_field(0)
-	    {
-	    }    
-	    static ref<my_object> create() 
-	    {
-		    return NEW my_object(self_class);
-	    }
-    };
-    
-    REGISTER(my_object, object, pessimistic_scheme);
-    
-    field_descriptor& my_object::describe_components()
+    }    
+    static ref<my_object> create() 
     {
-	    return FIELD(my_field);
+	    return NEW my_object(self_class);
     }
+};
+
+REGISTER(my_object, object, pessimistic_scheme);
+
+field_descriptor& my_object::describe_components()
+{
+    return FIELD(my_field);
+}
 ```
 
 
