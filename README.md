@@ -203,7 +203,7 @@ For the scope of this assignment the pessimistic metaobject  (pessimistic_schema
 - *WH.PWD*: Contains authorized users and passwords. When this file is present the server enforces authentication.
 
 ## GOODS hints
-- every database class must derived from `object`
+- every database class must derive from `object`
 - `wstring_t`: used for text fields
 - `set_owner`: used for sequential containers
 - `B_tree`: used for creating indexes
