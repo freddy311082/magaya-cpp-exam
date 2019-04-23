@@ -180,17 +180,17 @@ For the scope of this assignment the pessimistic metaobject  (pessimistic_schema
 ### Objects and Classes Identifiers
 *CPID*: Class persistent identifier
 
- - The valid range is from 2 to 65535 (0xFFFF). It is a WORD. CPID 1 is
--  Abstract root class when the database is not initialized. Each
--  Different version of a class has a different identifier. Non used
--  Classes are garbage collected.
+ - A two-byte (WORD) value ranging from 2 to 65535 (0xFFFF)
+ - CPID 1 is reserved for the abstract root class, which marks that the database is not initialized
+ - Each version of a class has a different identifier
+ - Garbage collector eliminates unused classes
 
 *OPID*: Object persistent identifier
 
-- The valid range is from 65536 (0x10000) to 4294967295 (0xFFFFFFFF). It is a DWORD.
-- Object 0x10000 is the database root.
-- Each object in the database knows its CPID.
-- Non referenced objects from root are garbage collected.
+ - A four-byte (DWORD) value ranging from 65536 (0x10000) to 4294967295 (0xFFFFFFFF)
+ - The id 0x10000 is reserved for the database root
+ - Each object in the database knows its CPID
+ - Garbage collector eliminates unused objects
 
 ### GOODS Database Files
 - *WH.CFG*: Specifies how many storages are used and the connection point for each storage. 
