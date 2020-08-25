@@ -4,10 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goods-server", "goods-server\goods-server.vcxproj", "{B148B359-437E-4EEA-A143-51272F2D419C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9949859F-68A6-46B6-84D4-A3CF43B63969} = {9949859F-68A6-46B6-84D4-A3CF43B63969}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client-lib", "client-lib\client-lib.vcxproj", "{9949859F-68A6-46B6-84D4-A3CF43B63969}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goods-demo", "goods-demo\goods-demo.vcxproj", "{94C385C6-C864-454F-95F0-ED4E14E5E8F0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9949859F-68A6-46B6-84D4-A3CF43B63969} = {9949859F-68A6-46B6-84D4-A3CF43B63969}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
