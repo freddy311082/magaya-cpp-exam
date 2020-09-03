@@ -46,7 +46,7 @@ inline static field_type extract_field_type(field_descriptor* f_components)
 		int hi;
 		int low;
 	};
-	return static_cast<field_type>(reinterpret_cast<_deconstruct*>(f_components)->low);
+	return static_cast<field_type>(reinterpret_cast<_deconstruct*>(&f_components)->hi);
 #else
 	return static_cast<field_type>(int(f_components));
 #endif
