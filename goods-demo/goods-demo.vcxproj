@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>..\inc;$(IncludePath);</IncludePath>
     <LibraryPath>..\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,6 +119,8 @@
       <PreprocessorDefinitions>_WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\fredd\projects\magaya\ejercicio\cpp-exam\goods-demo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,7 +171,32 @@
   <ItemGroup>
     <ClInclude Include="database-guard.h" />
     <ClInclude Include="db-root.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="src\datasource\DataSource.h" />
+    <ClInclude Include="src\datasource\db\DBDatasource.h" />
+    <ClInclude Include="src\datasource\db\mappings\CustomerMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\OrderMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\PricePolicyMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\ProductMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\ShippingAddressMapping.h" />
+    <ClInclude Include="src\datasource\db\model\CustomerDB.h" />
+    <ClInclude Include="src\datasource\db\model\OrderDB.h" />
+    <ClInclude Include="src\datasource\db\model\OrderItemDB.h" />
+    <ClInclude Include="src\datasource\db\model\PricePolicyDB.h" />
+    <ClInclude Include="src\datasource\db\model\ProductDB.h" />
+    <ClInclude Include="src\datasource\db\model\RootDB.h" />
+    <ClInclude Include="src\datasource\db\model\ShippingAddressDB.h" />
+    <ClInclude Include="src\middleware\model\Customer.h" />
+    <ClInclude Include="src\middleware\model\Order.h" />
+    <ClInclude Include="src\middleware\model\OrderItem.h" />
+    <ClInclude Include="src\middleware\model\PricePolicy.h" />
+    <ClInclude Include="src\middleware\model\Product.h" />
+    <ClInclude Include="src\middleware\model\ShippingAddress.h" />
+    <ClInclude Include="src\middleware\Service.h" />
+    <ClInclude Include="src\utils\enums.h" />
+    <ClInclude Include="src\utils\usings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="db-root.cpp" />
@@ -180,6 +207,27 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\datasource\db\DBDatasource.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\CustomerMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\OrderItemMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\OrderMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\PricePolicyMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\ProductMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\ShippingAddressMapping.cpp" />
+    <ClCompile Include="src\datasource\db\model\CustomerDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\OrderDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\PricePolicyDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\ProductDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\RootDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\ShippingAddressDB.cpp" />
+    <ClCompile Include="src\middleware\model\Customer.cpp" />
+    <ClCompile Include="src\middleware\model\Order.cpp" />
+    <ClCompile Include="src\middleware\model\OrderItem.cpp" />
+    <ClCompile Include="src\middleware\model\PricePolicy.cpp" />
+    <ClCompile Include="src\middleware\model\Product.cpp" />
+    <ClCompile Include="src\middleware\model\ShippingAddress.cpp" />
+    <ClCompile Include="src\middleware\Service.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
