@@ -7,14 +7,13 @@
 class DataSource
 {
 public:
-	DataSource() = default;
 
 	/*
 	 * The idea behind this method is allow the user of this class to create more datasource nad without any change
 	 * keep using this method as the DataSource constructor.
 	 */
 	template <	typename T,
-				typename = std::is_class<T>::value_type() && std::is_base_of<DataSource, T>::value_type(),
+				//typename = std::is_class<T>::value_type() && std::is_base_of<DataSource, T>::value_type(),
 				typename... Args>
 	static std::unique_ptr<T> newInstance(Args&&... args)
 	{

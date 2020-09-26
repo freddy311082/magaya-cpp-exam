@@ -3,14 +3,24 @@
 
 #include <filesystem>
 #include <sstream>
+#include <iostream>
+
 
 #include "../goods-demo/src/datasource/db/model/RootDB.h"
 #include "../goods-demo/src/datasource/db/mappings/CustomerMapping.h"
 #include "../goods-demo/src/datasource/db/mappings/ShippingAddressMapping.h"
 
+std::unique_ptr<database> DBDataSource::m_db = std::make_unique<database>();
+std::chrono::system_clock::time_point DBDataSource::g_lastCall = std::chrono::system_clock::now();
+std::mutex DBDataSource::g_mutex = std::mutex();
+bool DBDataSource::g_keepRunning = true;
+bool DBDataSource::g_unlockChecking = false;
+std::condition_variable DBDataSource::g_keepRunningCond = std::condition_variable();
+int DBDataSource::g_seconds = TIME_TO_CHECK_CONNECTION;
 
-DBDataSource::DBDataSource(const std::string& configFilename) :
-	DataSource() ,m_configFilename(configFilename + ".cfg")
+
+DBDataSource::DBDataSource(const std::string& configFilename, uint32_t dbReconnectSeconds) :
+	DataSource() ,m_configFilename(configFilename + ".cfg"), m_dbReconnectSeconds(dbReconnectSeconds)
 {
 	if (!std::filesystem::exists(m_configFilename))
 	{
@@ -18,32 +28,114 @@ DBDataSource::DBDataSource(const std::string& configFilename) :
 		error_str << "Config file " << m_configFilename << " doesn't exists." << std::endl;
 		throw std::ios::failure(error_str.str());
 	}
+
+	m_connectionThread = std::thread([&](DBDataSource* ds)
+	{
+		ds->checkDbActivity();
+	}, this);
+
+	m_timerThread = std::thread([]()
+	{
+		while(true)
+		{
+			std::cout << "Timer Thread: " << g_seconds << " s !!" << std::endl;
+			if (!g_keepRunning)
+				return; // end thread
+
+			if (--g_seconds == 0)
+			{
+				g_unlockChecking = true;
+				g_keepRunningCond.notify_all();
+				g_seconds = TIME_TO_CHECK_CONNECTION;
+			}
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+	});
+}
+
+
+void DBDataSource::checkDbActivity()
+{
+	while(g_keepRunning)
+	{
+		std::mutex lockingSleep;
+		std::unique_lock<std::mutex>  lock(lockingSleep);
+		g_keepRunningCond.wait(lock, [] {return g_unlockChecking; });
+		g_unlockChecking = false;
+		std::cout << "Entre a checkDbActivity !!!!" << std::endl;
+		std::cout << "Is connected to DB?: " << (m_isConnected ? "True" : "False") << std::endl;		
+		if (isConnected())
+		{
+			if (totalSecondsSinceLastCall() > TIME_TO_CHECK_CONNECTION)
+			{
+				dbClose();
+				std::cout << "Connection closed with DB !!" << std::endl;
+			}
+		}
+	}
+}
+
+void DBDataSource::updateLastCall()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	g_lastCall = std::chrono::system_clock::now();
+}
+
+int DBDataSource::totalSecondsSinceLastCall()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	auto now = std::chrono::system_clock::now();
+	return std::chrono::duration_cast<std::chrono::seconds>(now - g_lastCall).count();
 }
 
 
 void DBDataSource::dbClose()
 {
-	m_isConnected = false;
+	g_mutex.lock();
 	m_db->close();
+	g_mutex.unlock();
+	setIsConnected(false);
+}
+
+bool DBDataSource::isConnected()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	return m_isConnected;
+}
+
+void DBDataSource::setIsConnected(bool value)
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	m_isConnected = value;
 }
 
 DBDataSource::~DBDataSource()
 {
 	m_db->close();
+	g_keepRunning = false;
+	g_unlockChecking = true;
+	g_keepRunningCond.notify_all();
+	m_timerThread.join();
+	m_connectionThread.join();
 }
 
 
 void DBDataSource::dbConnect()
 {
 	// for multi threading scenario, we need to check this
-	//task::initialize(task::normal_stack);
-	if (!m_db->open(m_configFilename.c_str()))
+	if (!isConnected())
 	{
-		m_isConnected = false;
-		throw std::runtime_error("Unable to open connection with the database.");
+		task::initialize(task::normal_stack);
+		if (!m_db->open(m_configFilename.c_str()))
+		{
+			setIsConnected(false);
+			throw std::runtime_error("Unable to open connection with the database.");
+		}
+		std::cout << "Connection opened with DB !!" << std::endl;
+		setIsConnected(true);
 	}
-	
-	m_isConnected = true;
+
+	updateLastCall();
 }
 
 void DBDataSource::addCustomer(const CustomerPtr& customer)

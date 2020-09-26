@@ -64,20 +64,9 @@ ref<CustomerDB> RootDB::getCustomerByName(const wstring_t& name) const
 		std::stringstream query;
 		query << "m_name='" << name.getChars() << "'";
 		result_set_cursor cursor;
-		auto result = m_customers->find("5555");
+		m_customers->filter(cursor, query.str().c_str());
+		ref<CustomerDB> result = cursor.next();
 		return result;
-		
-		/*for (ref<CustomerDB> cust = cursor.next(); cust != nullptr; cust = cursor.next())
-		{
-			return cust;
-		}
-
-		for (auto cust = m_customers->first; cust != nullptr; cust = cust->next)
-		{
-			ref<CustomerDB> obj = (ref<CustomerDB>)cust;
-		}
-
-		return nullptr;*/
 	}
 	catch (const QueryException& exc)
 	{
