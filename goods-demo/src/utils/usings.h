@@ -10,4 +10,7 @@ class ref;
 class CustomerDB;
 using CustomersDbList = std::list<ref<CustomerDB>>;
 
-struct ShippingAddressDB;
+class ShippingAddressDB;
+
+class ProductDB;
+using ProductDbList = std::list<ref<ProductDB>>;

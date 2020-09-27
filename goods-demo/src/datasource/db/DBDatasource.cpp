@@ -8,7 +8,7 @@
 
 #include "../goods-demo/src/datasource/db/model/RootDB.h"
 #include "../goods-demo/src/datasource/db/mappings/CustomerMapping.h"
-#include "../goods-demo/src/datasource/db/mappings/ShippingAddressMapping.h"
+#include "../goods-demo/src/datasource/db/mappings/ProductMapping.h"
 
 std::unique_ptr<database> DBDataSource::m_db = std::make_unique<database>();
 std::chrono::system_clock::time_point DBDataSource::g_lastCall = std::chrono::system_clock::now();
@@ -143,8 +143,11 @@ void DBDataSource::addCustomer(const CustomerPtr& customer)
 	if (customer == nullptr)
 		throw std::invalid_argument("Customer cannot be NULL.");
 
-	if (customer->name.empty())
+	if (customer->name().empty())
 		throw std::invalid_argument("Invalid customer name.");
+
+	if (getCustomerByName(customer->name()) != nullptr)
+		throw std::invalid_argument("This customer already exists");
 	
 	runDbQuery([](ref<RootDB> root,  const CustomerPtr& cust)
 	{
@@ -152,7 +155,18 @@ void DBDataSource::addCustomer(const CustomerPtr& customer)
 	}, customer);
 }
 
-void DBDataSource::deleteCustomer(const CustomerPtr& customer)
+void DBDataSource::updateCustomer(const CustomerPtr& customer)
+{
+	if (customer == nullptr)
+		throw std::invalid_argument("Customer cannot be NULL.");
+
+	runDbQuery([](ref<RootDB> root, const CustomerPtr& customer)
+	{
+		modify(root)->updateCustomer(CustomerMapping::toDbModel(*customer));
+	}, customer);
+}
+
+void DBDataSource::removeCustomer(const CustomerPtr& customer)
 {
 	if (customer == nullptr)
 		throw std::invalid_argument("Customer cannot be NULL.");
@@ -192,5 +206,79 @@ CustomersList DBDataSource::allCustomers()
 		}
 	}, result);
 
+	return result;
+}
+
+void DBDataSource::validateProduct(const ProductPtr& product)
+{
+	if (product == nullptr)
+		throw std::invalid_argument("Product cannot be NULL.");
+
+	if (product->sku().empty())
+		throw std::invalid_argument("SKU value is invalid.");
+}
+
+void DBDataSource::addProduct(const ProductPtr& product)
+{
+	validateProduct(product);
+
+	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	{
+		if (root->getProductBySKU(product->sku().c_str()) != nullptr)
+			throw std::invalid_argument("This product already exists");
+
+		auto productDb = ProductMapping::toDbModel(*product);
+		modify(root)->addProdduct(productDb);
+		std::cout << "Aqui estoy !!" << std::endl;
+	}, product);
+}
+
+void DBDataSource::removeProduct(const ProductPtr& product)
+{
+	validateProduct(product);
+
+	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	{
+		modify(root)->removeProduct(product->sku().c_str());
+	}, product);
+}
+
+void DBDataSource::updateProduct(const ProductPtr& product)
+{
+	validateProduct(product);
+
+	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	{
+		modify(root)->updateProduct(ProductMapping::toDbModel(*product));
+	}, product);
+}
+
+ProductPtr DBDataSource::getProductBySKU(const std::string& sku)
+{
+	ProductPtr result;
+	runDbQuery([](ref<RootDB> root, const std::string& sku, ProductPtr& result)
+	{
+		auto productDb = root->getProductBySKU(sku.c_str());
+
+		if (productDb != nullptr)
+			result = ProductMapping::toModel(productDb);
+		
+	}, sku, result);
+
+	return result;
+}
+
+ProductsList DBDataSource::allProducts()
+{
+	ProductsList result;
+
+	runDbQuery([](ref<RootDB> root, ProductsList& result)
+	{
+		for (const auto& productDb: root->allProducts())
+		{
+			result.push_back(ProductMapping::toModel(productDb));
+		}
+	}, result);
+	
 	return result;
 }

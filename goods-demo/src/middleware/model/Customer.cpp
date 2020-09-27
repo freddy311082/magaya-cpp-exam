@@ -7,10 +7,10 @@ using namespace std;
 
 Customer::Customer(const std::string& name, const std::string& phone, const std::string& email,
 	const ShippingAddress& shippingAddress)
-	: name(name),
-	phone(phone),
-	email(email),
-	shippingAddress(shippingAddress)
+	: m_name(name),
+	m_phone(phone),
+	m_email(email),
+	m_shippingAddress(shippingAddress)
 {
 }
 
@@ -18,10 +18,10 @@ std::string Customer::info()
 {
 	stringstream ss;
 	ss << "** Customer **" << endl <<
-		"name: " << name << endl <<
-		"phone: " << phone << endl <<
-		"email: " << email << endl <<
-		shippingAddress.info() << endl;
+		"name: " << m_name << endl <<
+		"phone: " << m_phone << endl <<
+		"email: " << m_email << endl <<
+		m_shippingAddress.info() << endl;
 
 	return ss.str();
 }

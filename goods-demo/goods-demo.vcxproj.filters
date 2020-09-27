@@ -150,6 +150,9 @@
     <ClInclude Include="src\utils\usings.h">
       <Filter>Header Files\src\utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\datasource\DataSourceFactory.h">
+      <Filter>Header Files\src\datasource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\datasource\db\model\CustomerDB.cpp">

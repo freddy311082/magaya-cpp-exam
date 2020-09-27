@@ -17,9 +17,9 @@ ShippingAddressDB ShippingAddressMapping::toDbModel(const ShippingAddress& addr)
 
 ShippingAddress ShippingAddressMapping::toModel(const ShippingAddressDB& addrDb)
 {
-	return ShippingAddress{ addrDb.streetAndNumber.getChars(),
-						 addrDb.city.getChars(),
-						 addrDb.state.getChars(),
-						 addrDb.country.getChars(),
-						 addrDb.zipCode };
+	return ShippingAddress{ addrDb.streetAndNumber().getChars(),
+						 addrDb.city().getChars(),
+						 addrDb.state().getChars(),
+						 addrDb.country().getChars(),
+						 addrDb.zipCode() };
 }

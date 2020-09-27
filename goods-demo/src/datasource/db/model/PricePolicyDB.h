@@ -3,19 +3,22 @@
 #include "goods.h"
 
 
-class PricePolicyDB : public object
+class PricePolicyDB
 {
-protected:
 	real8 m_price;
 	real8 m_weight;
 
-	PricePolicyDB(real8 price, real8 weight = 1.);
-
 public:
-	ref<PricePolicyDB> create(real8 price, real8 weight = 1.);
-	real8 cost(real8 quantity);
-	~PricePolicyDB() = default;
+	PricePolicyDB(real8 price, real8 weight = 1.0);
 
-	METACLASS_DECLARATIONS(PricePolicyDB, object);
+	PricePolicyDB() = default;
 
+	real8 price() const { return m_price; }
+	real8 weight() const { return m_weight; }
+
+	real8 cost(real8 quantity) const;
+	field_descriptor& describe_components();
+	friend field_descriptor& describe_field(PricePolicyDB& shippingAddress);
+
+	PricePolicyDB& operator = (const PricePolicyDB&) = default;
 };

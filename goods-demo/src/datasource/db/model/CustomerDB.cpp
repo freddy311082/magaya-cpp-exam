@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include "CustomerDB.h"
 
-CustomerDB::CustomerDB(const wstring_t&		name,
-	const wstring_t&		phone,
-	const wstring_t&		email,
-	const ShippingAddressDB&	shippingAddress) :
+CustomerDB::CustomerDB(const wstring_t&	name,
+	const wstring_t& phone,
+	const wstring_t& email,
+	const ShippingAddressDB& shippingAddress) :
 	object(self_class),
 	m_name(name),
 	m_phone(phone),
@@ -16,10 +16,10 @@ CustomerDB::CustomerDB(const wstring_t&		name,
 	delete[] _name;
 }
 
-ref<CustomerDB> CustomerDB::create(const wstring_t&		name,
-	const wstring_t&			phone,
-	const wstring_t&			email,
-	const ShippingAddressDB&	shippingAddress)
+ref<CustomerDB> CustomerDB::create(const wstring_t&	name,
+	const wstring_t& phone,
+	const wstring_t& email,
+	const ShippingAddressDB& shippingAddress)
 {
 	return NEW CustomerDB(name, phone, email, shippingAddress);
 }
@@ -31,6 +31,15 @@ field_descriptor& CustomerDB::describe_components()
 		FIELD(m_email),
 		FIELD(m_key),
 		FIELD(m_shippingAddress);
+}
+
+void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wstring_t& email,
+	const ShippingAddressDB& shippingAddress)
+{
+	m_name = name;
+	m_phone = phone;
+	m_email = email;
+	m_shippingAddress = shippingAddress;
 }
 
 

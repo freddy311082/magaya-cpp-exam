@@ -3,7 +3,7 @@
 #include "dbscls.h"
 #include "datetime.h"
 
-struct ShippingAddressDB;
+class ShippingAddressDB;
 
 class OrderDB : public set_owner
 {

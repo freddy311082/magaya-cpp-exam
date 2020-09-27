@@ -4,7 +4,7 @@
 #include <memory>
 
 class CustomerDB;
-struct Customer;
+class Customer;
 using CustomerPtr = std::unique_ptr<Customer>;
 
 class CustomerMapping

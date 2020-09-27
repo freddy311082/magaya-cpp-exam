@@ -7,12 +7,10 @@
 
 ref<CustomerDB> CustomerMapping::toDbModel(const Customer& customer)
 {
-	ShippingAddressDB shippingAddress;
-	
-	return  CustomerDB::create(	customer.name.c_str(),
-						customer.phone.c_str(),
-						customer.email.c_str(),
-						ShippingAddressMapping::toDbModel(customer.shippingAddress));
+	return  CustomerDB::create(	customer.name().c_str(),
+						customer.phone().c_str(),
+						customer.email().c_str(),
+						ShippingAddressMapping::toDbModel(customer.shippingAddress()));
 }
 
 CustomerPtr CustomerMapping::toModel(const ref<CustomerDB>& customerDb)

@@ -15,6 +15,8 @@
 #include "src/middleware/model/Product.h"
 
 
+class DataSourceFactory;
+
 
 class DBDataSource final: public DataSource
 {
@@ -57,14 +59,23 @@ private:
 	void checkDbActivity();
 	void updateLastCall();
 	int totalSecondsSinceLastCall();
-	
+
+	void validateProduct(const ProductPtr& product);
 public:
 	DBDataSource(const std::string& configFilename, uint32_t dbReconnectSeconds = 60);
-	
-	void addCustomer(const CustomerPtr& customer);
-	void deleteCustomer(const CustomerPtr& customer);
-	CustomerPtr getCustomerByName(const std::string& name);
-	CustomersList  allCustomers();
+	// Customers
+	void addCustomer(const CustomerPtr& customer) override;
+	void updateCustomer(const CustomerPtr& customer) override;
+	void removeCustomer(const CustomerPtr& customer) override;
+	CustomerPtr getCustomerByName(const std::string& name) override;
+	CustomersList allCustomers() override;
+
+	// Products
+	void addProduct(const ProductPtr& product) override;
+	void removeProduct(const ProductPtr& product) override;
+	void updateProduct(const ProductPtr& product) override;
+	ProductPtr getProductBySKU(const std::string& sku) override;
+	ProductsList allProducts() override;
 	
 	~DBDataSource();
 };

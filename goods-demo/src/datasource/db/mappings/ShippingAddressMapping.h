@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-struct ShippingAddressDB;
+class ShippingAddressDB;
 struct ShippingAddress;
 
 
