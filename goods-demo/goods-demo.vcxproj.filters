@@ -72,12 +72,6 @@
     <ClInclude Include="src\datasource\db\model\OrderDB.h">
       <Filter>Header Files\src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="src\datasource\db\model\OrderItemDB.h">
-      <Filter>Header Files\src\datasource\db\model</Filter>
-    </ClInclude>
-    <ClInclude Include="src\datasource\db\model\PricePolicyDB.h">
-      <Filter>Header Files\src\datasource\db\model</Filter>
-    </ClInclude>
     <ClInclude Include="src\datasource\db\model\ProductDB.h">
       <Filter>Header Files\src\datasource\db\model</Filter>
     </ClInclude>
@@ -93,13 +87,7 @@
     <ClInclude Include="src\datasource\db\mappings\CustomerMapping.h">
       <Filter>Header Files\src\datasource\db\mappings</Filter>
     </ClInclude>
-    <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h">
-      <Filter>Header Files\src\datasource\db\mappings</Filter>
-    </ClInclude>
     <ClInclude Include="src\datasource\db\mappings\OrderMapping.h">
-      <Filter>Header Files\src\datasource\db\mappings</Filter>
-    </ClInclude>
-    <ClInclude Include="src\datasource\db\mappings\PricePolicyMapping.h">
       <Filter>Header Files\src\datasource\db\mappings</Filter>
     </ClInclude>
     <ClInclude Include="src\datasource\db\mappings\ProductMapping.h">
@@ -115,12 +103,6 @@
       <Filter>Header Files\src\middleware\model</Filter>
     </ClInclude>
     <ClInclude Include="src\middleware\model\Order.h">
-      <Filter>Header Files\src\middleware\model</Filter>
-    </ClInclude>
-    <ClInclude Include="src\middleware\model\OrderItem.h">
-      <Filter>Header Files\src\middleware\model</Filter>
-    </ClInclude>
-    <ClInclude Include="src\middleware\model\PricePolicy.h">
       <Filter>Header Files\src\middleware\model</Filter>
     </ClInclude>
     <ClInclude Include="src\middleware\model\Product.h">
@@ -161,12 +143,6 @@
     <ClCompile Include="src\datasource\db\model\OrderDB.cpp">
       <Filter>Source Files\src\datasource\db\model</Filter>
     </ClCompile>
-    <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp">
-      <Filter>Source Files\src\datasource\db\model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\datasource\db\model\PricePolicyDB.cpp">
-      <Filter>Source Files\src\datasource\db\model</Filter>
-    </ClCompile>
     <ClCompile Include="src\datasource\db\model\ProductDB.cpp">
       <Filter>Source Files\src\datasource\db\model</Filter>
     </ClCompile>
@@ -188,9 +164,6 @@
     <ClCompile Include="src\datasource\db\mappings\OrderMapping.cpp">
       <Filter>Source Files\src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="src\datasource\db\mappings\PricePolicyMapping.cpp">
-      <Filter>Source Files\src\datasource\db\mappings</Filter>
-    </ClCompile>
     <ClCompile Include="src\datasource\db\mappings\ProductMapping.cpp">
       <Filter>Source Files\src\datasource\db\mappings</Filter>
     </ClCompile>
@@ -204,9 +177,6 @@
       <Filter>Source Files\src\middleware\model</Filter>
     </ClCompile>
     <ClCompile Include="src\middleware\model\OrderItem.cpp">
-      <Filter>Source Files\src\middleware\model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\middleware\model\PricePolicy.cpp">
       <Filter>Source Files\src\middleware\model</Filter>
     </ClCompile>
     <ClCompile Include="src\middleware\model\Product.cpp">

@@ -124,7 +124,7 @@ void RootDB::updateProduct(ref<ProductDB> product)
 	if (productDb == nullptr)
 		throw std::invalid_argument("Product not found.");
 
-	modify(productDb)->update(product->sku(), product->description(), product->defaultPricePolicy());
+	modify(productDb)->update(product->sku(), product->description(), product->price(), product->weight());
 }
 
 ProductDbList RootDB::allProducts() const

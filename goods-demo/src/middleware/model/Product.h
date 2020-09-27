@@ -4,33 +4,23 @@
 #include <memory>
 #include  <list>
 
-#include "PricePolicy.h"
-
 class Product
 {
 	std::string m_sku;
 	std::string m_description;
-	PricePolicy m_defaultPricePolicy;
+	double m_price;
+	double m_weight;
 
 public:
-	std::string sku() const
-	{
-		return m_sku;
-	}
-
-	std::string description() const
-	{
-		return m_description;
-	}
-
-	PricePolicy defaultPricePolicy() const
-	{
-		return m_defaultPricePolicy;
-	}
+	double price() const { return m_price; }
+	double weight() const { return m_weight; }
+	std::string sku() const { return m_sku; }
+	std::string description() const { return m_description; }
 
 	Product(const std::string& sku, 
-	        std::string& description, 
-	        const PricePolicy& defaultPricePolicy);
+	        std::string& description,
+			double price,
+			double weight = 1);
 		std::string info() const;
 };
 
