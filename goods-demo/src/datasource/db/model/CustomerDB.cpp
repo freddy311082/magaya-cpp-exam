@@ -13,6 +13,7 @@ CustomerDB::CustomerDB(const wstring_t&	name,
 {
 	char* _name = m_name.getChars();
 	m_key = set_member::create(this, _name);
+	m_orders = B_tree::create(this);
 	delete[] _name;
 }
 
@@ -30,7 +31,8 @@ field_descriptor& CustomerDB::describe_components()
 		FIELD(m_phone),
 		FIELD(m_email),
 		FIELD(m_key),
-		FIELD(m_shippingAddress);
+		FIELD(m_shippingAddress),
+		FIELD(m_orders);
 }
 
 void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wstring_t& email,

@@ -61,14 +61,16 @@ private:
 	int totalSecondsSinceLastCall();
 
 	void validateProduct(const ProductPtr& product);
+	CustomerPtr getCustomerByEmailOrPhone(const std::string& email, const std::string& phone);
 public:
 	DBDataSource(const std::string& configFilename, uint32_t dbReconnectSeconds = 60);
 	// Customers
 	void addCustomer(const CustomerPtr& customer) override;
 	void updateCustomer(const CustomerPtr& customer) override;
 	void removeCustomer(const CustomerPtr& customer) override;
-	CustomerPtr getCustomerByName(const std::string& name) override;
 	CustomersList allCustomers() override;
+	CustomerPtr getCustomerByEmail(const std::string& email) override;
+	CustomerPtr getCustomerByPhone(const std::string& phone) override;
 
 	// Products
 	void addProduct(const ProductPtr& product) override;

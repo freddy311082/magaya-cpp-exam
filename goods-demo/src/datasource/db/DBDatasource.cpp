@@ -145,9 +145,6 @@ void DBDataSource::addCustomer(const CustomerPtr& customer)
 
 	if (customer->name().empty())
 		throw std::invalid_argument("Invalid customer name.");
-
-	if (getCustomerByName(customer->name()) != nullptr)
-		throw std::invalid_argument("This customer already exists");
 	
 	runDbQuery([](ref<RootDB> root,  const CustomerPtr& cust)
 	{
@@ -177,24 +174,6 @@ void DBDataSource::removeCustomer(const CustomerPtr& customer)
 	}, customer);
 }
 
-CustomerPtr DBDataSource::getCustomerByName(const std::string& name)
-{
-	if (name.empty())
-		throw std::invalid_argument("Invalid customer name.");
-
-	CustomerPtr result;
-	runDbQuery([](ref<RootDB> root, const std::string& name , CustomerPtr& result)
-	{
-		auto customer = root->getCustomerByName(name.c_str());
-
-		if (customer != nullptr)
-			result = CustomerMapping::toModel(customer);
-		
-	}, name, result);
-
-	return result;
-}
-
 CustomersList DBDataSource::allCustomers()
 {
 	CustomersList result;
@@ -209,6 +188,16 @@ CustomersList DBDataSource::allCustomers()
 	return result;
 }
 
+CustomerPtr DBDataSource::getCustomerByEmail(const std::string& email)
+{
+	return getCustomerByEmailOrPhone(email, "");
+}
+
+CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
+{
+	return getCustomerByEmailOrPhone("", phone);
+}
+
 void DBDataSource::validateProduct(const ProductPtr& product)
 {
 	if (product == nullptr)
@@ -218,18 +207,36 @@ void DBDataSource::validateProduct(const ProductPtr& product)
 		throw std::invalid_argument("SKU value is invalid.");
 }
 
+CustomerPtr DBDataSource::getCustomerByEmailOrPhone(const std::string& email, 
+													const std::string& phone)
+{
+	if (email.empty() && phone.empty())
+		return nullptr;
+
+	CustomerPtr customer;
+	runDbQuery([](
+		ref<RootDB> root,
+		const std::string& email, 
+		const std::string& phone,
+		CustomerPtr& customer)
+	{
+		auto customerDb = root->getCustomerByPhoneOrEmail(email.c_str(), phone.c_str());
+
+		if (customerDb != nullptr) // Customer was found
+			customer = CustomerMapping::toModel(customerDb);
+	}, email, phone, customer);
+
+	return customer;
+}
+
 void DBDataSource::addProduct(const ProductPtr& product)
 {
 	validateProduct(product);
 
 	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
 	{
-		if (root->getProductBySKU(product->sku().c_str()) != nullptr)
-			throw std::invalid_argument("This product already exists");
-
 		auto productDb = ProductMapping::toDbModel(*product);
-		modify(root)->addProdduct(productDb);
-		std::cout << "Aqui estoy !!" << std::endl;
+		modify(root)->addProduct(productDb);
 	}, product);
 }
 

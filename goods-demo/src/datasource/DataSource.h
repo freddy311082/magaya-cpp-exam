@@ -16,8 +16,10 @@ public:
 	virtual void addCustomer(const CustomerPtr& customer)  = 0;
 	virtual void updateCustomer(const CustomerPtr& customer)  = 0;
 	virtual void removeCustomer(const CustomerPtr& customer)  = 0;
-	virtual CustomerPtr getCustomerByName(const std::string& name)  = 0;
 	virtual CustomersList allCustomers()  = 0;
+	virtual CustomerPtr getCustomerByEmail(const std::string& email) = 0;
+	virtual CustomerPtr getCustomerByPhone(const std::string& phone) = 0;
+
 
 	// Products
 	virtual void addProduct(const ProductPtr& product)  = 0;

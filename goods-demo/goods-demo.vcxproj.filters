@@ -135,6 +135,9 @@
     <ClInclude Include="src\datasource\DataSourceFactory.h">
       <Filter>Header Files\src\datasource</Filter>
     </ClInclude>
+    <ClInclude Include="src\datasource\db\model\ConfigDB.h">
+      <Filter>Header Files\src\datasource\db\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\datasource\db\model\CustomerDB.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\model\ConfigDB.cpp">
+      <Filter>Source Files\src\datasource\db\model</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

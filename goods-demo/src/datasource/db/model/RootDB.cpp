@@ -9,12 +9,14 @@ RootDB::RootDB() : object(self_class)
 {
 	m_customers = B_tree::create(this);
 	m_products = B_tree::create(this);
+	m_config = ConfigDB::create();
 }
 
 field_descriptor& RootDB::describe_components()
 {
 	return FIELD(m_customers),
-		FIELD(m_products);
+		FIELD(m_products),
+		FIELD(m_config);
 }
 
 void RootDB::initialize() const
@@ -30,9 +32,11 @@ void RootDB::initialize() const
 
 void RootDB::addCustomer(ref<CustomerDB> customer)
 {
-	if (customer == nullptr)
-		throw std::invalid_argument("Invalid customer.");
-
+	if (getCustomerByPhoneOrEmail(customer->email(), customer->phone()) != nullptr)
+	{
+		throw std::invalid_argument("This customer already exists.");
+	}
+	
 	modify(m_customers)->insert(customer->key());
 }
 
@@ -43,9 +47,6 @@ void RootDB::removeCustomer(ref<CustomerDB> customer)
 
 	try
 	{
-		if (customer == nullptr)
-			throw std::invalid_argument("Customer not found.");
-
 		modify(m_customers)->remove(customer);
 	}
 	catch (const QueryException& exc)
@@ -54,28 +55,41 @@ void RootDB::removeCustomer(ref<CustomerDB> customer)
 	}
 }
 
-ref<CustomerDB> RootDB::getCustomerByName(const wstring_t& name) const
+ref<CustomerDB> RootDB::getCustomerByPhoneOrEmail(const wstring_t& email, const wstring_t& phone) const
 {
+	if (email.isNull() && phone.isNull())
+		return nullptr;
+	
+	std::stringstream query;
+	char* _email = email.getChars(), *_phone = phone.getChars();
+
+	if (!email.isNull())
+		query << "m_email='" << _email << "'";
+
+	if (!phone.isNull())
+		query << (email.isNull() ? " " : " and ") << "m_phone='" << _phone << "'";;
+		
+	result_set_cursor cursor;
 	try
 	{
-		std::stringstream query;
-		query << "m_name='" << name.getChars() << "'";
-		result_set_cursor cursor;
 		m_customers->filter(cursor, query.str().c_str());
-		ref<CustomerDB> result = cursor.next();
-		return result;
 	}
-	catch (const QueryException& exc)
+	catch (...)
 	{
-		throw std::invalid_argument(exc.msg);
+		delete[] _email;
+		delete[] _phone;
+		throw;
 	}
 
-	return nullptr;
+	delete[] _email;
+	delete[] _phone;
+	
+	return cursor.next();
 }
 
 void RootDB::updateCustomer(ref<CustomerDB> customer)
 {
-	auto cust = getCustomerByName(customer->name());
+	auto cust = getCustomerByPhoneOrEmail(customer->email(), "");
 
 	if (cust == nullptr)
 		throw std::invalid_argument("Customer not found.");
@@ -95,10 +109,10 @@ CustomersDbList RootDB::allCustomers() const
 	return result;
 }
 
-void RootDB::addProdduct(ref<ProductDB> product)
+void RootDB::addProduct(ref<ProductDB> product)
 {
-	if (product == nullptr)
-		throw std::invalid_argument("Invalid product.");
+	if (getProductBySKU(product->sku()) != nullptr)
+		throw std::invalid_argument("This product already exists.");
 
 	modify(m_products)->insert(product->key());
 }
@@ -115,9 +129,6 @@ void RootDB::removeProduct(const wstring_t& sku)
 
 void RootDB::updateProduct(ref<ProductDB> product)
 {
-	if (product == nullptr)
-		throw std::invalid_argument("Invalid product.");
-
 	wstring_t sku = product->sku();
 	auto productDb = getProductBySKU(sku);
 
@@ -150,7 +161,7 @@ ref<ProductDB> RootDB::getProductBySKU(const wstring_t& sku) const
 		query << "m_sku='" << sku << "'";
 		result_set_cursor cursor;
 		m_products->filter(cursor, query.str().c_str());
-		 product = cursor.next();
+		product = cursor.next();
 	}
 
 	return product;

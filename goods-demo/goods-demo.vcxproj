@@ -180,6 +180,7 @@
     <ClInclude Include="src\datasource\db\mappings\OrderMapping.h" />
     <ClInclude Include="src\datasource\db\mappings\ProductMapping.h" />
     <ClInclude Include="src\datasource\db\mappings\ShippingAddressMapping.h" />
+    <ClInclude Include="src\datasource\db\model\ConfigDB.h" />
     <ClInclude Include="src\datasource\db\model\CustomerDB.h" />
     <ClInclude Include="src\datasource\db\model\OrderDB.h" />
     <ClInclude Include="src\datasource\db\model\ProductDB.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="src\datasource\db\mappings\OrderMapping.cpp" />
     <ClCompile Include="src\datasource\db\mappings\ProductMapping.cpp" />
     <ClCompile Include="src\datasource\db\mappings\ShippingAddressMapping.cpp" />
+    <ClCompile Include="src\datasource\db\model\ConfigDB.cpp" />
     <ClCompile Include="src\datasource\db\model\CustomerDB.cpp" />
     <ClCompile Include="src\datasource\db\model\OrderDB.cpp" />
     <ClCompile Include="src\datasource\db\model\ProductDB.cpp" />
