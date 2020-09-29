@@ -16,7 +16,7 @@ public:
 	{
 		return m_lastOrderNumber;
 	}
-	nat8 netxOrderNumber() { return ++m_lastOrderNumber; }
+	nat8 nextOrderNumber() { return ++m_lastOrderNumber; }
 	ref<set_member> key() const { return m_key; }
 	static ref<ConfigDB> create();
 };

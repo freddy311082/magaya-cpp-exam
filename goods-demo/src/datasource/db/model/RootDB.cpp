@@ -3,7 +3,11 @@
 #include <sstream>
 #include "CustomerDB.h"
 #include "ProductDB.h"
+#include "OrderDB.h"
 #include <iostream>
+#include <chrono>
+
+using namespace std::chrono;
 
 RootDB::RootDB() : object(self_class)
 {
@@ -29,6 +33,10 @@ void RootDB::initialize() const
 }
 
 
+nat8 RootDB::nextOrderNumber()
+{
+	return modify(m_config)->nextOrderNumber();
+}
 
 void RootDB::addCustomer(ref<CustomerDB> customer)
 {
@@ -151,16 +159,34 @@ ProductDbList RootDB::allProducts() const
 	return result;
 }
 
+ref<OrderDB> RootDB::createOrderForCustomer(
+	ref<CustomerDB> customer, 
+	nat1 paymentType,
+	ShippingAddressDBPtr shippingAddress)
+{
+	nat8 orderNumber = modify(m_config)->nextOrderNumber();
+	time_t now = system_clock::to_time_t(system_clock::now());
+	auto address = shippingAddress == nullptr ? customer->shippingAddress() : *shippingAddress;
+	
+	return  OrderDB::create(orderNumber, dbDateTime(now), paymentType, address, customer);
+}
+
+
 ref<ProductDB> RootDB::getProductBySKU(const wstring_t& sku) const
 {
 	ref<ProductDB> product;
 
 	if (!sku.isNull())
 	{
+		
 		std::stringstream query;
-		query << "m_sku='" << sku << "'";
+		char* skuStr = sku.getChars();
+		query << "m_sku='" << skuStr << "'";
+
 		result_set_cursor cursor;
 		m_products->filter(cursor, query.str().c_str());
+		delete[] skuStr;
+
 		product = cursor.next();
 	}
 

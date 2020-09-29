@@ -1,15 +1,9 @@
 ﻿#pragma once
 
 #include <string>
-#include <memory>
 #include <list>
 
 #include "ShippingAddress.h"
-
-class Customer;
-using CustomerPtr = std::unique_ptr<Customer>;
-using CustomersList = std::list<CustomerPtr>;
-
 
 class Customer
 {

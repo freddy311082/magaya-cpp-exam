@@ -1,8 +1,7 @@
 #pragma once
 
 #include <memory>
-
-#include "model.h"
+#include "src/utils/usings.h"
 
 class DataSource
 {
@@ -27,6 +26,7 @@ public:
 	virtual void updateProduct(const ProductPtr& product)  = 0;
 	virtual ProductPtr getProductBySKU(const std::string& sku)  = 0;
 	virtual ProductsList allProducts()  = 0;
+	virtual void registerOrder(const OrderPtr& order) = 0;
 
 	virtual ~DataSource() = default;
 };

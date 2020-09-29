@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
+#include <sstream>
 #include "CustomerDB.h"
+#include "OrderDB.h"
+
 
 CustomerDB::CustomerDB(const wstring_t&	name,
 	const wstring_t& phone,
@@ -42,6 +45,24 @@ void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wst
 	m_phone = phone;
 	m_email = email;
 	m_shippingAddress = shippingAddress;
+}
+
+void CustomerDB::addOrder(ref<OrderDB> order)
+{
+	if (getOrder(order->number()) == nullptr)
+		modify(m_orders)->insert(order->key());
+	else
+		throw std::invalid_argument("Unable to insert this order: Order number already in use.");
+}
+
+ref<OrderDB> CustomerDB::getOrder(nat8 orderNumber) const
+{
+	std::stringstream query;
+	query << "m_number=" << orderNumber;
+
+	result_set_cursor cursor;
+	m_orders->filter(cursor, query.str().c_str());
+	return cursor.next();
 }
 
 

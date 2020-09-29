@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "goods.h"
 #include "dbscls.h"
-#include <list>
 
 #include "ShippingAddressDB.h"
+
+class OrderDB;
 
 class CustomerDB : public object
 {
@@ -12,7 +13,7 @@ protected:
 	wstring_t m_phone;
 	wstring_t m_email;
 	ShippingAddressDB m_shippingAddress;
-	ref<set_owner> m_orders;
+	ref<B_tree> m_orders;
 	ref<set_member> m_key;
 	
 	CustomerDB(const wstring_t&			name,
@@ -36,6 +37,8 @@ public:
 		const wstring_t& phone,
 		const wstring_t& email,
 		const ShippingAddressDB& shippingAddress);
+	void addOrder(ref<OrderDB> order);
+	ref<OrderDB> getOrder(nat8 orderNumber) const;
 };
 
 

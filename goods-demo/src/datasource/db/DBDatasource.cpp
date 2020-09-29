@@ -6,9 +6,10 @@
 #include <iostream>
 
 
-#include "../goods-demo/src/datasource/db/model/RootDB.h"
-#include "../goods-demo/src/datasource/db/mappings/CustomerMapping.h"
-#include "../goods-demo/src/datasource/db/mappings/ProductMapping.h"
+#include "src/datasource/db/model/RootDB.h"
+#include "src/datasource/db/mappings/CustomerMapping.h"
+#include "src/datasource/db/mappings/ProductMapping.h"
+#include "src/datasource/db/mappings/OrderMapping.h"
 
 std::unique_ptr<database> DBDataSource::m_db = std::make_unique<database>();
 std::chrono::system_clock::time_point DBDataSource::g_lastCall = std::chrono::system_clock::now();
@@ -288,4 +289,15 @@ ProductsList DBDataSource::allProducts()
 	}, result);
 	
 	return result;
+}
+
+void DBDataSource::registerOrder(const OrderPtr& order)
+{
+	if (order == nullptr)
+		throw std::invalid_argument("Invalid order.");
+
+	runDbQuery([](ref<RootDB> root, const OrderPtr& order)
+	{
+		auto orderDb = OrderMapping::toDbModel(*order);
+	}, order);
 }

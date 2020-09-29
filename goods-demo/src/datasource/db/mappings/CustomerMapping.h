@@ -3,9 +3,7 @@
 #include <goods.h>
 #include <memory>
 
-class CustomerDB;
-class Customer;
-using CustomerPtr = std::unique_ptr<Customer>;
+#include "src/utils/usings.h"
 
 class CustomerMapping
 {

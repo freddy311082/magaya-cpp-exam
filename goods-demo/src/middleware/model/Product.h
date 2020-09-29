@@ -1,8 +1,7 @@
 ﻿#pragma once
 
 #include <string>
-#include <memory>
-#include  <list>
+#include "src/utils/usings.h"
 
 class Product
 {
@@ -22,7 +21,6 @@ public:
 			double price,
 			double weight = 1);
 		std::string info() const;
-};
 
-using ProductPtr = std::unique_ptr<Product>;
-using ProductsList = std::list<ProductPtr>;
+	double cost(double quantity) const { return quantity * m_price / m_weight; }
+};

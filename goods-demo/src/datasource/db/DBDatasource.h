@@ -78,6 +78,9 @@ public:
 	void updateProduct(const ProductPtr& product) override;
 	ProductPtr getProductBySKU(const std::string& sku) override;
 	ProductsList allProducts() override;
+
+	// Orders
+	void registerOrder(const OrderPtr& order) override;
 	
 	~DBDataSource();
 };

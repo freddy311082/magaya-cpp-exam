@@ -64,6 +64,9 @@
     <Filter Include="Source Files\common">
       <UniqueIdentifier>{4d88cd61-3d59-4bd4-a0d9-195017b15a06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\utils">
+      <UniqueIdentifier>{f576d9bd-8a1a-4a7d-8006-60a909575d37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\datasource\db\model\CustomerDB.h">
@@ -138,6 +141,15 @@
     <ClInclude Include="src\datasource\db\model\ConfigDB.h">
       <Filter>Header Files\src\datasource\db\model</Filter>
     </ClInclude>
+    <ClInclude Include="src\datasource\db\model\OrderItemDB.h">
+      <Filter>Header Files\src\datasource\db\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\OrderItem.h">
+      <Filter>Header Files\src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h">
+      <Filter>Header Files\src\datasource\db\mappings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\datasource\db\model\CustomerDB.cpp">
@@ -201,6 +213,9 @@
       <Filter>Source Files\common</Filter>
     </ClCompile>
     <ClCompile Include="src\datasource\db\model\ConfigDB.cpp">
+      <Filter>Source Files\src\datasource\db\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp">
       <Filter>Source Files\src\datasource\db\model</Filter>
     </ClCompile>
   </ItemGroup>

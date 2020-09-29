@@ -1,12 +1,7 @@
 ﻿#pragma once
 
 #include <goods.h>
-#include <memory>
-
-class ProductDB;
-class Product;
-
-using ProductPtr = std::unique_ptr<Product>;
+#include "src/utils/usings.h"
 
 class ProductMapping
 {

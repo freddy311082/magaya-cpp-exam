@@ -3,7 +3,9 @@
 #include "goods.h"
 #include "dbscls.h"
 #include "src/utils/usings.h"
+#include "src/utils/enums.h"
 #include "ConfigDB.h"
+
 
 class RootDB : public object
 {
@@ -14,6 +16,8 @@ class RootDB : public object
 public:
 	RootDB();
 	void initialize() const;
+	nat8 lastOrderNumber() const { m_config->lastOrderNumber(); }
+	nat8 nextOrderNumber();
 
 	// Customers
 	void addCustomer(ref<CustomerDB> customer);
@@ -30,6 +34,10 @@ public:
 	ProductDbList allProducts() const;
 
 	// Orders
+	ref<OrderDB> createOrderForCustomer(
+		ref<CustomerDB> customer, 
+		nat1 paymentType,
+		ShippingAddressDBPtr shippingAddress);
 
 	~RootDB() = default;
 
