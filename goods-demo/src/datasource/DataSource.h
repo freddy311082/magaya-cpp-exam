@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "src/utils/usings.h"
+#include "src/middleware/model/CreateOrderParams.h"
 
 class DataSource
 {
@@ -22,11 +24,14 @@ public:
 
 	// Products
 	virtual void addProduct(const ProductPtr& product)  = 0;
-	virtual void removeProduct(const ProductPtr& product)  = 0;
+	virtual void removeProduct(const std::string& sku)  = 0;
 	virtual void updateProduct(const ProductPtr& product)  = 0;
 	virtual ProductPtr getProductBySKU(const std::string& sku)  = 0;
 	virtual ProductsList allProducts()  = 0;
-	virtual void registerOrder(const OrderPtr& order) = 0;
+
+	// Orders
+	virtual OrderPtr registerOrder(const CreateOrderParams& orderParams) = 0;
+	virtual uint64_t getNextOrderNumber() = 0;
 
 	virtual ~DataSource() = default;
 };

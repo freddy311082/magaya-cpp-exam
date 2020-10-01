@@ -7,12 +7,17 @@
 ref<OrderItemDB> OrderItemMapping::toDbModel(const OrderItemPtr& orderItem, 
 	uint64_t orderNumber, uint32_t itemNumber)
 {
-	ref<ProductDB> product = ProductMapping::toDbModel(*orderItem->product());
-	return OrderItemDB::create(product, orderItem->quantity(), orderNumber, itemNumber);
+	return OrderItemDB::create(orderItem->product()->sku().c_str(), 
+		orderItem->quantity(), 
+		orderNumber, 
+		itemNumber);
 }
 
-OrderItemPtr OrderItemMapping::toModel(const ref<OrderItemDB>& orderItemDB)
+OrderItemPtr OrderItemMapping::toModel(
+	const ref<OrderItemDB>& orderItemDB,
+	const ref<ProductDB>& productDb)
 {
-	ProductPtr product = ProductMapping::toModel(orderItemDB->product());
-	return std::make_unique<OrderItem>(orderItemDB->quantity(), std::move(product));
+	return std::make_unique<OrderItem>(
+		orderItemDB->quantity(), 
+		ProductMapping::toModel(productDb));
 }

@@ -150,6 +150,9 @@
     <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h">
       <Filter>Header Files\src\datasource\db\mappings</Filter>
     </ClInclude>
+    <ClInclude Include="src\middleware\model\CreateOrderParams.h">
+      <Filter>Header Files\src\middleware\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\datasource\db\model\CustomerDB.cpp">
@@ -217,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp">
       <Filter>Source Files\src\datasource\db\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\CreateOrderParams.cpp">
+      <Filter>Source Files\src\middleware\model</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

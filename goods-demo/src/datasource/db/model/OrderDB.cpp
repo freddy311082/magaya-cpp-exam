@@ -1,24 +1,22 @@
 ﻿#include "pch.h"
 #include "OrderDB.h"
-
 #include <functional>
 #include <string>
 #include "OrderItemDB.h"
-#include "ProductDB.h"
-#include "CustomerDB.h"
+
+#include <iostream>
+
 
 
 OrderDB::OrderDB(nat8 number,
 	const dbDateTime& datetime,
 	nat1 paymentType,
-	const ShippingAddressDB& shippingAddress,
-	ref<CustomerDB> customer) :
+	const ShippingAddressDB& shippingAddress) :
 	object(self_class),
 	m_number(number),
 	m_datetime(datetime),
 	m_paymentType(paymentType),
 	m_shippingAddress(shippingAddress),
-	m_customer(customer->key()),
 	m_lastItemNumber(0)
 {
 	m_key = set_member::create(this, std::to_string(m_number).c_str());
@@ -26,24 +24,29 @@ OrderDB::OrderDB(nat8 number,
 }
 
 
-GOODS_NAMESPACE::ref<OrderDB> OrderDB::create(nat4 number,
+ref<OrderDB> OrderDB::create(nat4 number,
 	const dbDateTime& datetime,
 	nat1 paymentType,
-	const ShippingAddressDB& shippingAddress,
-	ref<CustomerDB> customer)
+	const ShippingAddressDB& shippingAddress)
 {
-	return NEW OrderDB(number, datetime, paymentType, shippingAddress, customer);
+	return NEW OrderDB(number, datetime, paymentType, shippingAddress);
 }
 
-void OrderDB::addItem(ref<ProductDB> product, real8 quantity)
-{
-	auto item = OrderItemDB::create(product, quantity, m_number, ++m_lastItemNumber);
-	modify(m_items)->insert(item->key());	
+ref<OrderItemDB> OrderDB::addItem(const wstring_t& productSKU, real8 quantity)
+{	
+	modify(m_items)->insert(
+		OrderItemDB::create(
+			productSKU, 
+			quantity, 
+			m_number, 
+			++m_lastItemNumber)->key());
+	ref<OrderItemDB> item = m_items->last->obj;
+	return item;
 }
 
-void OrderDB::deleteItem(ref<ProductDB> product, real8 quantity)
+void OrderDB::deleteItem(const wstring_t& productSKU, real8 quantity)
 {
-	auto item = getItem(product, quantity);
+	auto item = getItem(productSKU, quantity);
 	if (item != nullptr)
 		modify(m_items)->remove(item->key());
 	else
@@ -51,13 +54,13 @@ void OrderDB::deleteItem(ref<ProductDB> product, real8 quantity)
 }
 
 
-ref<OrderItemDB> OrderDB::getItem(ref<ProductDB> product, real8 quantity) const
+ref<OrderItemDB> OrderDB::getItem(const wstring_t& productSKU, real8 quantity) const
 {
 	auto currentItem = m_items->first;
 	while (!currentItem.is_nil())
 	{
 		ref<OrderItemDB> orderItem = currentItem;
-		if (orderItem->isEqual(product, quantity))
+		if (orderItem->isEqual(productSKU, quantity))
 			return orderItem;
 		
 		currentItem = currentItem->next;
@@ -72,10 +75,9 @@ field_descriptor& OrderDB::describe_components()
 		FIELD(m_datetime),
 		FIELD(m_paymentType),
 		FIELD(m_shippingAddress),
-		FIELD(m_customer),
 		FIELD(m_lastItemNumber),
 		FIELD(m_items),
 		FIELD(m_key);
 }
 
-REGISTER(OrderDB, set_owner, pessimistic_scheme);
+REGISTER(OrderDB, object, pessimistic_scheme);

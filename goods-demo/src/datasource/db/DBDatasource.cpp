@@ -7,9 +7,17 @@
 
 
 #include "src/datasource/db/model/RootDB.h"
+#include "src/datasource/db/model/CustomerDB.h"
+#include "src/datasource/db/model/OrderDB.h"
+#include "src/datasource/db/model/OrderItemDB.h"
 #include "src/datasource/db/mappings/CustomerMapping.h"
 #include "src/datasource/db/mappings/ProductMapping.h"
+#include "src/datasource/db/mappings/ShippingAddressMapping.h"
 #include "src/datasource/db/mappings/OrderMapping.h"
+#include "src/middleware/model/Product.h"
+#include "src/middleware/model/Order.h"
+#include "src/middleware/model/OrderItem.h"
+#include "src/middleware/model/Customer.h"
 
 std::unique_ptr<database> DBDataSource::m_db = std::make_unique<database>();
 std::chrono::system_clock::time_point DBDataSource::g_lastCall = std::chrono::system_clock::now();
@@ -18,10 +26,11 @@ bool DBDataSource::g_keepRunning = true;
 bool DBDataSource::g_unlockChecking = false;
 std::condition_variable DBDataSource::g_keepRunningCond = std::condition_variable();
 int DBDataSource::g_seconds = TIME_TO_CHECK_CONNECTION;
+uint32_t DBDataSource::g_activeTransactionsNumber = 0;
 
 
-DBDataSource::DBDataSource(const std::string& configFilename, uint32_t dbReconnectSeconds) :
-	DataSource() ,m_configFilename(configFilename + ".cfg"), m_dbReconnectSeconds(dbReconnectSeconds)
+DBDataSource::DBDataSource(const std::string& configFilename) :
+	DataSource() ,m_configFilename(configFilename + ".cfg")
 {
 	if (!std::filesystem::exists(m_configFilename))
 	{
@@ -63,11 +72,10 @@ void DBDataSource::checkDbActivity()
 		std::unique_lock<std::mutex>  lock(lockingSleep);
 		g_keepRunningCond.wait(lock, [] {return g_unlockChecking; });
 		g_unlockChecking = false;
-		std::cout << "Entre a checkDbActivity !!!!" << std::endl;
 		std::cout << "Is connected to DB?: " << (m_isConnected ? "True" : "False") << std::endl;		
 		if (isConnected())
 		{
-			if (totalSecondsSinceLastCall() > TIME_TO_CHECK_CONNECTION)
+			if (totalSecondsSinceLastCall() > TIME_TO_CHECK_CONNECTION && numberOfActiveTransactions() == 0)
 			{
 				dbClose();
 				std::cout << "Connection closed with DB !!" << std::endl;
@@ -87,6 +95,24 @@ int DBDataSource::totalSecondsSinceLastCall()
 	std::lock_guard<std::mutex> _(g_mutex);
 	auto now = std::chrono::system_clock::now();
 	return std::chrono::duration_cast<std::chrono::seconds>(now - g_lastCall).count();
+}
+
+void DBDataSource::addTransaction()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	g_activeTransactionsNumber++;
+}
+
+void DBDataSource::removeTransaction()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	g_activeTransactionsNumber--;
+}
+
+uint32_t DBDataSource::numberOfActiveTransactions()
+{
+	std::lock_guard<std::mutex> _(g_mutex);
+	return g_activeTransactionsNumber;
 }
 
 
@@ -141,23 +167,14 @@ void DBDataSource::dbConnect()
 
 void DBDataSource::addCustomer(const CustomerPtr& customer)
 {
-	if (customer == nullptr)
-		throw std::invalid_argument("Customer cannot be NULL.");
-
-	if (customer->name().empty())
-		throw std::invalid_argument("Invalid customer name.");
-	
-	runDbQuery([](ref<RootDB> root,  const CustomerPtr& cust)
+	runDbQuery([](ref<RootDB> root,  const CustomerPtr& customer)
 	{
-		modify(root)->addCustomer(CustomerMapping::toDbModel(*cust));
+		modify(root)->addCustomer(CustomerMapping::toDbModel(*customer));
 	}, customer);
 }
 
 void DBDataSource::updateCustomer(const CustomerPtr& customer)
 {
-	if (customer == nullptr)
-		throw std::invalid_argument("Customer cannot be NULL.");
-
 	runDbQuery([](ref<RootDB> root, const CustomerPtr& customer)
 	{
 		modify(root)->updateCustomer(CustomerMapping::toDbModel(*customer));
@@ -165,10 +182,7 @@ void DBDataSource::updateCustomer(const CustomerPtr& customer)
 }
 
 void DBDataSource::removeCustomer(const CustomerPtr& customer)
-{
-	if (customer == nullptr)
-		throw std::invalid_argument("Customer cannot be NULL.");
-	
+{	
 	runDbQuery([](ref<RootDB> root, const CustomerPtr& customer)->void
 	{
 		modify(root)->removeCustomer(CustomerMapping::toDbModel(*customer));
@@ -199,15 +213,6 @@ CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
 	return getCustomerByEmailOrPhone("", phone);
 }
 
-void DBDataSource::validateProduct(const ProductPtr& product)
-{
-	if (product == nullptr)
-		throw std::invalid_argument("Product cannot be NULL.");
-
-	if (product->sku().empty())
-		throw std::invalid_argument("SKU value is invalid.");
-}
-
 CustomerPtr DBDataSource::getCustomerByEmailOrPhone(const std::string& email, 
 													const std::string& phone)
 {
@@ -221,7 +226,7 @@ CustomerPtr DBDataSource::getCustomerByEmailOrPhone(const std::string& email,
 		const std::string& phone,
 		CustomerPtr& customer)
 	{
-		auto customerDb = root->getCustomerByPhoneOrEmail(email.c_str(), phone.c_str());
+		auto customerDb = root->getCustomerByPhoneEmail(email.c_str(), phone.c_str());
 
 		if (customerDb != nullptr) // Customer was found
 			customer = CustomerMapping::toModel(customerDb);
@@ -232,8 +237,6 @@ CustomerPtr DBDataSource::getCustomerByEmailOrPhone(const std::string& email,
 
 void DBDataSource::addProduct(const ProductPtr& product)
 {
-	validateProduct(product);
-
 	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
 	{
 		auto productDb = ProductMapping::toDbModel(*product);
@@ -241,20 +244,16 @@ void DBDataSource::addProduct(const ProductPtr& product)
 	}, product);
 }
 
-void DBDataSource::removeProduct(const ProductPtr& product)
+void DBDataSource::removeProduct(const std::string& sku)
 {
-	validateProduct(product);
-
-	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	runDbQuery([](ref<RootDB> root, const std::string& sku)
 	{
-		modify(root)->removeProduct(product->sku().c_str());
-	}, product);
+		modify(root)->removeProduct(sku.c_str());
+	}, sku);
 }
 
 void DBDataSource::updateProduct(const ProductPtr& product)
 {
-	validateProduct(product);
-
 	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
 	{
 		modify(root)->updateProduct(ProductMapping::toDbModel(*product));
@@ -291,13 +290,49 @@ ProductsList DBDataSource::allProducts()
 	return result;
 }
 
-void DBDataSource::registerOrder(const OrderPtr& order)
+OrderPtr DBDataSource::registerOrder(const CreateOrderParams& orderParams)
 {
-	if (order == nullptr)
-		throw std::invalid_argument("Invalid order.");
-
-	runDbQuery([](ref<RootDB> root, const OrderPtr& order)
+	OrderPtr order;
+	runDbQuery([](
+		ref<RootDB> root, 
+		const CreateOrderParams& params,
+		OrderPtr& result)
 	{
-		auto orderDb = OrderMapping::toDbModel(*order);
-	}, order);
+		ref<CustomerDB> customer = root->getCustomerByEmail(params.customerEmail.c_str());
+		if (customer == nullptr)
+			throw std::invalid_argument("Invalid customer. Order cannot be created.");
+
+		nat1 paymentType = static_cast<nat1>(params.paymentType);
+		auto address = ShippingAddressMapping::toDbModel(params.shippingAddress);
+		auto order = modify(root)->createOrder(paymentType, address);
+
+		OrderItemsDBProdPairList oiProdList;
+		for (const auto& item: params.items)
+		{
+			ref<ProductDB> productDb = root->getProductBySKU(item.productSKU.c_str());
+			if (productDb.is_nil())
+				throw std::invalid_argument("This order has an invalid product.");
+			
+			auto itemDb = modify(order)->addItem(item.productSKU.c_str(), item.quantity);
+			oiProdList.push_back({productDb, itemDb});
+		}
+
+		modify(customer)->addOrder(order);
+		result = OrderMapping::toModel(order, oiProdList);
+		
+	}, orderParams, order);
+
+	return order;
+}
+
+uint64_t DBDataSource::getNextOrderNumber()
+{
+	uint64_t result = 0;
+
+	runDbQuery([](ref<RootDB> root, uint64_t& result)
+	{
+		result = modify(root)->nextOrderNumber();
+	}, result);
+
+	return result;
 }

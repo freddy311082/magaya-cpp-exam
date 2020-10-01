@@ -1,19 +1,18 @@
 ﻿#include "pch.h"
 #include "Order.h"
-#include "Customer.h"
 #include "OrderItem.h"
 #include <algorithm>
 #include <list>
+#include <sstream>
 
 using namespace  std;
 
 Order::Order(int m_number, const std::tm& m_datetime, PaymentType m_payment_type,
-	const ShippingAddress& m_shipping_address, CustomerPtr&& customer) 
+	const ShippingAddress& m_shipping_address) 
 	: m_number(m_number),
 	m_datetime(m_datetime),
 	m_paymentType(m_payment_type),
 	m_shippingAddress(m_shipping_address),
-	m_customer(move(customer)),
 	m_totalValue(0)
 {
 }
@@ -23,7 +22,6 @@ void Order::addItem(OrderItemPtr&& item)
 	if (item == nullptr)
 		throw std::invalid_argument("Invalid order item.");
 
-	m_totalValue += item->cost();
 	m_items.push_back(move(item));
 }
 
@@ -38,7 +36,6 @@ void Order::removeItem(size_t pos)
 		m_items.end(), 
 		[&](const auto& _) {return i++ == pos; });
 
-	m_totalValue -= (*it)->cost();
 	m_items.erase(it);
 }
 
@@ -59,7 +56,18 @@ void Order::updateItem(size_t pos, OrderItemPtr&& item)
 	 	[&](const auto& _) { return ++i == pos; });
 	auto posIteratorToBeDeleted = it;
 	++posIteratorToBeDeleted;
-	m_totalValue -= (*posIteratorToBeDeleted)->cost();
 	m_items.erase(posIteratorToBeDeleted);
 	m_items.insert(++it, move(item));
+}
+
+std::string Order::info() const
+{
+	stringstream ss;
+	ss << "<<<<< Order >>>>>" << endl <<
+		"Order Number: " << m_number << endl <<
+		"Payment Type: " << to_string(static_cast<int>(m_paymentType)) << endl <<
+		m_shippingAddress.info() <<
+		"Total Value" << m_totalValue << endl <<
+		"<<<<<<<<<>>>>>>>>";
+	return ss.str();
 }

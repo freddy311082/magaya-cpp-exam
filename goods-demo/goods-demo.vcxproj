@@ -188,6 +188,7 @@
     <ClInclude Include="src\datasource\db\model\ProductDB.h" />
     <ClInclude Include="src\datasource\db\model\RootDB.h" />
     <ClInclude Include="src\datasource\db\model\ShippingAddressDB.h" />
+    <ClInclude Include="src\middleware\model\CreateOrderParams.h" />
     <ClInclude Include="src\middleware\model\Customer.h" />
     <ClInclude Include="src\middleware\model\Order.h" />
     <ClInclude Include="src\middleware\model\OrderItem.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="src\datasource\db\model\ProductDB.cpp" />
     <ClCompile Include="src\datasource\db\model\RootDB.cpp" />
     <ClCompile Include="src\datasource\db\model\ShippingAddressDB.cpp" />
+    <ClCompile Include="src\middleware\model\CreateOrderParams.cpp" />
     <ClCompile Include="src\middleware\model\Customer.cpp" />
     <ClCompile Include="src\middleware\model\Order.cpp" />
     <ClCompile Include="src\middleware\model\OrderItem.cpp" />

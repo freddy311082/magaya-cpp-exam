@@ -49,10 +49,7 @@ void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wst
 
 void CustomerDB::addOrder(ref<OrderDB> order)
 {
-	if (getOrder(order->number()) == nullptr)
-		modify(m_orders)->insert(order->key());
-	else
-		throw std::invalid_argument("Unable to insert this order: Order number already in use.");
+	modify(m_orders)->insert(order->key());
 }
 
 ref<OrderDB> CustomerDB::getOrder(nat8 orderNumber) const
@@ -63,6 +60,18 @@ ref<OrderDB> CustomerDB::getOrder(nat8 orderNumber) const
 	result_set_cursor cursor;
 	m_orders->filter(cursor, query.str().c_str());
 	return cursor.next();
+}
+
+void CustomerDB::getOrdersInto(OrdersDBList& orders) const
+{
+	auto order = m_orders->first;
+
+	while (!order.is_nil())
+	{
+		ref<OrderDB> orderDb = order;
+		orders.push_back(orderDb);
+		order = order->next;
+	}
 }
 
 

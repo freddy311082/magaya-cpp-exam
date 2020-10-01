@@ -23,7 +23,9 @@ public:
 	void addCustomer(ref<CustomerDB> customer);
 	void removeCustomer(ref<CustomerDB> customer);
 	void updateCustomer(ref<CustomerDB> customer);
-	ref<CustomerDB> getCustomerByPhoneOrEmail(const wstring_t& email, const wstring_t& phone) const;
+	ref<CustomerDB> getCustomerByPhoneEmail(const wstring_t& email, const wstring_t& phone) const;
+	ref<CustomerDB> getCustomerByEmail(const wstring_t& email) const;
+	ref<CustomerDB> getCustomerByPhone(const wstring_t& phone) const;
 	CustomersDbList allCustomers() const;
 
 	// Products
@@ -34,10 +36,10 @@ public:
 	ProductDbList allProducts() const;
 
 	// Orders
-	ref<OrderDB> createOrderForCustomer(
-		ref<CustomerDB> customer, 
+	ref<OrderDB> createOrder(
 		nat1 paymentType,
-		ShippingAddressDBPtr shippingAddress);
+		const ShippingAddressDB& shippingAddress);
+	
 
 	~RootDB() = default;
 

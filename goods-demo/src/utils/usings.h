@@ -2,6 +2,7 @@
 
 #include <list>
 #include <memory>
+#include <utility>
 
 template <typename T>
 class ref;
@@ -19,9 +20,16 @@ class ShippingAddressDB;
 using ShippingAddressDBPtr = std::unique_ptr<ShippingAddressDB>;
 
 class OrderDB;
+using OrdersDBList = std::list<ref<OrderDB>>;
 
 class OrderItemDB;
 using OrderItemDbList = std::list<ref<OrderDB>>;
+struct OIProdPairDB
+{
+	ref<ProductDB> productDb;
+	ref<OrderItemDB> orderItemDb;
+};
+using OrderItemsDBProdPairList = std::list<OIProdPairDB> ;
 
 
 // Model
@@ -31,6 +39,7 @@ using CustomersList = std::list<CustomerPtr>;
 
 class Order;
 using OrderPtr = std::unique_ptr<Order>;
+using OrdersList = std::list<OrderPtr>;
 
 class Product;
 using ProductPtr = std::unique_ptr<Product>;

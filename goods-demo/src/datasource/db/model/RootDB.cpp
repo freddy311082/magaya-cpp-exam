@@ -40,7 +40,7 @@ nat8 RootDB::nextOrderNumber()
 
 void RootDB::addCustomer(ref<CustomerDB> customer)
 {
-	if (getCustomerByPhoneOrEmail(customer->email(), customer->phone()) != nullptr)
+	if (getCustomerByPhoneEmail(customer->email(), customer->phone()) != nullptr)
 	{
 		throw std::invalid_argument("This customer already exists.");
 	}
@@ -63,7 +63,7 @@ void RootDB::removeCustomer(ref<CustomerDB> customer)
 	}
 }
 
-ref<CustomerDB> RootDB::getCustomerByPhoneOrEmail(const wstring_t& email, const wstring_t& phone) const
+ref<CustomerDB> RootDB::getCustomerByPhoneEmail(const wstring_t& email, const wstring_t& phone) const
 {
 	if (email.isNull() && phone.isNull())
 		return nullptr;
@@ -95,9 +95,19 @@ ref<CustomerDB> RootDB::getCustomerByPhoneOrEmail(const wstring_t& email, const 
 	return cursor.next();
 }
 
+ref<CustomerDB> RootDB::getCustomerByEmail(const wstring_t& email) const
+{
+	return getCustomerByPhoneEmail(email, "");
+}
+
+ref<CustomerDB> RootDB::getCustomerByPhone(const wstring_t& phone) const
+{
+	return getCustomerByPhoneEmail("", phone);
+}
+
 void RootDB::updateCustomer(ref<CustomerDB> customer)
 {
-	auto cust = getCustomerByPhoneOrEmail(customer->email(), "");
+	auto cust = getCustomerByPhoneEmail(customer->email(), "");
 
 	if (cust == nullptr)
 		throw std::invalid_argument("Customer not found.");
@@ -159,16 +169,14 @@ ProductDbList RootDB::allProducts() const
 	return result;
 }
 
-ref<OrderDB> RootDB::createOrderForCustomer(
-	ref<CustomerDB> customer, 
+ref<OrderDB> RootDB::createOrder(
 	nat1 paymentType,
-	ShippingAddressDBPtr shippingAddress)
+	const ShippingAddressDB& shippingAddress)
 {
 	nat8 orderNumber = modify(m_config)->nextOrderNumber();
 	time_t now = system_clock::to_time_t(system_clock::now());
-	auto address = shippingAddress == nullptr ? customer->shippingAddress() : *shippingAddress;
 	
-	return  OrderDB::create(orderNumber, dbDateTime(now), paymentType, address, customer);
+	return  OrderDB::create(orderNumber, dbDateTime(now), paymentType, shippingAddress);
 }
 
 
@@ -176,21 +184,15 @@ ref<ProductDB> RootDB::getProductBySKU(const wstring_t& sku) const
 {
 	ref<ProductDB> product;
 
-	if (!sku.isNull())
-	{
-		
-		std::stringstream query;
-		char* skuStr = sku.getChars();
-		query << "m_sku='" << skuStr << "'";
+	std::stringstream query;
+	char* skuStr = sku.getChars();
+	query << "m_sku='" << skuStr << "'";
 
-		result_set_cursor cursor;
-		m_products->filter(cursor, query.str().c_str());
-		delete[] skuStr;
+	result_set_cursor cursor;
+	m_products->filter(cursor, query.str().c_str());
+	delete[] skuStr;
 
-		product = cursor.next();
-	}
-
-	return product;
+	return cursor.next();
 }
 
 

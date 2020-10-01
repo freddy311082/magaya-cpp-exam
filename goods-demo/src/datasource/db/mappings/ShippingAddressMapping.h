@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-
-class ShippingAddressDB;
-struct ShippingAddress;
+#include "src/middleware/model/ShippingAddress.h"
+#include "src/datasource/db/model/ShippingAddressDB.h"
 
 
 class ShippingAddressMapping

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <functional>
 #include <database.h>
 #include <list>
 #include <future>
@@ -11,8 +10,8 @@
 
 #include "src/datasource/DataSource.h"
 #include "src/datasource/db/model/RootDB.h"
-#include "src/middleware/model/Customer.h"
-#include "src/middleware/model/Product.h"
+
+
 
 
 class DataSourceFactory;
@@ -29,11 +28,11 @@ private:
 	static std::condition_variable g_keepRunningCond;
 	static bool g_unlockChecking;
 	static int g_seconds;
+	static uint32_t g_activeTransactionsNumber;
 	
 	static constexpr int TIME_TO_CHECK_CONNECTION = 5; // TODO:  move this to a config file
 
 	std::string m_configFilename;
-	uint32_t m_dbReconnectSeconds;
 	std::thread m_connectionThread;
 	std::thread m_timerThread;
 	bool m_isConnected = false;
@@ -43,12 +42,21 @@ private:
 	template <typename Func, typename... Args>
 	void runDbQuery(Func&& func, Args&&... args)
 	{
-		
-		dbConnect();
-		ref<RootDB> root;
-		m_db->get_root(root);
-		root->initialize();
-		func(root, std::forward<Args>(args)...);
+		addTransaction();
+		try
+		{
+			dbConnect();
+			ref<RootDB> root;
+			m_db->get_root(root);
+			root->initialize();
+			func(root, std::forward<Args>(args)...);
+			removeTransaction();
+		}
+		catch (...)
+		{
+			removeTransaction();
+			throw;
+		}
 	}
 
 	
@@ -59,11 +67,13 @@ private:
 	void checkDbActivity();
 	void updateLastCall();
 	int totalSecondsSinceLastCall();
+	void addTransaction();
+	void removeTransaction();
+	uint32_t numberOfActiveTransactions();
 
-	void validateProduct(const ProductPtr& product);
 	CustomerPtr getCustomerByEmailOrPhone(const std::string& email, const std::string& phone);
 public:
-	DBDataSource(const std::string& configFilename, uint32_t dbReconnectSeconds = 60);
+	DBDataSource(const std::string& configFilename);
 	// Customers
 	void addCustomer(const CustomerPtr& customer) override;
 	void updateCustomer(const CustomerPtr& customer) override;
@@ -74,13 +84,14 @@ public:
 
 	// Products
 	void addProduct(const ProductPtr& product) override;
-	void removeProduct(const ProductPtr& product) override;
+	void removeProduct(const std::string& sku) override;
 	void updateProduct(const ProductPtr& product) override;
 	ProductPtr getProductBySKU(const std::string& sku) override;
 	ProductsList allProducts() override;
 
 	// Orders
-	void registerOrder(const OrderPtr& order) override;
+	OrderPtr registerOrder(const CreateOrderParams& orderParams) override;
+	uint64_t getNextOrderNumber() override;
 	
 	~DBDataSource();
 };

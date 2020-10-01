@@ -3,8 +3,7 @@
 #include "dbscls.h"
 
 #include "ShippingAddressDB.h"
-
-class OrderDB;
+#include "src/utils/usings.h"
 
 class CustomerDB : public object
 {
@@ -13,7 +12,7 @@ protected:
 	wstring_t m_phone;
 	wstring_t m_email;
 	ShippingAddressDB m_shippingAddress;
-	ref<B_tree> m_orders;
+	ref<set_owner> m_orders;
 	ref<set_member> m_key;
 	
 	CustomerDB(const wstring_t&			name,
@@ -39,6 +38,7 @@ public:
 		const ShippingAddressDB& shippingAddress);
 	void addOrder(ref<OrderDB> order);
 	ref<OrderDB> getOrder(nat8 orderNumber) const;
+	void getOrdersInto(OrdersDBList& orders) const;
 };
 
 

@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "OrderItemDB.h"
-#include  "ProductDB.h"
 #include  <string>
 
-OrderItemDB::OrderItemDB(ref<ProductDB> product, real8 quantity, nat8 orderNumber, nat8 itemNumber) :
-	object(self_class), m_product(product), m_quantity(quantity)
+OrderItemDB::OrderItemDB(const wstring_t& sku, real8 quantity, nat8 orderNumber, nat8 itemNumber) :
+	object(self_class), m_productSKU(sku), m_quantity(quantity)
 {
 	m_key = set_member::create(this,
 		(std::to_string(orderNumber) +
@@ -12,25 +11,25 @@ OrderItemDB::OrderItemDB(ref<ProductDB> product, real8 quantity, nat8 orderNumbe
 			std::to_string(itemNumber)).c_str());
 }
 
-ref<OrderItemDB> OrderItemDB::create(ref<ProductDB> product, real8 quantity, nat8 orderNumber, nat8 itemNumber)
+ref<OrderItemDB> OrderItemDB::create(const wstring_t& productSKU, real8 quantity, nat8 orderNumber, nat8 itemNumber)
 {
-	return NEW OrderItemDB(product, quantity, orderNumber, itemNumber);
+	return NEW OrderItemDB(productSKU, quantity, orderNumber, itemNumber);
 }
 
 bool OrderItemDB::isEqual(ref<OrderItemDB> item) const
 {
-	return isEqual(item->m_product, item->m_quantity);
+	return isEqual(item->m_productSKU, item->m_quantity);
 }
 
-bool OrderItemDB::isEqual(ref<ProductDB> product, real8 quantity) const
+bool OrderItemDB::isEqual(const wstring_t& sku, real8 quantity) const
 {
-	return product->sku() == m_product->sku() &&
+	return sku == m_productSKU &&
 		quantity == m_quantity;
 }
 
 field_descriptor& OrderItemDB::describe_components()
 {
-	return FIELD(m_product), FIELD(m_quantity), FIELD(m_key);
+	return FIELD(m_productSKU), FIELD(m_quantity), FIELD(m_key);
 }
 
 

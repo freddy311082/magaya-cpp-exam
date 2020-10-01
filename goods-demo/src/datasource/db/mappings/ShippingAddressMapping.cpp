@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "ShippingAddressMapping.h"
-#include "src/middleware/model/ShippingAddress.h"
-#include "src/datasource/db/model/ShippingAddressDB.h"
+
 
 
 ShippingAddressDB ShippingAddressMapping::toDbModel(const ShippingAddress& addr)
