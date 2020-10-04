@@ -9,7 +9,8 @@ ProductDB::ProductDB(const wstring_t& sku,
 	m_sku(sku),
 	m_description(description),
 	m_price(price),
-	m_weight(weight)
+	m_weight(weight),
+	m_timesUsed(0)
 {
 	char* key = m_sku.getChars();
 	m_key = set_member::create(this, key);
@@ -29,7 +30,8 @@ field_descriptor& ProductDB::describe_components()
 		FIELD(m_description),
 		FIELD(m_price),
 		FIELD(m_weight),
-		FIELD(m_key);
+		FIELD(m_key),
+		FIELD(m_timesUsed);
 }
 
 real8 ProductDB::cost(real8 quantity) const

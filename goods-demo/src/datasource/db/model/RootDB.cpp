@@ -4,8 +4,10 @@
 #include "CustomerDB.h"
 #include "ProductDB.h"
 #include "OrderDB.h"
+#include "OrderItemDB.h"
 #include <iostream>
 #include <chrono>
+
 
 using namespace std::chrono;
 
@@ -40,74 +42,51 @@ nat8 RootDB::nextOrderNumber()
 
 void RootDB::addCustomer(ref<CustomerDB> customer)
 {
-	if (getCustomerByPhoneEmail(customer->email(), customer->phone()) != nullptr)
-	{
+	if (getCustomerByEmail(customer->email()) != nullptr ||
+		getCustomerByPhone(customer->phone()) != nullptr)
 		throw std::invalid_argument("This customer already exists.");
-	}
 	
 	modify(m_customers)->insert(customer->key());
 }
 
-void RootDB::removeCustomer(ref<CustomerDB> customer)
+void RootDB::deleteCustomer(const wstring_t& email)
 {
-	std::stringstream query;
-	query << "m_name='" << customer->name().getChars() << "'";
+	auto customerDb = getCustomerByEmail(email);
 
-	try
-	{
-		modify(m_customers)->remove(customer);
-	}
-	catch (const QueryException& exc)
-	{
-		throw std::invalid_argument(exc.msg);
-	}
+	if (customerDb == nullptr)
+		throw std::invalid_argument("Customer doesn't exists");
+
+	if (!customerDb->canBeDeleted())
+		throw std::invalid_argument("This customer has orders associated. It cannot be deleted.");
+
+	modify(m_customers)->remove(customerDb->key());
 }
 
-ref<CustomerDB> RootDB::getCustomerByPhoneEmail(const wstring_t& email, const wstring_t& phone) const
+ref<CustomerDB> RootDB::getCustomer(const std::stringstream& query) const
 {
-	if (email.isNull() && phone.isNull())
-		return nullptr;
-	
-	std::stringstream query;
-	char* _email = email.getChars(), *_phone = phone.getChars();
-
-	if (!email.isNull())
-		query << "m_email='" << _email << "'";
-
-	if (!phone.isNull())
-		query << (email.isNull() ? " " : " and ") << "m_phone='" << _phone << "'";;
 		
 	result_set_cursor cursor;
-	try
-	{
-		m_customers->filter(cursor, query.str().c_str());
-	}
-	catch (...)
-	{
-		delete[] _email;
-		delete[] _phone;
-		throw;
-	}
-
-	delete[] _email;
-	delete[] _phone;
-	
+	m_customers->filter(cursor, query.str().c_str());
 	return cursor.next();
 }
 
 ref<CustomerDB> RootDB::getCustomerByEmail(const wstring_t& email) const
 {
-	return getCustomerByPhoneEmail(email, "");
+	std::stringstream query("m_email='");
+	query << email.getChars() << "'";
+	return getCustomer(query);
 }
 
 ref<CustomerDB> RootDB::getCustomerByPhone(const wstring_t& phone) const
 {
-	return getCustomerByPhoneEmail("", phone);
+	std::stringstream query("m_phone='");
+	query << phone.getChars() << "'";
+	return getCustomer(query);
 }
 
 void RootDB::updateCustomer(ref<CustomerDB> customer)
 {
-	auto cust = getCustomerByPhoneEmail(customer->email(), "");
+	auto cust = getCustomerByEmail(customer->email());
 
 	if (cust == nullptr)
 		throw std::invalid_argument("Customer not found.");
@@ -135,13 +114,16 @@ void RootDB::addProduct(ref<ProductDB> product)
 	modify(m_products)->insert(product->key());
 }
 
-void RootDB::removeProduct(const wstring_t& sku)
+void RootDB::deleteProduct(const wstring_t& sku)
 {
 	auto product = getProductBySKU(sku);
 
 	if (product == nullptr)
 		throw std::invalid_argument("Product not found.");
 
+	if (!hasProductBeenOrdered(product->sku()))
+		throw std::invalid_argument("This product cannot been deleted cause it has been ordered.");
+		
 	modify(m_products)->remove(product->key());
 }
 
@@ -169,6 +151,44 @@ ProductDbList RootDB::allProducts() const
 	return result;
 }
 
+ProductDbList RootDB::productsBySKU(const std::list<wstring_t>& skuList) const
+{
+	ProductDbList result;
+	std::stringstream query;
+	bool firstLoop = true;
+
+	// building the query string
+	for (const wstring_t& sku: skuList)
+	{
+		query << (firstLoop ? "" : " || ");
+		query << "m_sku='" << sku.getChars() << "'";
+		firstLoop = false;
+	}
+	
+	result_set_cursor cursor;
+	m_products->filter(cursor, query.str().c_str());
+
+	auto productRef = cursor.next();
+	while (!productRef.is_nil())
+	{
+		ref<ProductDB> productDb = productRef;
+		result.push_back(productDb);
+		productRef = cursor.next();
+	}
+
+	return result;
+}
+
+bool RootDB::hasProductBeenOrdered(const wstring_t& sku) const
+{
+	auto product = getProductBySKU(sku);
+
+	if (product.is_nil())
+		throw std::invalid_argument("This product doesn't exists.");
+
+	return product->timesUsed() > 0;
+}
+
 ref<OrderDB> RootDB::createOrder(
 	nat1 paymentType,
 	const ShippingAddressDB& shippingAddress)
@@ -179,6 +199,42 @@ ref<OrderDB> RootDB::createOrder(
 	return  OrderDB::create(orderNumber, dbDateTime(now), paymentType, shippingAddress);
 }
 
+OrdersDBList RootDB::allOrdersFromCustomer(const wstring_t& customerEmail) const
+{
+	std::stringstream query;
+	char* email = customerEmail.getChars();
+	query << "m_email='" << email << "'";
+	result_set_cursor cursor;
+
+	m_customers->filter(cursor, query.str().c_str());
+
+	ref<CustomerDB> customerDB = cursor.next();
+	if (customerDB.is_nil())
+		throw std::invalid_argument("This customer doesn't exists.");
+
+	return customerDB->allOrders();
+}
+
+OrderItemsDBProdPairList RootDB::orderItemDBPairs(ref<OrderDB> orderDb) const
+{
+	OrderItemsDBProdPairList result;
+	
+	std::stringstream query;
+	
+	ProductDbList orderProducts = productsBySKU(orderDb->allProductSKUs());
+	OrderItemDbList orderItems = orderDb->items();
+	assert(orderItems.size() == orderProducts.size());
+
+	auto itemsIt = orderItems.begin();
+	auto productsIt = orderProducts.begin();
+
+	for (; itemsIt != orderItems.end(); itemsIt++, productsIt++)
+	{
+		result.push_back({ *productsIt, *itemsIt });
+	}
+
+	return result;
+}
 
 ref<ProductDB> RootDB::getProductBySKU(const wstring_t& sku) const
 {

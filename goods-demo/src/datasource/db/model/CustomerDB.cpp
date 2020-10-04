@@ -74,5 +74,25 @@ void CustomerDB::getOrdersInto(OrdersDBList& orders) const
 	}
 }
 
+OrdersDBList CustomerDB::allOrders() const
+{
+	OrdersDBList result;
+
+	auto order = m_orders->first;
+
+	while(!order.is_nil())
+	{
+		result.push_back(static_cast<ref<OrderDB>>(order->obj));
+		order = order->next;
+	}
+	
+	return result;
+}
+
+bool CustomerDB::canBeDeleted() const
+{
+	return m_orders.is_nil();
+}
+
 
 REGISTER(CustomerDB, object, pessimistic_scheme);

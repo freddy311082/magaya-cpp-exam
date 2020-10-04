@@ -9,12 +9,21 @@ enum DataSourceType
 };
 
 
-class DataSourceFactory final {
-public:
-	template <DataSourceType ENUM = DataSourceType_DATABASE,
-				typename... Args>
-	static std::shared_ptr<DataSource> newInstance(Args&&... args)
+template <DataSourceType T> struct DataSourceFactory
+{
+	template <typename... Args>
+	static std::unique_ptr<DataSource> newInstance(Args&&... args)
 	{
-		return std::make_shared<DBDataSource>(std::forward<Args>(args)...);
-	}	
+		return nullptr;
+	}
+};
+
+
+template <> struct DataSourceFactory<DataSourceType_DATABASE>
+{
+	template <typename... Args>
+	static std::unique_ptr<DataSource> newInstance(Args&&... args)
+	{
+		return std::make_unique<DBDataSource>(std::forward<Args>(args)...);
+	}
 };

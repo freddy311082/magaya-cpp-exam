@@ -181,12 +181,12 @@ void DBDataSource::updateCustomer(const CustomerPtr& customer)
 	}, customer);
 }
 
-void DBDataSource::removeCustomer(const CustomerPtr& customer)
+void DBDataSource::deleteCustomer(const std::string& email)
 {	
-	runDbQuery([](ref<RootDB> root, const CustomerPtr& customer)->void
+	runDbQuery([](ref<RootDB> root, const std::string& email)->void
 	{
-		modify(root)->removeCustomer(CustomerMapping::toDbModel(*customer));
-	}, customer);
+		modify(root)->deleteCustomer(email.c_str());
+	}, email);
 }
 
 CustomersList DBDataSource::allCustomers()
@@ -205,35 +205,28 @@ CustomersList DBDataSource::allCustomers()
 
 CustomerPtr DBDataSource::getCustomerByEmail(const std::string& email)
 {
-	return getCustomerByEmailOrPhone(email, "");
+	CustomerPtr customer;
+	runDbQuery([](ref<RootDB> root, const std::string& email, CustomerPtr& customer)
+	{
+		auto customerDb = root->getCustomerByEmail(email.c_str());
+		customer = customerDb.is_nil() ? nullptr : CustomerMapping::toModel(customerDb);
+	}, email, customer);
+
+	return customer;
 }
 
 CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
 {
-	return getCustomerByEmailOrPhone("", phone);
-}
-
-CustomerPtr DBDataSource::getCustomerByEmailOrPhone(const std::string& email, 
-													const std::string& phone)
-{
-	if (email.empty() && phone.empty())
-		return nullptr;
-
 	CustomerPtr customer;
-	runDbQuery([](
-		ref<RootDB> root,
-		const std::string& email, 
-		const std::string& phone,
-		CustomerPtr& customer)
+	runDbQuery([](ref<RootDB> root, const std::string& phone, CustomerPtr& customer)
 	{
-		auto customerDb = root->getCustomerByPhoneEmail(email.c_str(), phone.c_str());
-
-		if (customerDb != nullptr) // Customer was found
-			customer = CustomerMapping::toModel(customerDb);
-	}, email, phone, customer);
+		auto customerDb = root->getCustomerByEmail(phone.c_str());
+		customer = customerDb.is_nil() ? nullptr : CustomerMapping::toModel(customerDb);
+	}, phone, customer);
 
 	return customer;
 }
+
 
 void DBDataSource::addProduct(const ProductPtr& product)
 {
@@ -248,7 +241,7 @@ void DBDataSource::removeProduct(const std::string& sku)
 {
 	runDbQuery([](ref<RootDB> root, const std::string& sku)
 	{
-		modify(root)->removeProduct(sku.c_str());
+		modify(root)->deleteProduct(sku.c_str());
 	}, sku);
 }
 
@@ -302,6 +295,7 @@ OrderPtr DBDataSource::registerOrder(const CreateOrderParams& orderParams)
 		if (customer == nullptr)
 			throw std::invalid_argument("Invalid customer. Order cannot be created.");
 
+
 		nat1 paymentType = static_cast<nat1>(params.paymentType);
 		auto address = ShippingAddressMapping::toDbModel(params.shippingAddress);
 		auto order = modify(root)->createOrder(paymentType, address);
@@ -334,5 +328,27 @@ uint64_t DBDataSource::getNextOrderNumber()
 		result = modify(root)->nextOrderNumber();
 	}, result);
 
+	return result;
+}
+
+OrdersList DBDataSource::allOrdersByCustomer(const std::string& customerEmail)
+{
+	OrdersList result;
+
+	runDbQuery([&](ref<RootDB> root, OrdersList& orders)
+	{
+		ref<CustomerDB> customerDb = root->getCustomerByEmail(customerEmail.c_str());
+		if (customerDb.is_nil())
+			throw std::invalid_argument("This customer doesn't exists.");
+		
+		for (const auto& orderDb: root->allOrdersFromCustomer(customerEmail.c_str()))
+		{
+			result.push_back(OrderMapping::toModel(
+				orderDb, 
+				root->orderItemDBPairs(orderDb))
+			);
+		}
+	}, result);
+	
 	return result;
 }

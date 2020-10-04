@@ -53,6 +53,37 @@ void OrderDB::deleteItem(const wstring_t& productSKU, real8 quantity)
 		throw std::invalid_argument("This item doesn't exists.");
 }
 
+std::list<wstring_t> OrderDB::allProductSKUs() const
+{
+	std::list<wstring_t> result;
+	auto item = m_items->first;
+
+	bool firstLoop = true;
+	while (!item.is_nil())
+	{
+		ref<OrderItemDB> orderItemDb = item->obj;
+		result.push_back(orderItemDb->productSKU());
+		item = item->next;
+	}
+
+	return result;
+}
+
+
+OrderItemDbList OrderDB::items() const
+{
+	OrderItemDbList result;
+	auto itemRef = m_items->first;
+
+	while (!itemRef.is_nil())
+	{
+		ref<OrderItemDB> item = itemRef->obj;
+		result.push_back(item);
+		itemRef = itemRef->next;
+	}
+
+	return result;
+}
 
 ref<OrderItemDB> OrderDB::getItem(const wstring_t& productSKU, real8 quantity) const
 {

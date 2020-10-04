@@ -62,12 +62,18 @@ void Order::updateItem(size_t pos, OrderItemPtr&& item)
 
 std::string Order::info() const
 {
+	stringstream itemsSs;
+
+	for (const auto& item: m_items)
+		itemsSs << item->info();
+	
 	stringstream ss;
 	ss << "<<<<< Order >>>>>" << endl <<
 		"Order Number: " << m_number << endl <<
 		"Payment Type: " << to_string(static_cast<int>(m_paymentType)) << endl <<
 		m_shippingAddress.info() <<
 		"Total Value" << m_totalValue << endl <<
+		itemsSs.str() <<
 		"<<<<<<<<<>>>>>>>>";
 	return ss.str();
 }

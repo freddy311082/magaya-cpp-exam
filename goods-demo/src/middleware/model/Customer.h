@@ -23,7 +23,7 @@ public:
 		return m_phone;
 	}
 
-	std::string email() const
+	const std::string email() const
 	{
 		return m_email;
 	}

@@ -12,11 +12,6 @@
 #include "src/datasource/db/model/RootDB.h"
 
 
-
-
-class DataSourceFactory;
-
-
 class DBDataSource final: public DataSource
 {
 private:
@@ -77,7 +72,7 @@ public:
 	// Customers
 	void addCustomer(const CustomerPtr& customer) override;
 	void updateCustomer(const CustomerPtr& customer) override;
-	void removeCustomer(const CustomerPtr& customer) override;
+	void deleteCustomer(const std::string& email) override;
 	CustomersList allCustomers() override;
 	CustomerPtr getCustomerByEmail(const std::string& email) override;
 	CustomerPtr getCustomerByPhone(const std::string& phone) override;
@@ -92,7 +87,8 @@ public:
 	// Orders
 	OrderPtr registerOrder(const CreateOrderParams& orderParams) override;
 	uint64_t getNextOrderNumber() override;
-	
+
+	OrdersList allOrdersByCustomer(const std::string& customerEmail) override;
 	~DBDataSource();
 };
 

@@ -26,7 +26,7 @@ string OrderItem::info() const
 		"Quantity: " << m_quantity << endl <<
 		m_product->info() << endl <<
 		"Cost: " << cost() << endl <<
-		"==================";
+		"==================" << endl;
 	
 	return ss.str();
 }

@@ -28,7 +28,7 @@ public:
 	nat1 paymentType() const{ return m_paymentType; }
 	ShippingAddressDB shippingAddress() const { return m_shippingAddress; }
 	ref<set_member> key() const { return m_key; }
-	ref<B_tree> items() const { return m_items; }
+	OrderItemDbList items() const;
 	ref<OrderItemDB> getItem(const wstring_t& productSKU, real8 quantity) const;
 	
 	
@@ -40,6 +40,7 @@ public:
 								const ShippingAddressDB& shippingAddress);
 	ref<OrderItemDB> addItem(const wstring_t& productSKU, real8 quantity);
 	void deleteItem(const wstring_t& productSKU, real8 quantity);
+	std::list<wstring_t> allProductSKUs() const;
 	
 	
 

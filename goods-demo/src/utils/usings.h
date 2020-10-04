@@ -23,7 +23,7 @@ class OrderDB;
 using OrdersDBList = std::list<ref<OrderDB>>;
 
 class OrderItemDB;
-using OrderItemDbList = std::list<ref<OrderDB>>;
+using OrderItemDbList = std::list<ref<OrderItemDB>>;
 struct OIProdPairDB
 {
 	ref<ProductDB> productDb;

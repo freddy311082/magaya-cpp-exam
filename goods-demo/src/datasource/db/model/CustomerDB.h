@@ -39,6 +39,8 @@ public:
 	void addOrder(ref<OrderDB> order);
 	ref<OrderDB> getOrder(nat8 orderNumber) const;
 	void getOrdersInto(OrdersDBList& orders) const;
+	OrdersDBList allOrders() const;
+	bool canBeDeleted() const;
 };
 
 

@@ -11,6 +11,7 @@ protected:
 	real8 m_price;
 	real8 m_weight;
 	ref<set_member>				m_key;
+	nat4 m_timesUsed;
 
 	ProductDB(const wstring_t& sku, const wstring_t& description, real8 price, real8 weight = 1.);
 public:
@@ -21,7 +22,10 @@ public:
 	real8 price() const { return m_price; }
 	real8 weight() const { return m_weight; }
 	ref<set_member> key() const { return m_key; }
+	nat4 timesUsed() const { return m_timesUsed; }
 	real8 cost(real8 quantity) const;
+	void registerUse() { m_timesUsed++; }
+	void unregisterUse() { m_timesUsed--; }
 
 	static ref<ProductDB> create(const wstring_t& sku,
 		const wstring_t& description,
