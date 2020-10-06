@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "Service.h"
 #include "src/middleware/model/Customer.h"
+#include "src/middleware/model/Product.h"
 
 using namespace std;
 
@@ -30,8 +31,7 @@ void  Service::addCustomer(const Customer& customer)
 	if (customer.email().empty() || customer.phone().empty())
 		throw invalid_argument("Invalid customer: Email or Phone are not valid.");
 
-	CustomerPtr customerPtr = std::make_unique<Customer>(customer);
-	m_dataSource->addCustomer(customerPtr);
+	m_dataSource->addCustomer(make_unique<Customer>(customer));
 }
 
 void Service::deleteCustomer(const string& email)
@@ -62,4 +62,36 @@ bool Service::phoneCustomerExists(const std::string& phone)
 		throw std::invalid_argument("Invalid Phone value. It cannot be empty.");
 	
 	return m_dataSource->getCustomerByPhone(phone) != nullptr;
+}
+
+void Service::addProduct(const Product& product)
+{
+	if (product.sku().empty())
+		throw std::invalid_argument("Invalid Product. The SKU value cannot no be empty.");
+
+	if (product.price() < 0 || product.weight() < 0)
+		throw std::invalid_argument("Invalid Product. Price and Weight must be positive values.");
+
+	m_dataSource->addProduct(std::make_unique<Product>(product));
+}
+
+ProductsList Service::allProducts()
+{
+	return m_dataSource->allProducts();
+}
+
+void Service::deleteProduct(const std::string& sku)
+{
+	if (sku.empty())
+		throw std::invalid_argument("Invalid SKU. It cannot be empty.");
+
+	m_dataSource->deleteProduct(sku);
+}
+
+bool Service::existsProductSKU(const std::string& sku)
+{
+	if (sku.empty())
+		throw std::invalid_argument("Invalid SKU. It cannot be empty.");
+
+	return m_dataSource->getProductBySKU(sku) != nullptr;
 }

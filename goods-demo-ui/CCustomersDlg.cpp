@@ -8,6 +8,7 @@
 #include "src/middleware/Service.h"
 #include "src/middleware/model/Customer.h"
 #include "CNewCustomerDlg.h"
+#include "src/ui/utils/mfc_utils.h"
 
 
 // CCustomersDlg dialog
@@ -25,17 +26,7 @@ CCustomersDlg::~CCustomersDlg()
 
 void CCustomersDlg::InitCustomerListCtrl()
 {
-	m_CustomerListCtrl.ModifyStyle(LVS_TYPEMASK, LVS_REPORT);
-	const DWORD extendedStyle = m_CustomerListCtrl.GetExtendedStyle();
-	m_CustomerListCtrl.SetExtendedStyle(extendedStyle | LVS_EX_DOUBLEBUFFER | LVS_EX_FULLROWSELECT);
-
-
-	CA2W headers[4] = { CA2W("Name"), CA2W("Email"), CA2W("Phone"), CA2W("Shipping Address")};
-
-	for (int i = 0; i < 4; ++i)
-	{
-		m_CustomerListCtrl.InsertColumn(i, headers[i], LVCFMT_LEFT, 300);
-	}
+	initListCtrl(m_CustomerListCtrl,{ "Name", "Email", "Phone", "Shipping Address" });
 }
 
 void CCustomersDlg::DoDataExchange(CDataExchange* pDX)
@@ -54,14 +45,10 @@ void CCustomersDlg::showAllCustomers()
 	int i = 0;
 	for (const auto& customer : customerList)
 	{
-		CA2W emailItem(customer->email().c_str());
-		m_CustomerListCtrl.InsertItem(i, emailItem);
-
-		m_CustomerListCtrl.SetItemText(i, 0, CA2W(customer->name().c_str()));
-		m_CustomerListCtrl.SetItemText(i, 1, CA2W(customer->email().c_str()));
-		m_CustomerListCtrl.SetItemText(i, 2, CA2W(customer->phone().c_str()));
-		m_CustomerListCtrl.SetItemText(i, 3, CA2W(customer->shippingAddress().toString().c_str()));
-
+		addRowToListCtrl(m_CustomerListCtrl,
+			i,
+			customer->email(), 
+			{customer->name(), customer->email(), customer->phone(), customer->shippingAddress().toString()});
 		i++;
 	}
 }

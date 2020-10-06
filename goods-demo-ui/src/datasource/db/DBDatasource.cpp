@@ -245,7 +245,7 @@ void DBDataSource::addProduct(const ProductPtr& product)
 	}, product);
 }
 
-void DBDataSource::removeProduct(const std::string& sku)
+void DBDataSource::deleteProduct(const std::string& sku)
 {
 	runDbQuery([](ref<RootDB> root, const std::string& sku)
 	{

@@ -21,6 +21,7 @@ public:
 			double price,
 			double weight = 1);
 		std::string info() const;
+		Product() = default;
 
 	double cost(double quantity) const { return quantity * m_price / m_weight; }
 };

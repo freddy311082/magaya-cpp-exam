@@ -47,6 +47,13 @@ private:
 			func(root, std::forward<Args>(args)...);
 			removeTransaction();
 		}
+		catch (const QueryException& error)
+		{
+			removeTransaction();
+			throw std::system_error(
+				std::make_error_code(std::errc::inappropriate_io_control_operation),
+				error.msg);
+		}
 		catch (...)
 		{
 			removeTransaction();
@@ -80,7 +87,7 @@ public:
 
 	// Products
 	void addProduct(const ProductPtr& product) override;
-	void removeProduct(const std::string& sku) override;
+	void deleteProduct(const std::string& sku) override;
 	void updateProduct(const ProductPtr& product) override;
 	ProductPtr getProductBySKU(const std::string& sku) override;
 	ProductsList allProducts() override;

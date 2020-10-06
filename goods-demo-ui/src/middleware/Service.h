@@ -19,5 +19,10 @@ public:
 	CustomersList allCustomers();
 	bool emailCustomerExists(const std::string& email);
 	bool phoneCustomerExists(const std::string& phone);
+
+	void addProduct(const Product& product);
+	ProductsList allProducts();
+	void deleteProduct(const std::string& sku);
+	bool existsProductSKU(const std::string& sku);
 };
 

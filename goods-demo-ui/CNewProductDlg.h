@@ -1,14 +1,17 @@
 #pragma once
-
+#include <memory>
+#include "src/middleware/model/Product.h"
 
 // CNewProductDlg dialog
 
 class CNewProductDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CNewProductDlg)
+	std::shared_ptr<Product> m_product;
 
 public:
-	CNewProductDlg(CWnd* pParent = nullptr);   // standard constructor
+	CNewProductDlg(std::shared_ptr<Product> product,
+		CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CNewProductDlg();
 
 // Dialog Data
@@ -20,4 +23,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CEdit skuEdit;
+	CEdit descriptionEdit;
+	CEdit priceEdit;
+	CEdit weightEdit;
+	afx_msg void OnValidateSKUBtnClicked();
 };
