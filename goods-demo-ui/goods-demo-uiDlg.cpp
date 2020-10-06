@@ -32,10 +32,6 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnDeleteCustomerBnClicked();
-	afx_msg void OnShowOrdersBnClicked();
-	afx_msg void OnCreateOrderBnClicked();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -48,10 +44,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-	ON_BN_CLICKED(IDC_BUTTON1, &CAboutDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &CAboutDlg::OnDeleteCustomerBnClicked)
-	ON_BN_CLICKED(IDC_BUTTON3, &CAboutDlg::OnShowOrdersBnClicked)
-	ON_BN_CLICKED(IDC_BUTTON4, &CAboutDlg::OnCreateOrderBnClicked)
 END_MESSAGE_MAP()
 
 
@@ -63,6 +55,9 @@ CgoodsdemouiDlg::CgoodsdemouiDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GOODSDEMOUI_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_pages[0] = &m_customersPage;
+	m_pages[1] = &m_productsPage;
+	m_pages[2] = &m_ordersPage;
 }
 
 void CgoodsdemouiDlg::DoDataExchange(CDataExchange* pDX)
@@ -75,6 +70,7 @@ BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CgoodsdemouiDlg::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 
@@ -115,8 +111,26 @@ BOOL CgoodsdemouiDlg::OnInitDialog()
 	m_TabCtrol.InsertItem(1, _T("Products"));
 	m_TabCtrol.InsertItem(2, _T("Orders"));
 
+	Init();
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
+
+void CgoodsdemouiDlg::Init()
+{
+	CRect rect;
+	m_TabCtrol.GetClientRect(&rect);
+	m_customersPage.Create(IDD_CUSTOMERS_DIALOG, &m_TabCtrol);
+	m_customersPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_SHOWWINDOW | SWP_NOZORDER);
+	m_pwndShow = &m_customersPage;
+
+	m_productsPage.Create(IDD_PRODUCTS_DIALOG, &m_TabCtrol);
+	m_productsPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_HIDEWINDOW | SWP_NOZORDER);
+
+	m_ordersPage.Create(IDD_ORDERS_DIALOG, &m_TabCtrol);
+	m_ordersPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_HIDEWINDOW | SWP_NOZORDER);
+}
+
 
 void CgoodsdemouiDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -168,27 +182,18 @@ HCURSOR CgoodsdemouiDlg::OnQueryDragIcon()
 }
 
 
-
-void CAboutDlg::OnBnClickedButton1()
-{
-	// Show Create Customer Dialog
-	// TODO: Add your control notification handler code here
-}
-
-
-void CAboutDlg::OnDeleteCustomerBnClicked()
+void CgoodsdemouiDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: Add your control notification handler code here
-}
+	if (m_pwndShow!= NULL)
+	{
+		m_pwndShow->ShowWindow(SW_HIDE);
+		m_pwndShow = NULL;
+	}
 
-
-void CAboutDlg::OnShowOrdersBnClicked()
-{
-	// TODO: Add your control notification handler code here
-}
-
-
-void CAboutDlg::OnCreateOrderBnClicked()
-{
-	// TODO: Add your control notification handler code here
+	int selectedIndex = m_TabCtrol.GetCurFocus();
+	m_pages[selectedIndex]->ShowWindow(SW_SHOW);
+	m_pwndShow = m_pages[selectedIndex];
+	
+	*pResult = 0;
 }

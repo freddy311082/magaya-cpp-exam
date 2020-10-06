@@ -3,4 +3,9 @@
   <PropertyGroup>
     <RESOURCE_FILE>goodsdemoui.rc</RESOURCE_FILE>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>"GOODS_CONFIG_FILE=C:\goods\server.cfg"
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

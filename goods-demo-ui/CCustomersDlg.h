@@ -17,7 +17,14 @@ public:
 #endif
 
 protected:
+	void InitCustomerListCtrl();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void showAllCustomers();
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CListCtrl m_CustomerListCtrl;
+	void refreshCustomersList();
+	void OnAddCustomerBtnClicked();
+	afx_msg void OnDeleteCustomerBtnClicked();
 };

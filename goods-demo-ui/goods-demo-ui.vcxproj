@@ -76,6 +76,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>..\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -92,11 +94,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\goods-demo-ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>client-lib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -199,6 +204,31 @@
     <ClInclude Include="goods-demo-uiDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\datasource\DataSource.h" />
+    <ClInclude Include="src\datasource\DataSourceFactory.h" />
+    <ClInclude Include="src\datasource\db\DBDatasource.h" />
+    <ClInclude Include="src\datasource\db\mappings\CustomerMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\OrderMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\ProductMapping.h" />
+    <ClInclude Include="src\datasource\db\mappings\ShippingAddressMapping.h" />
+    <ClInclude Include="src\datasource\db\model\ConfigDB.h" />
+    <ClInclude Include="src\datasource\db\model\CustomerDB.h" />
+    <ClInclude Include="src\datasource\db\model\OrderDB.h" />
+    <ClInclude Include="src\datasource\db\model\OrderItemDB.h" />
+    <ClInclude Include="src\datasource\db\model\ProductDB.h" />
+    <ClInclude Include="src\datasource\db\model\RootDB.h" />
+    <ClInclude Include="src\datasource\db\model\ShippingAddressDB.h" />
+    <ClInclude Include="src\middleware\model\CreateOrderParams.h" />
+    <ClInclude Include="src\middleware\model\Customer.h" />
+    <ClInclude Include="src\middleware\model\Order.h" />
+    <ClInclude Include="src\middleware\model\OrderItem.h" />
+    <ClInclude Include="src\middleware\model\Product.h" />
+    <ClInclude Include="src\middleware\model\ShippingAddress.h" />
+    <ClInclude Include="src\middleware\Service.h" />
+    <ClInclude Include="src\ui\utils\mfc_utils.h" />
+    <ClInclude Include="src\utils\enums.h" />
+    <ClInclude Include="src\utils\usings.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +247,27 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\datasource\db\DBDatasource.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\CustomerMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\OrderItemMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\OrderMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\ProductMapping.cpp" />
+    <ClCompile Include="src\datasource\db\mappings\ShippingAddressMapping.cpp" />
+    <ClCompile Include="src\datasource\db\model\ConfigDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\CustomerDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\OrderDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\ProductDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\RootDB.cpp" />
+    <ClCompile Include="src\datasource\db\model\ShippingAddressDB.cpp" />
+    <ClCompile Include="src\middleware\model\CreateOrderParams.cpp" />
+    <ClCompile Include="src\middleware\model\Customer.cpp" />
+    <ClCompile Include="src\middleware\model\Order.cpp" />
+    <ClCompile Include="src\middleware\model\OrderItem.cpp" />
+    <ClCompile Include="src\middleware\model\Product.cpp" />
+    <ClCompile Include="src\middleware\model\ShippingAddress.cpp" />
+    <ClCompile Include="src\middleware\Service.cpp" />
+    <ClCompile Include="src\ui\utils\mfc_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="goodsdemoui.rc" />

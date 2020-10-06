@@ -10,11 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goods-server", "goods-serve
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client-lib", "client-lib\client-lib.vcxproj", "{9949859F-68A6-46B6-84D4-A3CF43B63969}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goods-demo", "goods-demo\goods-demo.vcxproj", "{94C385C6-C864-454F-95F0-ED4E14E5E8F0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{9949859F-68A6-46B6-84D4-A3CF43B63969} = {9949859F-68A6-46B6-84D4-A3CF43B63969}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goods-demo-ui", "goods-demo-ui\goods-demo-ui.vcxproj", "{F02F2272-BA65-4DF9-8C42-37C82C6386C0}"
 EndProject
 Global
@@ -41,14 +36,6 @@ Global
 		{9949859F-68A6-46B6-84D4-A3CF43B63969}.Release|x64.Build.0 = Release|x64
 		{9949859F-68A6-46B6-84D4-A3CF43B63969}.Release|x86.ActiveCfg = Release|Win32
 		{9949859F-68A6-46B6-84D4-A3CF43B63969}.Release|x86.Build.0 = Release|Win32
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Debug|x64.ActiveCfg = Debug|x64
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Debug|x64.Build.0 = Debug|x64
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Debug|x86.ActiveCfg = Debug|Win32
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Debug|x86.Build.0 = Debug|Win32
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Release|x64.ActiveCfg = Release|x64
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Release|x64.Build.0 = Release|x64
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Release|x86.ActiveCfg = Release|Win32
-		{94C385C6-C864-454F-95F0-ED4E14E5E8F0}.Release|x86.Build.0 = Release|Win32
 		{F02F2272-BA65-4DF9-8C42-37C82C6386C0}.Debug|x64.ActiveCfg = Debug|x64
 		{F02F2272-BA65-4DF9-8C42-37C82C6386C0}.Debug|x64.Build.0 = Debug|x64
 		{F02F2272-BA65-4DF9-8C42-37C82C6386C0}.Debug|x86.ActiveCfg = Debug|Win32

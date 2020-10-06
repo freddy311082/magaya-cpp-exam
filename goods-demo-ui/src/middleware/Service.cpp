@@ -1,0 +1,65 @@
+#include "pch.h"
+#include <cstdlib>
+#include "Service.h"
+#include "src/middleware/model/Customer.h"
+
+using namespace std;
+
+const string Service::g_configFile = "C:\\goods\\server.cfg"; // TODO: The best idea here is having this in a config file
+unique_ptr<Service> Service::m_singleton = nullptr;
+
+Service& Service::instance()
+{
+	static std::once_flag oneFlag;
+
+	std::call_once(oneFlag, [&]() {
+		m_singleton = make_unique<Service>();
+	});
+
+	return *m_singleton;
+}
+
+Service::Service()
+{
+	
+	m_dataSource = DataSourceFactory<DataSourceType_DATABASE>::newInstance(g_configFile);
+}
+
+void  Service::addCustomer(const Customer& customer)
+{
+	if (customer.email().empty() || customer.phone().empty())
+		throw invalid_argument("Invalid customer: Email or Phone are not valid.");
+
+	CustomerPtr customerPtr = std::make_unique<Customer>(customer);
+	m_dataSource->addCustomer(customerPtr);
+}
+
+void Service::deleteCustomer(const string& email)
+{
+	if (email.empty())
+		throw invalid_argument("Invalid customer email.");
+
+	m_dataSource->deleteCustomer(email);
+}
+
+
+CustomersList Service::allCustomers()
+{
+	return m_dataSource->allCustomers();
+}
+
+bool Service::emailCustomerExists(const std::string& email)
+{
+	if (email.empty())
+		throw std::invalid_argument("Invalid Email value. It cannot be empty.");
+	
+	return m_dataSource->getCustomerByEmail(email) != nullptr;
+}
+
+bool Service::phoneCustomerExists(const std::string& phone)
+{
+	if (phone.empty())
+		throw std::invalid_argument("Invalid Phone value. It cannot be empty.");
+	
+	return m_dataSource->getCustomerByPhone(phone) != nullptr;
+}

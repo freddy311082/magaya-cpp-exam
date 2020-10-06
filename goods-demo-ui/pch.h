@@ -23,5 +23,7 @@
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
 #include <afxcmn.h>
+#include "goods.h"
+#include "dbscls.h"
 
 #endif //PCH_H

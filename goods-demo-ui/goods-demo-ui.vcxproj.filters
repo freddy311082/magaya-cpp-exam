@@ -1,90 +1,250 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{e5dc7654-0938-483b-9fb3-54baf5c85096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\datasource">
+      <UniqueIdentifier>{75e2fd1f-847d-4eb6-8fd3-b264bc420801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\middleware">
+      <UniqueIdentifier>{d480933a-642a-4a3c-ae99-c2c99c5605af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{e0aea55c-4630-40a4-aa54-52456434b7b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\datasource\db">
+      <UniqueIdentifier>{2944b983-9a41-4131-b09c-1c2f78d94dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\datasource\db\mappings">
+      <UniqueIdentifier>{d6ccc6a6-3ffe-4ab3-8a21-01ee40148188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\datasource\db\model">
+      <UniqueIdentifier>{2e48879c-39ff-4ee8-bd00-d70e29bc7ea5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\middleware\model">
+      <UniqueIdentifier>{cc445543-5c95-4e0e-9d73-4b2972f8a0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{e24871a8-ec90-40fd-8d17-4a9d416f7d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\utils">
+      <UniqueIdentifier>{6f7e1d62-18df-4430-81dd-198df927794c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="goods-demo-ui.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\ShippingAddressDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="goods-demo-uiDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\RootDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\ProductDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\OrderItemDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\OrderDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\CustomerDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="CCustomersDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\model\ConfigDB.h">
+      <Filter>src\datasource\db\model</Filter>
     </ClInclude>
-    <ClInclude Include="CNewCustomerDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\mappings\ShippingAddressMapping.h">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClInclude>
-    <ClInclude Include="CNewOrderDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\mappings\ProductMapping.h">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClInclude>
-    <ClInclude Include="CNewProductDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\mappings\CustomerMapping.h">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClInclude>
-    <ClInclude Include="COrdersDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\datasource\db\mappings\OrderItemMapping.h">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClInclude>
-    <ClInclude Include="CProductsDlg.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\middleware\model\ShippingAddress.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\Product.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\OrderItem.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\Order.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\Customer.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\usings.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\enums.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\Service.h">
+      <Filter>src\middleware</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datasource\db\mappings\OrderMapping.h">
+      <Filter>src\datasource\db\mappings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\middleware\model\CreateOrderParams.h">
+      <Filter>src\middleware\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datasource\DataSource.h">
+      <Filter>src\datasource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datasource\DataSourceFactory.h">
+      <Filter>src\datasource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datasource\db\DBDatasource.h">
+      <Filter>src\datasource\db</Filter>
     </ClInclude>
     <ClInclude Include="CAppTabsCtrl.h">
-      <Filter>Header Files</Filter>
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CCustomersDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CNewCustomerDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CNewOrderDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CNewProductDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="COrdersDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CProductsDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="goods-demo-ui.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="goods-demo-uiDlg.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\utils\mfc_utils.h">
+      <Filter>src\ui\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="goods-demo-ui.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\mappings\ShippingAddressMapping.cpp">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="goods-demo-uiDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\mappings\ProductMapping.cpp">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\mappings\OrderItemMapping.cpp">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="CCustomersDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\mappings\CustomerMapping.cpp">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="CNewCustomerDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\mappings\OrderMapping.cpp">
+      <Filter>src\datasource\db\mappings</Filter>
     </ClCompile>
-    <ClCompile Include="CNewOrderDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\model\ProductDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
     </ClCompile>
-    <ClCompile Include="CNewProductDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\model\RootDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
     </ClCompile>
-    <ClCompile Include="COrdersDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\model\ShippingAddressDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
     </ClCompile>
-    <ClCompile Include="CProductsDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\datasource\db\model\OrderItemDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\model\OrderDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\model\ConfigDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\Customer.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\Order.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\OrderItem.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\Product.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\ShippingAddress.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\DBDatasource.cpp">
+      <Filter>src\datasource\db</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\Service.cpp">
+      <Filter>src\middleware</Filter>
+    </ClCompile>
+    <ClCompile Include="src\middleware\model\CreateOrderParams.cpp">
+      <Filter>src\middleware\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datasource\db\model\CustomerDB.cpp">
+      <Filter>src\datasource\db\model</Filter>
     </ClCompile>
     <ClCompile Include="CAppTabsCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CCustomersDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CNewCustomerDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CNewOrderDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CNewProductDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="COrdersDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CProductsDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="goods-demo-ui.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="goods-demo-uiDlg.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\utils\mfc_utils.cpp">
+      <Filter>src\ui\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

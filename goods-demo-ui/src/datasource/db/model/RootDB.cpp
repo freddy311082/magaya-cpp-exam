@@ -72,15 +72,15 @@ ref<CustomerDB> RootDB::getCustomer(const std::stringstream& query) const
 
 ref<CustomerDB> RootDB::getCustomerByEmail(const wstring_t& email) const
 {
-	std::stringstream query("m_email='");
-	query << email.getChars() << "'";
+	std::stringstream query;
+	query << "m_email='" << email.getChars() << "'";
 	return getCustomer(query);
 }
 
 ref<CustomerDB> RootDB::getCustomerByPhone(const wstring_t& phone) const
 {
-	std::stringstream query("m_phone='");
-	query << phone.getChars() << "'";
+	std::stringstream query;
+	query << "m_phone='" << phone.getChars() << "'";
 	return getCustomer(query);
 }
 
