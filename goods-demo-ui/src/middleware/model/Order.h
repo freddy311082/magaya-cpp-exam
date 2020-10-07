@@ -22,6 +22,7 @@ public:
 
 	Order(int m_number, const std::tm& m_datetime, PaymentType m_payment_type,
 		const ShippingAddress& m_shipping_address);
+	Order() = default;
 
 	int number() const{ return m_number; }
 	std::tm datetime() const { return m_datetime; }

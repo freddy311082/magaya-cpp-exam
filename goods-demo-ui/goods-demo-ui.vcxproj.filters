@@ -151,6 +151,9 @@
     <ClInclude Include="src\ui\utils\mfc_utils.h">
       <Filter>src\ui\utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\helper_functions.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\datasource\db\mappings\ShippingAddressMapping.cpp">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="src\ui\utils\mfc_utils.cpp">
       <Filter>src\ui\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\helper_functions.cpp">
+      <Filter>src\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -39,9 +39,10 @@ void addRowToListCtrl(CListCtrl& listCtrl,
 	CA2W keyValue(items[row].c_str());
 	listCtrl.InsertItem(row, keyValue);
 
+	int index = row < 0 ? listCtrl.GetItemCount() : row;
 	for (int i = 0; i < items.size(); ++i)
 	{
-		listCtrl.SetItemText(row, i, CA2W(items[i].c_str()));
+		listCtrl.SetItemText(index, i, CA2W(items[i].c_str()));
 	}
 	
 	

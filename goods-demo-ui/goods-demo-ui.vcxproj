@@ -228,6 +228,7 @@
     <ClInclude Include="src\middleware\Service.h" />
     <ClInclude Include="src\ui\utils\mfc_utils.h" />
     <ClInclude Include="src\utils\enums.h" />
+    <ClInclude Include="src\utils\helper_functions.h" />
     <ClInclude Include="src\utils\usings.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -268,6 +269,7 @@
     <ClCompile Include="src\middleware\model\ShippingAddress.cpp" />
     <ClCompile Include="src\middleware\Service.cpp" />
     <ClCompile Include="src\ui\utils\mfc_utils.cpp" />
+    <ClCompile Include="src\utils\helper_functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="goodsdemoui.rc" />
