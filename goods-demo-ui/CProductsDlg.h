@@ -7,6 +7,9 @@ class CProductsDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CProductsDlg)
 
+	void showAllProducts();
+	void refreshProductList();
+
 public:
 	CProductsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CProductsDlg();

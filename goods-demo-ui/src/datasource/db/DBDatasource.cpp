@@ -141,7 +141,7 @@ DBDataSource::~DBDataSource()
 {
 	try
 	{
-		m_db->close();
+		dbClose();
 	}
 	catch (...)
 	{

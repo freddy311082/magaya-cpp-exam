@@ -23,3 +23,11 @@ std::string Product::info() const
 	
 	return ss.str();
 }
+
+bool Product::isValid() const
+{
+	return !m_sku.empty() &&
+		!m_description.empty() &&
+		m_price >= 0 &&
+		m_weight >= 0;
+}

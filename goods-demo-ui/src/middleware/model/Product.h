@@ -16,6 +16,12 @@ public:
 	std::string sku() const { return m_sku; }
 	std::string description() const { return m_description; }
 
+	void setSKU(const std::string& sku)	{ m_sku = sku; }
+	void setDescription(const std::string& description)	{m_description = description; }
+	void setPrice(double price){ m_price = price; }
+	void setWeight(double weight) { m_weight = weight; }
+	
+
 	Product(const std::string& sku, 
 	        std::string& description,
 			double price,
@@ -24,4 +30,5 @@ public:
 		Product() = default;
 
 	double cost(double quantity) const { return quantity * m_price / m_weight; }
+	bool isValid() const;
 };

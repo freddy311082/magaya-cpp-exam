@@ -88,21 +88,18 @@ void CCustomersDlg::OnDeleteCustomerBtnClicked()
 
 	try
 	{
-		if (pos == NULL)
-		{
+		int index = getSelectedRow(m_CustomerListCtrl);
+		if (index == -1)
 			throw std::invalid_argument("No customer selected. Please, select one.");
-		}
 		
-		int index = m_CustomerListCtrl.GetNextSelectedItem(pos);
 		auto text = m_CustomerListCtrl.GetItemText(index, 1);
 		std::string email = CW2A(text);
 		Service::instance().deleteCustomer(email);
+		refreshCustomersList();
 	}
 	catch (const std::exception& error)
 	{
 		CA2W msg(error.what());
 		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 	}
-	
-	refreshCustomersList();
 }

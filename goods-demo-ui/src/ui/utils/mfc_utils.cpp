@@ -14,6 +14,11 @@ int getIntFromCEdit(const CEdit& edit)
 	return std::stoi(getStdStrFromCEdit(edit));
 }
 
+double getDoubleFromCEdit(const CEdit& edit)
+{
+	return std::stod(getStdStrFromCEdit(edit));
+}
+
 void initListCtrl(CListCtrl& listCtrl, const std::vector<std::string>& headers)
 {
 	listCtrl.ModifyStyle(LVS_TYPEMASK, LVS_REPORT);
@@ -40,4 +45,13 @@ void addRowToListCtrl(CListCtrl& listCtrl,
 	}
 	
 	
+}
+
+int getSelectedRow(const CListCtrl& listCtrl)
+{
+	POSITION pos = listCtrl.GetFirstSelectedItemPosition();
+	if (pos == NULL)
+		return -1;
+
+	return listCtrl.GetNextSelectedItem(pos);
 }

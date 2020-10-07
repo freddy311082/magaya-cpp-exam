@@ -6,6 +6,7 @@
 #include "CNewProductDlg.h"
 #include "afxdialogex.h"
 #include  "src/middleware/Service.h"
+#include "src/ui/utils/mfc_utils.h"
 
 
 // CNewProductDlg dialog
@@ -31,6 +32,27 @@ void CNewProductDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, descriptionEdit);
 	DDX_Control(pDX, IDC_EDIT3, priceEdit);
 	DDX_Control(pDX, IDC_EDIT4, weightEdit);
+}
+
+void CNewProductDlg::OnOK()
+{
+	m_product->setSKU(getStdStrFromCEdit(skuEdit));
+	m_product->setDescription(getStdStrFromCEdit(descriptionEdit));
+	try
+	{
+		m_product->setPrice(getDoubleFromCEdit(priceEdit));
+		m_product->setWeight(getDoubleFromCEdit(weightEdit));
+	}
+	catch ([[maybe_unused]] const std::exception& _)
+	{
+		AfxMessageBox(_T("Invalid product. Please make sure that all fields are valid."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	if (m_product->isValid())
+		CDialogEx::OnOK();
+	else
+		AfxMessageBox(_T("Invalid product. Please make sure that all fields are valid."), MB_OK | MB_ICONERROR);
 }
 
 
