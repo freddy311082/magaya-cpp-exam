@@ -22,6 +22,7 @@ void Order::addItem(OrderItemPtr&& item)
 	if (item == nullptr)
 		throw std::invalid_argument("Invalid order item.");
 
+	m_totalValue += item->cost();
 	m_items.push_back(move(item));
 }
 
@@ -36,6 +37,7 @@ void Order::removeItem(size_t pos)
 		m_items.end(), 
 		[&](const auto& _) {return i++ == pos; });
 
+	m_totalValue -= (*it)->cost();
 	m_items.erase(it);
 }
 

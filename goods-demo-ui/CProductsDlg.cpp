@@ -23,7 +23,6 @@ void CProductsDlg::showAllProducts()
 	for (const auto& product : products)
 	{
 		addRowToListCtrl(m_productsListCtrl,
-			i,
 			product->sku(),
 			{ product->sku(),
 				product->description(),

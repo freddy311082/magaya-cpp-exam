@@ -42,14 +42,11 @@ void CCustomersDlg::showAllCustomers()
 {
 	auto customerList = Service::instance().allCustomers();
 
-	int i = 0;
 	for (const auto& customer : customerList)
 	{
 		addRowToListCtrl(m_CustomerListCtrl,
-			i,
 			customer->email(), 
 			{customer->name(), customer->email(), customer->phone(), customer->shippingAddress().toString()});
-		i++;
 	}
 }
 

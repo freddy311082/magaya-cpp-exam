@@ -32,10 +32,10 @@ void initListCtrl(CListCtrl& listCtrl, const std::vector<std::string>& headers)
 }
 
 void addRowToListCtrl(CListCtrl& listCtrl,
-	int row,
 	const std::string& itemKey,
 	const std::vector<std::string>& items)
 {
+	int row = listCtrl.GetItemCount();
 	CA2W keyValue(items[row].c_str());
 	listCtrl.InsertItem(row, keyValue);
 
@@ -55,4 +55,20 @@ int getSelectedRow(const CListCtrl& listCtrl)
 		return -1;
 
 	return listCtrl.GetNextSelectedItem(pos);
+}
+
+void setValueToCEdit(CEdit& edit, int value)
+{
+	setValueToCEdit(edit, std::to_string(value));
+}
+
+void setValueToCEdit(CEdit& edit, double value)
+{
+	setValueToCEdit(edit, std::to_string(value));
+}
+
+void setValueToCEdit(CEdit& edit, const std::string& value)
+{
+	CA2W str(value.c_str());
+	edit.SetWindowTextW(str);
 }

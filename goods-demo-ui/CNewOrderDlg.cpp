@@ -98,18 +98,19 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 				std::make_unique<Product>(*m_products[prodIndex]))
 		);
 
-		m_totalCost += quantity;
-		CA2W totalValue(std::to_string(m_totalCost).c_str());
-		quantityEdit.SetWindowTextW(totalValue);
+		// m_totalCost += quantity;
+		// CA2W totalValue(std::to_string(m_totalCost).c_str());
+		// totalEdit.SetWindowTextW(totalValue);
 
 		std::string s;
-		addRowToListCtrl(itemsCtrlList,-1,  s , {
+		addRowToListCtrl(itemsCtrlList,  s , {
 			m_products[prodIndex]->sku(),
 			m_products[prodIndex]->description(),
 			std::to_string(quantity),
 			std::to_string(m_products[prodIndex]->cost(quantity))
 		});
-		
+
+		setValueToCEdit(totalEdit, m_order->totalValue());
 	}
 	catch (const std::exception& error)
 	{
