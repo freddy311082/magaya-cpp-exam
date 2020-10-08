@@ -85,7 +85,6 @@ void COrdersDlg::showSelectedCustomerOrders()
 COrdersDlg::COrdersDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ORDERS_DIALOG, pParent)
 {
-	loadCustomers();
 }
 
 COrdersDlg::~COrdersDlg()
@@ -101,13 +100,14 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 
 	initListCtrl(ordersListCtrl, {"Order Number", "Customer Email", "Date Time", "Payment Type", "Total"});
 	initListCtrl(orderItemsListCtrl, {"Number", "Product SKU", "Product Name", "Quantity", "Cost"});
+
+	loadCustomers();
 }
 
 
 BEGIN_MESSAGE_MAP(COrdersDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &COrdersDlg::OnNewOrderBtnClicked)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &COrdersDlg::OnCbnSelchangeCombo1)
-	ON_BN_CLICKED(IDC_BUTTON2, &COrdersDlg::OnReloadCustomersClicked)
 END_MESSAGE_MAP()
 
 
@@ -153,11 +153,4 @@ void COrdersDlg::OnCbnSelchangeCombo1()
 		CA2W msg(error.what());
 		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 	}
-}
-
-
-void COrdersDlg::OnReloadCustomersClicked()
-{
-	customersCombobox.Clear();
-	loadCustomers();
 }
