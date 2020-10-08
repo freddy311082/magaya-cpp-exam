@@ -44,6 +44,7 @@ public:
 		const ShippingAddressDB& shippingAddress);
 	OrdersDBList allOrdersFromCustomer(const wstring_t& customerEmail) const;
 	OrderItemsDBProdPairList orderItemDBPairs(ref<OrderDB> orderDb) const;
+	ref<OrderDB> getOrder(nat8 number, const wstring_t& customerEmail) const;
 	
 
 	~RootDB() = default;

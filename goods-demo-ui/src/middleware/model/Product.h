@@ -27,7 +27,8 @@ public:
 			double price,
 			double weight = 1);
 		std::string info() const;
-		Product() = default;
+	Product() = default;
+	Product(const Product& product) = default;
 
 	double cost(double quantity) const { return quantity * m_weight / m_price; }
 	bool isValid() const;

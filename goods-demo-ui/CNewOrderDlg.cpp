@@ -43,8 +43,8 @@ void CNewOrderDlg::loadProductsInCombobox()
 }
 
 
-CNewOrderDlg::CNewOrderDlg(std::shared_ptr<Order> order, CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_NEW_ORDER_DIALOG, pParent), m_order(order), m_totalCost(0)
+CNewOrderDlg::CNewOrderDlg(std::shared_ptr<CreateOrderParams> orderParams, CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_NEW_ORDER_DIALOG, pParent), m_orderParams(orderParams), m_totalCost(0)
 {
 }
 
@@ -91,17 +91,10 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 
 		int prodIndex = productsCombobox.GetCurSel();
 		double quantity = getDoubleFromCEdit(quantityEdit);
+		m_totalCost += quantity;
 
-		m_order->addItem(
-			std::make_unique<OrderItem>(
-				quantity, 
-				std::make_unique<Product>(*m_products[prodIndex]))
-		);
-
-		// m_totalCost += quantity;
-		// CA2W totalValue(std::to_string(m_totalCost).c_str());
-		// totalEdit.SetWindowTextW(totalValue);
-
+		m_orderParams->items.push_back({ quantity, m_products[prodIndex]->sku() });
+		
 		std::string s;
 		addRowToListCtrl(itemsCtrlList,  s , {
 			m_products[prodIndex]->sku(),
@@ -110,7 +103,7 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 			std::to_string(m_products[prodIndex]->cost(quantity))
 		});
 
-		setValueToCEdit(totalEdit, m_order->totalValue());
+		setValueToCEdit(totalEdit, m_totalCost);
 	}
 	catch (const std::exception& error)
 	{

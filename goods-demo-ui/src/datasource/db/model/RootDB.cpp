@@ -228,6 +228,21 @@ OrderItemsDBProdPairList RootDB::orderItemDBPairs(ref<OrderDB> orderDb) const
 	return result;
 }
 
+ref<OrderDB> RootDB::getOrder(nat8 number, const wstring_t& customerEmail) const
+{
+	std::stringstream query;
+	query << "m_email='" << customerEmail.getChars() << "' and m_orders contains (m_number=" << number << ")";
+	result_set_cursor cursor;
+	m_customers->filter(cursor, query.str().c_str());
+
+	ref<CustomerDB> customer = cursor.next();
+
+	if (!customer.is_nil())
+		return customer->getOrder(number);
+
+	return nullptr;
+}
+
 ref<ProductDB> RootDB::getProductBySKU(const wstring_t& sku) const
 {
 	ref<ProductDB> product;

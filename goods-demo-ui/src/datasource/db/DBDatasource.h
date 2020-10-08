@@ -95,8 +95,8 @@ public:
 	// Orders
 	OrderPtr registerOrder(const CreateOrderParams& orderParams) override;
 	uint64_t getNextOrderNumber() override;
-
 	OrdersList allOrdersByCustomer(const std::string& customerEmail) override;
+	OrderPtr getOrder(uint32_t number, const std::string& customerEmail) override;
 	~DBDataSource();
 };
 

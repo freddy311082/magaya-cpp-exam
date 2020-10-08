@@ -10,6 +10,7 @@ class OrderItem
 	ProductPtr m_product;
 public:
 	OrderItem(double quantity, ProductPtr&& product);
+	OrderItem(const OrderItem& item);
 
 	double quantity() const
 	{

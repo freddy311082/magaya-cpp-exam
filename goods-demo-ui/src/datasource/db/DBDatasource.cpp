@@ -380,3 +380,15 @@ OrdersList DBDataSource::allOrdersByCustomer(const std::string& customerEmail)
 	
 	return result;
 }
+
+OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmail)
+{
+	OrderPtr result;
+
+	runDbQuery([](ref<RootDB> root, uint64_t number, const std::string& customerEmail)
+	{
+		
+	}, number, customerEmail, result);
+	
+	return result;
+}

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include "src/utils/usings.h"
+#include "src/middleware/model/Customer.h"
 
 // COrdersDlg dialog
 
@@ -7,6 +11,10 @@ class COrdersDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(COrdersDlg)
 
+	std::vector<CustomerPtr> m_customers;
+	void loadCustomers();
+	void reloadOrders();
+	void showCustomerOrders();
 public:
 	COrdersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~COrdersDlg();
@@ -22,4 +30,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnNewOrderBtnClicked();
+	CComboBox customersCombobox;
+	CListCtrl ordersCtrlList;
+	CListCtrl orderItemsCtrlList;
+	afx_msg void OnCbnSelchangeCombo1();
 };

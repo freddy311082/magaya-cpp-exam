@@ -17,6 +17,20 @@ Order::Order(int m_number, const std::tm& m_datetime, PaymentType m_payment_type
 {
 }
 
+Order::Order(const Order& order)
+{
+	m_number = order.m_number;
+	m_datetime = order.m_datetime;
+	m_paymentType = order.m_paymentType;
+	m_shippingAddress = order.m_shippingAddress;
+	m_totalValue = order.m_totalValue;
+
+	for (const auto& itemPtr: order.m_items)
+	{
+		m_items.push_back(make_unique<OrderItem>(*itemPtr));
+	}
+}
+
 void Order::addItem(OrderItemPtr&& item)
 {
 	if (item == nullptr)

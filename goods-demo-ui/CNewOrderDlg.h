@@ -5,6 +5,7 @@
 #include "src/middleware/model/Order.h"
 #include "src/middleware/model/OrderItem.h"
 #include <vector>
+#include "src/middleware/model/CreateOrderParams.h"
 
 // CNewOrderDlg dialog
 
@@ -12,7 +13,7 @@ class CNewOrderDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CNewOrderDlg);
 	std::vector<ProductPtr> m_products;
-	std::shared_ptr<Order> m_order;
+	std::shared_ptr<CreateOrderParams> m_orderParams;
 	double m_totalCost;
 	
 	void loadProductsFromDB();
@@ -20,7 +21,7 @@ class CNewOrderDlg : public CDialogEx
 	
 
 public:
-	CNewOrderDlg(std::shared_ptr<Order> order , CWnd* pParent = nullptr);   // standard constructor
+	CNewOrderDlg(std::shared_ptr<CreateOrderParams> order , CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CNewOrderDlg();
 
 // Dialog Data

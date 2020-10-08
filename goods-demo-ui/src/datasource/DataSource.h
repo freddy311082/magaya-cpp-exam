@@ -33,7 +33,7 @@ public:
 	virtual OrderPtr registerOrder(const CreateOrderParams& orderParams) = 0;
 	virtual uint64_t getNextOrderNumber() = 0;
 	virtual OrdersList allOrdersByCustomer(const std::string& customerEmail) = 0;
-
+	virtual OrderPtr getOrder(uint32_t number, const std::string& customerEmail) = 0;
 	virtual ~DataSource() = default;
 };
 

@@ -3,6 +3,8 @@
 #include "Service.h"
 #include "src/middleware/model/Customer.h"
 #include "src/middleware/model/Product.h"
+#include "src/middleware/model/Order.h"
+#include "src/middleware/model/OrderItem.h"
 
 using namespace std;
 
@@ -94,4 +96,26 @@ bool Service::existsProductSKU(const std::string& sku)
 		throw std::invalid_argument("Invalid SKU. It cannot be empty.");
 
 	return m_dataSource->getProductBySKU(sku) != nullptr;
+}
+
+void Service::addOrder(const CreateOrderParams& orderParams)
+{
+	if (orderParams.customerEmail.empty())
+		throw std::invalid_argument("Customer email is not valid.");
+
+	if (!orderParams.shippingAddress.isValid())
+		throw std::invalid_argument("The shipping address is not valid.");
+
+	if (orderParams.items.empty())
+		throw std::invalid_argument("The order at least needs one item.");
+	
+	m_dataSource->registerOrder(orderParams);
+}
+
+OrderPtr Service::getOrder(uint32_t number, const std::string& customerEmail)
+{
+	if (customerEmail.empty())
+		std::invalid_argument("Invalid customer email.");
+	
+	m_dataSource->getOrder(number, customerEmail);
 }

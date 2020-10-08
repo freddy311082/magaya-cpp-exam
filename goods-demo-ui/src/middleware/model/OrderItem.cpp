@@ -13,6 +13,12 @@ OrderItem::OrderItem(double quantity, ProductPtr&& product) :
 	m_product = move(product);
 }
 
+OrderItem::OrderItem(const OrderItem& item)
+{
+	m_quantity = item.m_quantity;
+	m_product = std::make_unique<Product>(*item.m_product);
+}
+
 double OrderItem::cost() const
 {
 	return m_product->cost(m_quantity);

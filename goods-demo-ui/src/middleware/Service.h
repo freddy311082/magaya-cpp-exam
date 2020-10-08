@@ -24,5 +24,7 @@ public:
 	ProductsList allProducts();
 	void deleteProduct(const std::string& sku);
 	bool existsProductSKU(const std::string& sku);
+
+	void addOrder(const CreateOrderParams& orderParams);
 };
 
