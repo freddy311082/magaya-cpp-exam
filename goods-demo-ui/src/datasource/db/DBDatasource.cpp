@@ -385,9 +385,10 @@ OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmai
 {
 	OrderPtr result;
 
-	runDbQuery([](ref<RootDB> root, uint64_t number, const std::string& customerEmail)
+	runDbQuery([](ref<RootDB> root, uint64_t number, 
+		const std::string& customerEmail, OrderPtr& result)
 	{
-		
+		ref<OrderDB> orderDb = root->getOrder(number, customerEmail.c_str());
 	}, number, customerEmail, result);
 	
 	return result;

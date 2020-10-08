@@ -117,5 +117,5 @@ OrderPtr Service::getOrder(uint32_t number, const std::string& customerEmail)
 	if (customerEmail.empty())
 		std::invalid_argument("Invalid customer email.");
 	
-	m_dataSource->getOrder(number, customerEmail);
+	return m_dataSource->getOrder(number, customerEmail);
 }

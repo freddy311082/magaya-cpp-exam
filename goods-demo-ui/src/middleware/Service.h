@@ -26,5 +26,6 @@ public:
 	bool existsProductSKU(const std::string& sku);
 
 	void addOrder(const CreateOrderParams& orderParams);
+	OrderPtr getOrder(uint32_t number, const std::string& customerEmail);
 };
 
