@@ -143,9 +143,9 @@ ProductDbList RootDB::allProducts() const
 	return result;
 }
 
-ProductDbList RootDB::productsBySKU(const std::list<wstring_t>& skuList) const
+ProductDbHashTable RootDB::productsBySKU(const std::list<wstring_t>& skuList) const
 {
-	ProductDbList result;
+	ProductDbHashTable result;
 	std::stringstream query;
 	bool firstLoop = true;
 
@@ -164,7 +164,7 @@ ProductDbList RootDB::productsBySKU(const std::list<wstring_t>& skuList) const
 	while (!productRef.is_nil())
 	{
 		ref<ProductDB> productDb = productRef;
-		result.push_back(productDb);
+		result[productDb->sku().getChars()] = productDb;
 		productRef = cursor.next();
 	}
 
@@ -211,20 +211,11 @@ OrderItemsDBProdPairList RootDB::orderItemDBPairs(ref<OrderDB> orderDb) const
 {
 	OrderItemsDBProdPairList result;
 	
-	std::stringstream query;
+	auto orderProducts = productsBySKU(orderDb->allProductSKUs());
+
+	for (const auto& item: orderDb->items())
+		result.push_back({ orderProducts[item->productSKU().getChars()], item });
 	
-	ProductDbList orderProducts = productsBySKU(orderDb->allProductSKUs());
-	OrderItemDbList orderItems = orderDb->items();
-	assert(orderItems.size() == orderProducts.size());
-
-	auto itemsIt = orderItems.begin();
-	auto productsIt = orderProducts.begin();
-
-	for (; itemsIt != orderItems.end(); itemsIt++, productsIt++)
-	{
-		result.push_back({ *productsIt, *itemsIt });
-	}
-
 	return result;
 }
 
@@ -237,7 +228,7 @@ ref<OrderDB> RootDB::getOrder(nat8 number, const wstring_t& customerEmail) const
 
 	ref<CustomerDB> customer = cursor.next();
 
-	if (!customer.is_nil())
+	if (customer != nullptr)
 		return customer->getOrder(number);
 
 	return nullptr;

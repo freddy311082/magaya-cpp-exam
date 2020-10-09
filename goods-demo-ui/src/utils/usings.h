@@ -2,7 +2,8 @@
 
 #include <list>
 #include <memory>
-#include <utility>
+#include <unordered_map>
+#include <string>
 
 template <typename T>
 class ref;
@@ -15,6 +16,7 @@ class ShippingAddressDB;
 
 class ProductDB;
 using ProductDbList = std::list<ref<ProductDB>>;
+using ProductDbHashTable = std::unordered_map<std::string, ref<ProductDB>>;
 
 class ShippingAddressDB;
 using ShippingAddressDBPtr = std::unique_ptr<ShippingAddressDB>;

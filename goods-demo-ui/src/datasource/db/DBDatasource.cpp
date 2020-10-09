@@ -228,7 +228,7 @@ CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
 	CustomerPtr customer;
 	runDbQuery([](ref<RootDB> root, const std::string& phone, CustomerPtr& customer)
 	{
-		auto customerDb = root->getCustomerByEmail(phone.c_str());
+		auto customerDb = root->getCustomerByPhone(phone.c_str());
 		customer = customerDb.is_nil() ? nullptr : CustomerMapping::toModel(customerDb);
 	}, phone, customer);
 
@@ -340,7 +340,8 @@ OrderPtr DBDataSource::registerOrder(const CreateOrderParams& orderParams)
 
 		ds->registerProductUse(oiProdList);
 		
-		result = OrderMapping::toModel(order, oiProdList);
+		result = OrderMapping::toModel(order, oiProdList, customer->email().getChars());
+		
 		
 	}, orderParams, this, order);
 
@@ -372,8 +373,10 @@ OrdersList DBDataSource::allOrdersByCustomer(const std::string& customerEmail)
 		for (const auto& orderDb: root->allOrdersFromCustomer(customerEmail.c_str()))
 		{
 			result.push_back(OrderMapping::toModel(
-				orderDb, 
-				root->orderItemDBPairs(orderDb))
+					orderDb, 
+					root->orderItemDBPairs(orderDb),
+				customerDb->email().getChars()
+				)
 			);
 		}
 	}, result);
@@ -389,6 +392,10 @@ OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmai
 		const std::string& customerEmail, OrderPtr& result)
 	{
 		ref<OrderDB> orderDb = root->getOrder(number, customerEmail.c_str());
+		result = OrderMapping::toModel(
+			orderDb,
+			root->orderItemDBPairs(orderDb),
+			customerEmail);
 	}, number, customerEmail, result);
 	
 	return result;

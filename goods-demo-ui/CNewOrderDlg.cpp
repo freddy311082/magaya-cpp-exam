@@ -21,7 +21,10 @@ void CNewOrderDlg::loadProductsFromDB()
 	try
 	{
 		m_products.clear();
-		listToVector(Service::instance().allProducts(), m_products);
+		for (auto& product: Service::instance().allProducts())
+		{
+			m_products[product->sku()] = std::move(product);
+		}
 	}
 	catch (const std::exception& error)
 	{
@@ -33,13 +36,30 @@ void CNewOrderDlg::loadProductsFromDB()
 void CNewOrderDlg::loadProductsInCombobox()
 {
 	loadProductsFromDB();
-	productsCombobox.Clear();
-	
-	for (int i = 0; i < m_products.size(); ++i)
+	skuCombobox.Clear();
+
+	for (const auto& product: m_products)
 	{
-		CA2W value(m_products[i]->description().c_str());
-		productsCombobox.AddString(value);
+		CA2W value(product.second->sku().c_str());
+		skuCombobox.AddString(value);
 	}
+
+	skuCombobox.SetCurSel(0);
+	OnCbnSelchangeCombo1();
+}
+
+void CNewOrderDlg::initPaymentTypeCombobox()
+{
+	// CASH = 1,
+	// CREDIT_CARD = 2,
+	// CHECK = 3,
+	// OTHER = 4
+	paymentTypeCombobox.AddString(CA2W("Cash"));
+	paymentTypeCombobox.AddString(CA2W("Credit Card"));
+	paymentTypeCombobox.AddString(CA2W("Check"));
+	paymentTypeCombobox.AddString(CA2W("Other"));
+
+	paymentTypeCombobox.SetCurSel(0);
 }
 
 
@@ -56,11 +76,13 @@ void CNewOrderDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, quantityEdit);
-	DDX_Control(pDX, IDC_COMBO1, productsCombobox);
+	DDX_Control(pDX, IDC_COMBO1, skuCombobox);
 	DDX_Control(pDX, IDC_EDIT2, totalEdit);
 	DDX_Control(pDX, IDC_LIST1, itemsCtrlList);
-	DDX_Control(pDX, IDC_EDIT3, skuEdit);
+	DDX_Control(pDX, IDC_EDIT3, productNameEdit);
+	DDX_Control(pDX, IDC_COMBO2, paymentTypeCombobox);
 
+	initPaymentTypeCombobox();
 	loadProductsInCombobox();
 	initListCtrl(itemsCtrlList, { "Product SKU", "Product Name", "Quantity", "Cost" });
 }
@@ -73,6 +95,7 @@ void CNewOrderDlg::OnOK()
 
 BEGIN_MESSAGE_MAP(CNewOrderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CNewOrderDlg::OnAddOrderItemBtnClicked)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CNewOrderDlg::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 
@@ -86,21 +109,23 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 
 	try
 	{
-		if (productsCombobox.GetCurSel() == CB_ERR)
+		if (skuCombobox.GetCurSel() == CB_ERR)
 			throw std::invalid_argument("One product must be selected.");
 
-		int prodIndex = productsCombobox.GetCurSel();
+		CString comboText;
+		skuCombobox.GetWindowTextW(comboText);
+		std::string productSKU = CW2A(comboText);
 		double quantity = getDoubleFromCEdit(quantityEdit);
-		m_totalCost += quantity;
+		m_totalCost += m_products[productSKU]->cost(quantity);
 
-		m_orderParams->items.push_back({ quantity, m_products[prodIndex]->sku() });
+		m_orderParams->items.push_back({ quantity, m_products[productSKU]->sku() });
 		
 		std::string s;
 		addRowToListCtrl(itemsCtrlList,  s , {
-			m_products[prodIndex]->sku(),
-			m_products[prodIndex]->description(),
+			m_products[productSKU]->sku(),
+			m_products[productSKU]->description(),
 			std::to_string(quantity),
-			std::to_string(m_products[prodIndex]->cost(quantity))
+			std::to_string(m_products[productSKU]->cost(quantity))
 		});
 
 		setValueToCEdit(totalEdit, m_totalCost);
@@ -117,4 +142,14 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 
 	quantityEdit.GetWindowTextW(text);
 	
+}
+
+
+void CNewOrderDlg::OnCbnSelchangeCombo1()
+{
+	CString text;
+	skuCombobox.GetWindowTextW(text);
+	std::string skuKey{ CW2A(text) };
+	text = m_products[skuKey]->description().c_str();
+	productNameEdit.SetWindowTextW(text);
 }

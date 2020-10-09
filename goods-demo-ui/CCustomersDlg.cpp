@@ -68,12 +68,20 @@ void CCustomersDlg::refreshCustomersList()
 
 void CCustomersDlg::OnAddCustomerBtnClicked()
 {
-	std::shared_ptr<Customer> customer = std::make_shared<Customer>();
-	CNewCustomerDlg newCustDlg(customer, this);
-	if (newCustDlg.DoModal() == IDOK)
+	try
 	{
-		Service::instance().addCustomer(*customer);
-		refreshCustomersList();
+		std::shared_ptr<Customer> customer = std::make_shared<Customer>();
+		CNewCustomerDlg newCustDlg(customer, this);
+		if (newCustDlg.DoModal() == IDOK)
+		{
+			Service::instance().addCustomer(*customer);
+			refreshCustomersList();
+		}
+	}
+	catch (const std::exception& error)
+	{
+		CA2W msg(error.what());
+		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 	}
 }
 

@@ -17,14 +17,16 @@ class Order
 	ShippingAddress m_shippingAddress;
 	OrderItemsList m_items;
 	double m_totalValue;
-	
+	std::string m_customerEmail;
 public:
 
 	Order(int m_number, const std::tm& m_datetime, PaymentType m_payment_type,
-		const ShippingAddress& m_shipping_address);
+		const ShippingAddress& m_shipping_address, const std::string& customerEmail);
 	Order() = default;
 	Order(const Order& order);
-
+	
+	std::string customeEmail() const { return m_customerEmail; }
+	void setCustomerEmail(const std::string& email) { m_customerEmail = email; }
 	int number() const{ return m_number; }
 	std::tm datetime() const { return m_datetime; }
 	PaymentType paymentType() const { return m_paymentType; }

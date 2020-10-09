@@ -14,7 +14,7 @@ class COrdersDlg : public CDialogEx
 	std::vector<CustomerPtr> m_customers;
 	void loadCustomers();
 	void reloadOrders();
-	void showSelectedCustomerOrders();
+	void showOrderItems(int index);
 public:
 	COrdersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~COrdersDlg();
@@ -34,4 +34,5 @@ public:
 	CListCtrl ordersListCtrl;
 	CListCtrl orderItemsListCtrl;
 	afx_msg void OnCbnSelchangeCombo1();
+	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
 };

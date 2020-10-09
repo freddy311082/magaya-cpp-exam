@@ -2,11 +2,13 @@
 #include "helper_functions.h"
 #include <string>
 
-bool strToDouble(const std::string& str, double& result)
+using namespace std;
+
+bool strToDouble(const string& str, double& result)
 {
 	try
 	{
-		result = std::stod(str);
+		result = stod(str);
 	}
 	catch ([[maybe_unused]] const std::exception& _)
 	{
@@ -14,4 +16,24 @@ bool strToDouble(const std::string& str, double& result)
 	}
 
 	return true;
+}
+
+string to_string(PaymentType paymentType)
+{
+	switch (paymentType)
+	{
+	case PaymentType::CASH:
+		return "Cash";
+
+	case PaymentType::CHECK:
+		return "Check";
+
+	case PaymentType::CREDIT_CARD:
+		return "Credit Card";
+
+	case PaymentType::OTHER:
+		return "Other";
+	}
+
+	return "";
 }

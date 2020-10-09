@@ -27,5 +27,6 @@ public:
 
 	void addOrder(const CreateOrderParams& orderParams);
 	OrderPtr getOrder(uint32_t number, const std::string& customerEmail);
+	OrdersList allOrdersFromCustomer(const std::string& email);
 };
 

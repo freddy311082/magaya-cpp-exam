@@ -35,7 +35,8 @@ ref<OrderDB> OrderMapping::toDbModel(const Order& order, bool populateOrderItems
 
 OrderPtr OrderMapping::toModel(
 	const ref<OrderDB>& orderDb, 
-	const OrderItemsDBProdPairList& oiProdList)
+	const OrderItemsDBProdPairList& oiProdList,
+	const std::string& customerEmail)
 {	
 	std::time_t datetime = orderDb->datetime().asTime_t();
 	
@@ -43,7 +44,8 @@ OrderPtr OrderMapping::toModel(
 		orderDb->number(), 
 		*std::localtime(&datetime),
 		static_cast<PaymentType>(orderDb->paymentType()),
-		ShippingAddressMapping::toModel(orderDb->shippingAddress()));
+		ShippingAddressMapping::toModel(orderDb->shippingAddress()),
+		customerEmail);
 
 	for (const auto& oiProdPair: oiProdList)
 	{

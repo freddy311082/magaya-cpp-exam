@@ -36,7 +36,7 @@ void addRowToListCtrl(CListCtrl& listCtrl,
 	const std::vector<std::string>& items)
 {
 	int row = listCtrl.GetItemCount();
-	CA2W keyValue(items[row].c_str());
+	CA2W keyValue(items[0].c_str());
 	listCtrl.InsertItem(row, keyValue);
 
 	int index = row < 0 ? listCtrl.GetItemCount() : row;

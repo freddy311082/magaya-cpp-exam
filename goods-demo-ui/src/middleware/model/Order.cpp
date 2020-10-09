@@ -8,11 +8,12 @@
 using namespace  std;
 
 Order::Order(int m_number, const std::tm& m_datetime, PaymentType m_payment_type,
-	const ShippingAddress& m_shipping_address) 
+	const ShippingAddress& shippingAddress, const std::string& customerEmail) 
 	: m_number(m_number),
 	m_datetime(m_datetime),
 	m_paymentType(m_payment_type),
-	m_shippingAddress(m_shipping_address),
+	m_shippingAddress(shippingAddress),
+	m_customerEmail(customerEmail),
 	m_totalValue(0)
 {
 }

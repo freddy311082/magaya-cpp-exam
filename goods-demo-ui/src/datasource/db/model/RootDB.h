@@ -35,7 +35,7 @@ public:
 	void updateProduct(ref<ProductDB> product);
 	ref<ProductDB> getProductBySKU(const wstring_t& sku) const;
 	ProductDbList allProducts() const;
-	ProductDbList productsBySKU(const std::list<wstring_t>& skuList) const;
+	ProductDbHashTable productsBySKU(const std::list<wstring_t>& skuList) const;
 	bool hasProductBeenOrdered(const wstring_t& sku) const;
 
 	// Orders

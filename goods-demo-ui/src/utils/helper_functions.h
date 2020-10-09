@@ -2,6 +2,8 @@
 
 #include "usings.h"
 #include <vector>
+#include "enums.h"
+#include <unordered_map>
 
 template <typename T>
 void listToVector(
@@ -18,6 +20,5 @@ void listToVector(
 	}
 }
 
-
-
 bool strToDouble(const std::string& str, double& result);
+std::string to_string(PaymentType paymentType);

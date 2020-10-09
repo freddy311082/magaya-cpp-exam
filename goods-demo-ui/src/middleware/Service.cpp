@@ -107,7 +107,7 @@ void Service::addOrder(const CreateOrderParams& orderParams)
 		throw std::invalid_argument("The shipping address is not valid.");
 
 	if (orderParams.items.empty())
-		throw std::invalid_argument("The order at least needs one item.");
+		throw std::invalid_argument("The order needs at least one item to be created.");
 	
 	m_dataSource->registerOrder(orderParams);
 }
@@ -118,4 +118,12 @@ OrderPtr Service::getOrder(uint32_t number, const std::string& customerEmail)
 		std::invalid_argument("Invalid customer email.");
 	
 	return m_dataSource->getOrder(number, customerEmail);
+}
+
+OrdersList Service::allOrdersFromCustomer(const std::string& email)
+{
+	if (email.empty())
+		throw std::invalid_argument("Invalid customer email.");
+
+	return m_dataSource->allOrdersByCustomer(email);
 }

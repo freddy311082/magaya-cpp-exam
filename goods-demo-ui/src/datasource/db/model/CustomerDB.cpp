@@ -91,7 +91,7 @@ OrdersDBList CustomerDB::allOrders() const
 
 bool CustomerDB::canBeDeleted() const
 {
-	return m_orders->next == nullptr;
+	return m_orders->empty();
 }
 
 
