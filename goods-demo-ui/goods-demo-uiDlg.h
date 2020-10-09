@@ -12,6 +12,7 @@
 // CgoodsdemouiDlg dialog
 class CgoodsdemouiDlg : public CDialogEx
 {
+	bool m_initCustomersPending;
 // Construction
 public:
 	CgoodsdemouiDlg(CWnd* pParent = nullptr);	// standard constructor
@@ -34,6 +35,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
 	void Init();
 	DECLARE_MESSAGE_MAP()
 public:

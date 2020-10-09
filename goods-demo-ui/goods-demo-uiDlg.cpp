@@ -7,6 +7,7 @@
 #include "goods-demo-ui.h"
 #include "goods-demo-uiDlg.h"
 #include "afxdialogex.h"
+#include "src/ui/utils/mfc_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,7 +53,7 @@ END_MESSAGE_MAP()
 
 
 CgoodsdemouiDlg::CgoodsdemouiDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_GOODSDEMOUI_DIALOG, pParent)
+	: CDialogEx(IDD_GOODSDEMOUI_DIALOG, pParent), m_initCustomersPending(true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pages[0] = &m_customersPage;
@@ -70,6 +71,7 @@ BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_MESSAGE(WM_USER_CUSTOMER_CREATE, &CgoodsdemouiDlg::OnCustomerAddedMessage)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CgoodsdemouiDlg::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
@@ -113,6 +115,12 @@ BOOL CgoodsdemouiDlg::OnInitDialog()
 
 	Init();
 
+	if (m_initCustomersPending == true)
+	{
+		m_initCustomersPending = false;
+		OnCustomerAddedMessage(0, 0);
+	}
+	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -121,14 +129,14 @@ void CgoodsdemouiDlg::Init()
 	CRect rect;
 	m_TabCtrol.GetClientRect(&rect);
 	m_customersPage.Create(IDD_CUSTOMERS_DIALOG, &m_TabCtrol);
-	m_customersPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_SHOWWINDOW | SWP_NOZORDER);
+	m_customersPage.SetWindowPos(NULL, 0, 40, rect.Width(), rect.Height() , SWP_SHOWWINDOW | SWP_NOZORDER);
 	m_pwndShow = &m_customersPage;
 
 	m_productsPage.Create(IDD_PRODUCTS_DIALOG, &m_TabCtrol);
-	m_productsPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_HIDEWINDOW | SWP_NOZORDER);
+	m_productsPage.SetWindowPos(NULL, 0, 40, rect.Width(), rect.Height(), SWP_HIDEWINDOW | SWP_NOZORDER);
 
 	m_ordersPage.Create(IDD_ORDERS_DIALOG, &m_TabCtrol);
-	m_ordersPage.SetWindowPos(NULL, 0, 40, rect.Width() - 10, rect.Height() - 10, SWP_HIDEWINDOW | SWP_NOZORDER);
+	m_ordersPage.SetWindowPos(NULL, 0, 40, rect.Width(), rect.Height() - 10, SWP_HIDEWINDOW | SWP_NOZORDER);
 }
 
 
@@ -179,6 +187,16 @@ void CgoodsdemouiDlg::OnPaint()
 HCURSOR CgoodsdemouiDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+LRESULT CgoodsdemouiDlg::OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam)
+{
+	if (!m_initCustomersPending)
+	{
+		CustomersList customers{ m_customersPage.consumeTemporalCustList() };
+		m_ordersPage.loadCustomers(customers);
+	}
+	return 0;
 }
 
 

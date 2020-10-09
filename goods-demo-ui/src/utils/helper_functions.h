@@ -22,3 +22,4 @@ void listToVector(
 
 bool strToDouble(const std::string& str, double& result);
 std::string to_string(PaymentType paymentType);
+std::string to_string(const std::tm& datetime);

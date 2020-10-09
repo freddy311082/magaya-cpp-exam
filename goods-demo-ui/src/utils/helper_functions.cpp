@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "helper_functions.h"
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -36,4 +37,18 @@ string to_string(PaymentType paymentType)
 	}
 
 	return "";
+}
+
+std::string to_string(const std::tm& datetime)
+{
+	stringstream ss;
+
+	ss << datetime.tm_year << "-" <<
+		datetime.tm_mon << "-" <<
+		datetime.tm_mday << " " <<
+		datetime.tm_hour << ":" <<
+		datetime.tm_min << ":" <<
+		datetime.tm_sec;
+	
+	return ss.str();
 }

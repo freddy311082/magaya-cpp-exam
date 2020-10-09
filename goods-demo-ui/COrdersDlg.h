@@ -12,12 +12,12 @@ class COrdersDlg : public CDialogEx
 	DECLARE_DYNAMIC(COrdersDlg)
 
 	std::vector<CustomerPtr> m_customers;
-	void loadCustomers();
 	void reloadOrders();
 	void showOrderItems(int index);
 public:
 	COrdersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~COrdersDlg();
+	void loadCustomers(CustomersList& customers);
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -35,4 +35,5 @@ public:
 	CListCtrl orderItemsListCtrl;
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
 };

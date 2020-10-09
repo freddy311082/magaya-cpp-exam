@@ -27,6 +27,7 @@ CCustomersDlg::~CCustomersDlg()
 void CCustomersDlg::InitCustomerListCtrl()
 {
 	initListCtrl(m_CustomerListCtrl,{ "Name", "Email", "Phone", "Shipping Address" });
+	reloadCustomersList();
 }
 
 void CCustomersDlg::DoDataExchange(CDataExchange* pDX)
@@ -35,13 +36,10 @@ void CCustomersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, m_CustomerListCtrl);
 
 	InitCustomerListCtrl();
-	showAllCustomers();
 }
 
-void CCustomersDlg::showAllCustomers()
+void CCustomersDlg::showAllCustomers(const CustomersList& customerList)
 {
-	auto customerList = Service::instance().allCustomers();
-
 	for (const auto& customer : customerList)
 	{
 		addRowToListCtrl(m_CustomerListCtrl,
@@ -60,10 +58,26 @@ END_MESSAGE_MAP()
 // CCustomersDlg message handlers
 
 
-void CCustomersDlg::refreshCustomersList()
+void CCustomersDlg::reloadCustomersList()
 {
-	m_CustomerListCtrl.DeleteAllItems();
-	showAllCustomers();
+	try
+	{
+		m_CustomerListCtrl.DeleteAllItems();
+		CustomersList customerList = Service::instance().allCustomers();
+		showAllCustomers(customerList);
+
+		m_temporalCustomerList = std::move(customerList);
+
+		GetParent()->GetParent()->SendMessage(WM_USER_CUSTOMER_CREATE,
+			NULL,
+			NULL
+		);
+	}
+	catch (const std::exception& error)
+	{
+		CA2W msg(error.what());
+		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+	}
 }
 
 void CCustomersDlg::OnAddCustomerBtnClicked()
@@ -75,7 +89,7 @@ void CCustomersDlg::OnAddCustomerBtnClicked()
 		if (newCustDlg.DoModal() == IDOK)
 		{
 			Service::instance().addCustomer(*customer);
-			refreshCustomersList();
+			reloadCustomersList();
 		}
 	}
 	catch (const std::exception& error)
@@ -100,7 +114,7 @@ void CCustomersDlg::OnDeleteCustomerBtnClicked()
 		auto text = m_CustomerListCtrl.GetItemText(index, 1);
 		std::string email = CW2A(text);
 		Service::instance().deleteCustomer(email);
-		refreshCustomersList();
+		reloadCustomersList();
 	}
 	catch (const std::exception& error)
 	{

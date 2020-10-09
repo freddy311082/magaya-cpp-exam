@@ -10,26 +10,31 @@
 #include "src/middleware/Service.h"
 #include "src/utils/helper_functions.h"
 #include "src/ui/utils/mfc_utils.h"
+#include <iomanip>
+#include <sstream>
 
 
 // COrdersDlg dialog
 
 IMPLEMENT_DYNAMIC(COrdersDlg, CDialogEx)
 
-void COrdersDlg::loadCustomers()
+
+void COrdersDlg::loadCustomers(CustomersList& customers)
 {
 	try
 	{
-		auto custList = Service::instance().allCustomers();
-		listToVector(custList, m_customers);
+		customersCombobox.ResetContent();
+		m_customers.clear();
+		listToVector(customers, m_customers);
 
-		for (const auto& customer: m_customers)
+		for (const auto& customer : m_customers)
 		{
 			CA2W email(customer->email().c_str());
 			customersCombobox.AddString(email);
 		}
 
 		customersCombobox.SetCurSel(0);
+		reloadOrders();
 	}
 	catch (const std::exception& error)
 	{
@@ -37,7 +42,6 @@ void COrdersDlg::loadCustomers()
 		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 	}
 }
-
 
 void COrdersDlg::reloadOrders()
 {
@@ -57,17 +61,15 @@ void COrdersDlg::reloadOrders()
 
 		for (const auto& order: orders)
 		{
-			char dateTimeStr[20];
-			char* format = "%d:%d:%d %d:%d:%d";
-			auto datetime = std::mktime(&order->datetime());
-			std::strftime(dateTimeStr, 20, format, localtime(&datetime));
-
+			std::tm tvalue = order->datetime();
+			std::stringstream dtValue;
+			dtValue << std::put_time(&tvalue, "%Y-%b-%d %H:%M:%S");
 			addRowToListCtrl(ordersListCtrl,
 				std::to_string(order->number()),
 				{
 					std::to_string(order->number()),
 					order->customeEmail(),
-					dateTimeStr,
+					dtValue.str(),
 					to_string(static_cast<PaymentType>(order->paymentType())),
 					std::to_string(order->totalValue())					
 				});
@@ -143,13 +145,11 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 
 	initListCtrl(ordersListCtrl, {"Order Number", "Customer Email", "Date Time", "Payment Type", "Total"});
 	initListCtrl(orderItemsListCtrl, {"Number", "Product SKU", "Product Name", "Quantity", "Cost"});
-
-	loadCustomers();
-	reloadOrders();
 }
 
 
 BEGIN_MESSAGE_MAP(COrdersDlg, CDialogEx)
+	ON_MESSAGE(WM_USER_CUSTOMER_CREATE, &COrdersDlg::OnCustomerAddedMessage)
 	ON_BN_CLICKED(IDC_BUTTON1, &COrdersDlg::OnNewOrderBtnClicked)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &COrdersDlg::OnCbnSelchangeCombo1)
 	ON_NOTIFY(NM_CLICK, IDC_LIST1, &COrdersDlg::OnNMClickList1)
@@ -215,19 +215,13 @@ void COrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
 		{
 			int index = ordersListCtrl.GetNextSelectedItem(pos);
 			showOrderItems(index);
-		//
-		// 	CString numberValue = ordersListCtrl.GetItemText(index, 0);
-		// 	std::string numberStd = CW2A(numberValue);
-		// 	int64_t number = std::stoll(numberStd);
-		//
-		// 	CString emailCStr;
-		// 	customersCombobox.GetWindowTextW(emailCStr);
-		// 	std::string email{ CW2A(emailCStr) };
-		//
-		// 	OrderPtr order = Service::instance().getOrder(number, email);
-		//
 		}
 	}
 		
 	*pResult = 0;
+}
+
+LRESULT COrdersDlg::OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam)
+{
+	return 0;
 }

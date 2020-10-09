@@ -4,6 +4,8 @@
 #include <afxwin.h>
 #include <afxcmn.h>
 
+#define WM_USER_CUSTOMER_CREATE WM_USER + 100
+
 std::string getStdStrFromCEdit(const CEdit& edit);
 int getIntFromCEdit(const CEdit& edit);
 double getDoubleFromCEdit(const CEdit& edit);

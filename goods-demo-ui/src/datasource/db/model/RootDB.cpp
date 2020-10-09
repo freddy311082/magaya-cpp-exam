@@ -6,10 +6,7 @@
 #include "OrderDB.h"
 #include "OrderItemDB.h"
 #include <iostream>
-#include <chrono>
-
-
-using namespace std::chrono;
+#include <ctime>
 
 RootDB::RootDB() : object(self_class)
 {
@@ -186,9 +183,9 @@ ref<OrderDB> RootDB::createOrder(
 	const ShippingAddressDB& shippingAddress)
 {
 	nat8 orderNumber = modify(m_config)->nextOrderNumber();
-	time_t now = system_clock::to_time_t(system_clock::now());
+	std::time_t tNow = std::time(nullptr);	
+	return  OrderDB::create(orderNumber, dbDateTime(tNow), paymentType, shippingAddress);
 	
-	return  OrderDB::create(orderNumber, dbDateTime(now), paymentType, shippingAddress);
 }
 
 OrdersDBList RootDB::allOrdersFromCustomer(const wstring_t& customerEmail) const
