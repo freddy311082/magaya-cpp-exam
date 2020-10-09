@@ -25,7 +25,32 @@ Service& Service::instance()
 Service::Service()
 {
 	
-	m_dataSource = DataSourceFactory<DataSourceType_DATABASE>::newInstance(g_configFile);
+}
+
+void Service::setConfigFile(const std::string& filename)
+{
+	if (filename.empty())
+		throw std::invalid_argument("Invalid config file path.");
+
+	m_dataSource = DataSourceFactory<DataSourceType_DATABASE>::newInstance(filename);
+}
+
+bool Service::testConnection()
+{
+	if (m_dataSource == nullptr)
+		throw std::invalid_argument("DataSource object has not been configure yet.");
+
+	try
+	{
+		m_dataSource->testConnection();
+		return true;
+	}
+	catch ([[maybe_unused]] const std::exception& _)
+	{
+		m_dataSource.reset();
+	}
+
+	return false;
 }
 
 void  Service::addCustomer(const Customer& customer)

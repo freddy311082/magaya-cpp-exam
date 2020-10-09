@@ -24,18 +24,32 @@ CCustomersDlg::~CCustomersDlg()
 {
 }
 
+void CCustomersDlg::enableUI()
+{
+	InitCustomerListCtrl();
+	setEnableUI(true);
+}
+
 void CCustomersDlg::InitCustomerListCtrl()
 {
 	initListCtrl(m_CustomerListCtrl,{ "Name", "Email", "Phone", "Shipping Address" });
 	reloadCustomersList();
 }
 
+void CCustomersDlg::setEnableUI(bool value)
+{
+	addButton.EnableWindow(value);
+	deleteButton.EnableWindow(value);
+}
+
 void CCustomersDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_CustomerListCtrl);
+	DDX_Control(pDX, IDC_BUTTON1, addButton);
+	DDX_Control(pDX, IDC_BUTTON2, deleteButton);
 
-	InitCustomerListCtrl();
+	setEnableUI(false);
 }
 
 void CCustomersDlg::showAllCustomers(const CustomersList& customerList)

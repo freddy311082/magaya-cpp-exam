@@ -13,6 +13,9 @@ public:
 	static const std::string g_configFile;
 	static Service& instance();
 	Service();
+
+	void setConfigFile(const std::string& filename);
+	bool testConnection();
 	
 	void addCustomer(const Customer& customer);
 	void deleteCustomer(const std::string& email);

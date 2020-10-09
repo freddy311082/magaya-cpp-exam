@@ -32,7 +32,7 @@ void CProductsDlg::showAllProducts()
 	}
 }
 
-void CProductsDlg::refreshProductList()
+void CProductsDlg::reloadProductList()
 {
 	m_productsListCtrl.DeleteAllItems();
 	showAllProducts();
@@ -48,12 +48,27 @@ CProductsDlg::~CProductsDlg()
 {
 }
 
+void CProductsDlg::enableUI()
+{
+	reloadProductList();
+	setEnableUI(true);
+}
+
+void CProductsDlg::setEnableUI(bool value)
+{
+	addButton.EnableWindow(value);
+	deleteButton.EnableWindow(value);
+}
+
 void CProductsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_productsListCtrl);
-	initListCtrl(m_productsListCtrl, {"SKU", "Description", "Price", "Weight"});
-	refreshProductList();
+	initListCtrl(m_productsListCtrl, { "SKU", "Description", "Price", "Weight" });
+	DDX_Control(pDX, IDC_BUTTON1, addButton);
+	DDX_Control(pDX, IDC_BUTTON2, deleteButton);
+
+	setEnableUI(false);
 }
 
 
@@ -75,7 +90,7 @@ void CProductsDlg::OnAddProductBtnClicked()
 		if (newProductDlg.DoModal() == IDOK)
 		{
 			Service::instance().addProduct(*product);
-			refreshProductList();
+			reloadProductList();
 		}
 	}
 	catch (const std::exception& error)
@@ -97,7 +112,7 @@ void CProductsDlg::OnDeleteProductBtnClicked()
 		auto text = m_productsListCtrl.GetItemText(index, 0);
 		std::string sku = CW2A(text);
 		Service::instance().deleteProduct(sku);
-		refreshProductList();
+		reloadProductList();
 	}
 	catch (const std::exception& error)
 	{

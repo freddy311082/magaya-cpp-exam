@@ -64,6 +64,11 @@ DBDataSource::DBDataSource(const std::string& configFilename) :
 	});
 }
 
+void DBDataSource::testConnection()
+{
+	dbConnect();
+}
+
 
 void DBDataSource::checkDbActivity()
 {
@@ -164,7 +169,7 @@ void DBDataSource::dbConnect()
 		if (!m_db->open(m_configFilename.c_str()))
 		{
 			setIsConnected(false);
-			throw std::runtime_error("Unable to open connection with the database.");
+			throw std::ios_base::failure("Unable to open connection with the database.");
 		}
 		std::cout << "Connection opened with DB !!" << std::endl;
 		setIsConnected(true);

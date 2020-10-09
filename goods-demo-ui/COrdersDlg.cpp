@@ -43,6 +43,19 @@ void COrdersDlg::loadCustomers(CustomersList& customers)
 	}
 }
 
+void COrdersDlg::setEnableUI(bool value)
+{
+	newOrderButton.EnableWindow(value);
+	customersCombobox.EnableWindow(value);
+	ordersListCtrl.EnableWindow(value);
+	orderItemsListCtrl.EnableWindow(value);
+}
+
+void COrdersDlg::enableUI()
+{
+	setEnableUI(true);
+}
+
 void COrdersDlg::reloadOrders()
 {
 	ordersListCtrl.DeleteAllItems();
@@ -142,9 +155,11 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, customersCombobox);
 	DDX_Control(pDX, IDC_LIST1, ordersListCtrl);
 	DDX_Control(pDX, IDC_LIST2, orderItemsListCtrl);
+	DDX_Control(pDX, IDC_BUTTON1, newOrderButton);
+	initListCtrl(ordersListCtrl, { "Order Number", "Customer Email", "Date Time", "Payment Type", "Total" });
+	initListCtrl(orderItemsListCtrl, { "Number", "Product SKU", "Product Name", "Quantity", "Cost" });
 
-	initListCtrl(ordersListCtrl, {"Order Number", "Customer Email", "Date Time", "Payment Type", "Total"});
-	initListCtrl(orderItemsListCtrl, {"Number", "Product SKU", "Product Name", "Quantity", "Cost"});
+	setEnableUI(false);
 }
 
 

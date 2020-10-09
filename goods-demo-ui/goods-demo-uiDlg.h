@@ -45,5 +45,8 @@ public:
 	COrdersDlg m_ordersPage;
 	CDialogEx* m_pages[3];
 	CWnd* m_pwndShow;
+	void enableUI();
+	void OnFileOpenDbConfigFileMenuClicked();
+
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 };

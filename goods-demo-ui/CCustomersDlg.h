@@ -9,11 +9,13 @@
 class CCustomersDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CCustomersDlg)
+	
 	CustomersList m_temporalCustomerList;
 
 public:
 	CCustomersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CCustomersDlg();
+	void enableUI();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -22,6 +24,7 @@ public:
 
 protected:
 	void InitCustomerListCtrl();
+	void setEnableUI(bool value);
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void showAllCustomers(const CustomersList& customerList);
 
@@ -32,4 +35,6 @@ public:
 	void OnAddCustomerBtnClicked();
 	afx_msg void OnDeleteCustomerBtnClicked();
 	CustomersList&& consumeTemporalCustList() { return std::move(m_temporalCustomerList); };
+	CButton addButton;
+	CButton deleteButton;
 };

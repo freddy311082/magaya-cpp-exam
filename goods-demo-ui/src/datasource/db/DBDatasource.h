@@ -25,7 +25,7 @@ private:
 	static int g_seconds;
 	static uint32_t g_activeTransactionsNumber;
 	
-	static constexpr int TIME_TO_CHECK_CONNECTION = 5; // TODO:  move this to a config file
+	static constexpr int TIME_TO_CHECK_CONNECTION = 30; // TODO:  move this to a config file
 
 	std::string m_configFilename;
 	std::thread m_connectionThread;
@@ -77,6 +77,9 @@ private:
 	CustomerPtr getCustomerByEmailOrPhone(const std::string& email, const std::string& phone);
 public:
 	DBDataSource(const std::string& configFilename);
+
+
+	void testConnection() override;
 	// Customers
 	void addCustomer(const CustomerPtr& customer) override;
 	void updateCustomer(const CustomerPtr& customer) override;

@@ -18,6 +18,8 @@ public:
 	COrdersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~COrdersDlg();
 	void loadCustomers(CustomersList& customers);
+	void setEnableUI(bool value);
+	void enableUI();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -36,4 +38,5 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
+	CButton newOrderButton;
 };

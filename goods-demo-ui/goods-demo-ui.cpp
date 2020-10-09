@@ -16,6 +16,7 @@
 
 BEGIN_MESSAGE_MAP(CgoodsdemouiApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	ON_COMMAND(ID_FILE_EXIT, &CgoodsdemouiApp::OnMenuExitClicked)
 END_MESSAGE_MAP()
 
 
@@ -105,3 +106,9 @@ BOOL CgoodsdemouiApp::InitInstance()
 	return FALSE;
 }
 
+
+
+void CgoodsdemouiApp::OnMenuExitClicked()
+{
+	OnAppExit();
+}

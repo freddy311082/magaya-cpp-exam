@@ -8,6 +8,7 @@
 #include "goods-demo-uiDlg.h"
 #include "afxdialogex.h"
 #include "src/ui/utils/mfc_utils.h"
+#include "src/middleware/Service.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -65,6 +66,7 @@ void CgoodsdemouiDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TAB1, m_TabCtrol);
+	
 }
 
 BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
@@ -73,6 +75,7 @@ BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(WM_USER_CUSTOMER_CREATE, &CgoodsdemouiDlg::OnCustomerAddedMessage)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CgoodsdemouiDlg::OnTcnSelchangeTab1)
+	ON_COMMAND(ID_FILE_OPENDBCONFIGFILE, &CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked)
 END_MESSAGE_MAP()
 
 
@@ -214,4 +217,35 @@ void CgoodsdemouiDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	m_pwndShow = m_pages[selectedIndex];
 	
 	*pResult = 0;
+}
+
+
+void CgoodsdemouiDlg::enableUI()
+{
+	m_customersPage.enableUI();
+	m_productsPage.enableUI();
+	m_ordersPage.enableUI();
+}
+
+void CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked()
+{
+	std::string filter {"*.cfg|*.*"};
+	CFileDialog fileDlg(
+		TRUE,
+		_T("*.cfg"),
+		_T("server.cfg"),
+		OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
+		_T("*.cfg|*.*"));
+	if (fileDlg.DoModal() == IDOK)
+	{
+		std::string configFile = CW2A(fileDlg.GetPathName());
+		Service::instance().setConfigFile(configFile);
+
+		if (Service::instance().testConnection())
+		{
+			enableUI();
+		}
+		else
+			AfxMessageBox(_T("Invalid GOODS config file. Please, check its content and try again."), MB_OK | MB_ICONERROR);
+	}
 }

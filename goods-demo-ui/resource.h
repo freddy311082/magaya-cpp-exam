@@ -13,6 +13,7 @@
 #define IDD_NEW_CUSTOMER_DIALOG         137
 #define IDD_NEW_PRODUCT_DIALOG          139
 #define IDD_NEW_ORDER_DIALOG            141
+#define IDR_MENU1                       143
 #define IDC_TAB1                        1000
 #define IDC_BUTTON1                     1001
 #define IDC_BUTTON2                     1002
@@ -30,13 +31,15 @@
 #define IDC_EDIT8                       1015
 #define IDC_COMBO1                      1016
 #define IDC_COMBO2                      1017
+#define ID_FILE_OPENDBCONFIGFILE        32771
+#define ID_FILE_EXIT                    32772
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        143
-#define _APS_NEXT_COMMAND_VALUE         32771
+#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_COMMAND_VALUE         32773
 #define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

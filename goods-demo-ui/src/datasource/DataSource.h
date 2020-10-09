@@ -13,6 +13,12 @@ public:
 	 * keep using this method as the DataSource constructor.
 	 */
 
+	/*
+	 * This method MUST throw std:::ios_base_failure exception in case the connection cannot
+	 * be established.
+	 */
+	virtual void testConnection() = 0;
+
 	// Customers
 	virtual void addCustomer(const CustomerPtr& customer)  = 0;
 	virtual void updateCustomer(const CustomerPtr& customer)  = 0;
