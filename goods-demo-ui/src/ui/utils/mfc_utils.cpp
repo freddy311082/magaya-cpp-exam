@@ -57,7 +57,22 @@ int getSelectedRow(const CListCtrl& listCtrl)
 	return listCtrl.GetNextSelectedItem(pos);
 }
 
-std::string getTextFroListCtrl(const CListCtrl& listCtrl, int row, int col)
+std::vector<int> getAllSelectedRows(const CListCtrl& listCtrl)
+{
+	std::vector<int> result(listCtrl.GetSelectedCount());
+	POSITION pos = listCtrl.GetFirstSelectedItemPosition();
+	if (pos != NULL)
+	{
+		for (size_t i = 0; i < result.size(); ++i)
+		{
+			result[i] = listCtrl.GetNextSelectedItem(pos);
+		}
+	}
+
+	return result;
+}
+
+std::string getTextFromListCtrl(const CListCtrl& listCtrl, int row, int col)
 {
 	CString text = listCtrl.GetItemText(row, col);
 	std::string  result{ CW2A(text) };

@@ -46,6 +46,7 @@ public:
 	OrdersDBList allOrders() const;
 	bool canBeDeleted() const;
 	void deleteOrder(ref<OrderDB> order);
+	void updateProductSkuInOrders(const wstring_t& originalSku, const wstring_t& newSku);
 };
 
 

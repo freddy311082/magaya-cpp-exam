@@ -87,18 +87,18 @@ void CCustomersDlg::showAllCustomers(const CustomersList& customerList)
 
 std::shared_ptr<Customer> CCustomersDlg::getCustomerObjFromListCtrl(int row)
 {
-	ShippingAddress address(getTextFroListCtrl(customerListCtrl, row, 3),
-		getTextFroListCtrl(customerListCtrl, row, 4),
-		getTextFroListCtrl(customerListCtrl, row, 5),
-		getTextFroListCtrl(customerListCtrl, row, 6),
-		std::stoi(getTextFroListCtrl(customerListCtrl, row, 7)));
+	ShippingAddress address(getTextFromListCtrl(customerListCtrl, row, 3),
+		getTextFromListCtrl(customerListCtrl, row, 4),
+		getTextFromListCtrl(customerListCtrl, row, 5),
+		getTextFromListCtrl(customerListCtrl, row, 6),
+		std::stoi(getTextFromListCtrl(customerListCtrl, row, 7)));
 
 	return std::make_shared<Customer>(
-		getTextFroListCtrl(customerListCtrl, row, 0),
-		getTextFroListCtrl(customerListCtrl, row, 2),
-		getTextFroListCtrl(customerListCtrl, row, 1),
+		getTextFromListCtrl(customerListCtrl, row, 0),
+		getTextFromListCtrl(customerListCtrl, row, 2),
+		getTextFromListCtrl(customerListCtrl, row, 1),
 		address,
-		std::stoi(getTextFroListCtrl(customerListCtrl, row, 8))
+		std::stoi(getTextFromListCtrl(customerListCtrl, row, 8))
 	);
 }
 
@@ -160,13 +160,19 @@ void CCustomersDlg::OnDeleteCustomerBtnClicked()
 {
 	try
 	{
-		int index = getSelectedRow(customerListCtrl);
-		if (index == -1)
-			throw std::invalid_argument("No customer selected. Please, select one.");
-		if (AfxMessageBox(_T("Ar you sure that you want to delete this customer?"), 
+		std::vector<int> indexesToDelete = getAllSelectedRows(customerListCtrl);
+
+		if (indexesToDelete.empty())
+			throw std::invalid_argument("No customer selected. Please, select at least one.");
+		
+				
+		if (AfxMessageBox(_T("Ar you sure that you want to delete this customer?"),
 			MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
-			Service::instance().deleteCustomer(getTextFroListCtrl(customerListCtrl, index, 1));
+			for (int index : indexesToDelete)
+			{
+				Service::instance().deleteCustomer(getTextFromListCtrl(customerListCtrl, index, 1));
+			}
 			reloadCustomersList();
 		}
 	}

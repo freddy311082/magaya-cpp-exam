@@ -104,7 +104,7 @@ void COrdersDlg::showOrderItems(int index)
 	{
 		try
 		{
-			int64_t number = std::stoll(getTextFroListCtrl(ordersListCtrl, index, 0));
+			int64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
 		
 			CString emailCStr;
 			customersCombobox.GetWindowTextW(emailCStr);
@@ -203,7 +203,7 @@ void COrdersDlg::OnNewOrderBtnClicked()
 		{
 			Service::instance().addOrder(*orderParams);
 			reloadOrders();
-			[[maybe_unused]] auto _ =GetParent()->GetParent()->SendMessage(WM_USER_NEW_ORDER_CREATED, NULL, NULL);
+			[[maybe_unused]] auto _ =GetParent()->GetParent()->SendMessage(WM_USER_ADDED_OR_DELETED_ORDER, NULL, NULL);
 		}
 	}
 	catch (const std::exception& error)
@@ -247,6 +247,10 @@ void COrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
 			showOrderItems(index);
 		}
 	}
+	else
+	{
+		orderItemsListCtrl.DeleteAllItems();
+	}
 		
 	*pResult = 0;
 }
@@ -268,11 +272,11 @@ void COrdersDlg::OnDeleteOrderBtnClicked()
 			customersCombobox.GetWindowTextW(emailCStr);
 			std::string customerEmail = CW2A(emailCStr);
 
-			uint64_t number = std::stoll(getTextFroListCtrl(ordersListCtrl, index, 0));
+			uint64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
 
 			Service::instance().deleteOrder(number, customerEmail);
 			reloadOrders();
-			[[maybe_unused]] auto _ = GetParent()->GetParent()->SendMessage(WM_USER_NEW_ORDER_CREATED, NULL, NULL);
+			[[maybe_unused]] auto _ = GetParent()->GetParent()->SendMessage(WM_USER_ADDED_OR_DELETED_ORDER, NULL, NULL);
 		}
 	}
 	catch (const std::exception& error)

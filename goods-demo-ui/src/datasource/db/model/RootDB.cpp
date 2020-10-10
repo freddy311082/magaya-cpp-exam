@@ -66,6 +66,7 @@ ref<CustomerDB> RootDB::getCustomer(const std::stringstream& query) const
 	return cursor.next();
 }
 
+
 std::string RootDB::buildProdutSKUsQueryFrom(const std::list<wstring_t>& skuList) const
 {
 	std::stringstream query;
@@ -180,15 +181,30 @@ void RootDB::deleteProduct(ref<ProductDB> product)
 	modify(m_products)->remove(product->key());
 }
 
-void RootDB::updateProduct(ref<ProductDB> product)
+void RootDB::updateProduct(const wstring_t& originalSku, ref<ProductDB> productUpdates)
 {
-	wstring_t sku = product->sku();
-	auto productDb = getProductBySKU(sku);
+	auto productDb = getProductBySKU(originalSku);
 
 	if (productDb == nullptr)
 		throw std::invalid_argument("Product not found.");
 
-	modify(productDb)->update(product->sku(), product->description(), product->price(), product->weight());
+	if (originalSku != productUpdates->sku() &&
+		getProductBySKU(productUpdates->sku()) != nullptr)
+		throw std::invalid_argument("This product cannot be updated. The SKU already exists.");
+
+	modify(m_products)->remove(productDb->key());
+	modify(productDb)->update(
+		productUpdates->sku(),
+		productUpdates->description(),
+		productUpdates->price(),
+		productUpdates->weight()
+	);
+	modify(m_products)->insert(productDb->key());
+
+	for (auto& customerDb: allCustomers())
+	{
+		modify(customerDb)->updateProductSkuInOrders(originalSku, productDb->sku());
+	}
 }
 
 ProductDbList RootDB::allProducts() const

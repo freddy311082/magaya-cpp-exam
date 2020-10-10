@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+
+class Product;
 
 // CProductsDlg dialog
 
@@ -7,6 +10,7 @@ class CProductsDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CProductsDlg)
 	void showAllProducts();
+	std::shared_ptr<Product> getProductObjFromListCtrl(int row);
 
 public:
 	CProductsDlg(CWnd* pParent = nullptr);   // standard constructor
@@ -30,4 +34,5 @@ public:
 	CListCtrl productsListCtrl;
 	CButton addButton;
 	CButton deleteButton;
+	afx_msg void OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult);
 };

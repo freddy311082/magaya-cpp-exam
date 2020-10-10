@@ -69,19 +69,20 @@ std::list<wstring_t> OrderDB::allProductSKUsPerItem() const
 	return result;
 }
 
-std::unordered_set<std::string> OrderDB::allProductSKUsUsed() const
+
+void OrderDB::updateSku(const wstring_t& originalSku, const wstring_t& newSku)
 {
-	std::unordered_set<std::string> result;
 	auto item = m_items->first;
 
-	while(!item.is_nil())
+	while (!item.is_nil())
 	{
-		ref<OrderItemDB> orderItemDB;
-		result.insert(orderItemDB->productSKU().getChars());
+		ref<OrderItemDB> orderItemDb  = item->obj;
+
+		if (orderItemDb->productSKU() == originalSku)
+			modify(orderItemDb)->updateProductSku(newSku);
+		
 		item = item->next;
 	}
-	
-	return result;
 }
 
 

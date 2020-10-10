@@ -109,5 +109,17 @@ void CustomerDB::deleteOrder(ref<OrderDB> order)
 	m_numberOfOrders--;
 }
 
+void CustomerDB::updateProductSkuInOrders(const wstring_t& originalSku, const wstring_t& newSku)
+{
+	auto order = m_orders->first;
+
+	while(!order.is_nil())
+	{
+		ref<OrderDB> orderDb = order->obj;
+		modify(orderDb)->updateSku(originalSku, newSku);
+		order = order->next;
+	}
+}
+
 
 REGISTER(CustomerDB, object, pessimistic_scheme);

@@ -15,9 +15,10 @@ IMPLEMENT_DYNAMIC(CNewProductDlg, CDialogEx)
 
 CNewProductDlg::CNewProductDlg(
 	std::shared_ptr<Product> product,
+	DialogMode mode,
 	CWnd* pParent /*=nullptr*/):
 	CDialogEx(IDD_NEW_PRODUCT_DIALOG, pParent),
-	m_product(product)
+	m_product(product), m_mode(mode)
 {
 }
 
@@ -32,6 +33,14 @@ void CNewProductDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, descriptionEdit);
 	DDX_Control(pDX, IDC_EDIT3, priceEdit);
 	DDX_Control(pDX, IDC_EDIT4, weightEdit);
+
+	if (m_mode == DialogMode::UPDATE_MODE)
+	{
+		skuEdit.SetWindowTextW(CA2W(m_product->sku().c_str()));
+		descriptionEdit.SetWindowTextW(CA2W(m_product->description().c_str()));
+		priceEdit.SetWindowTextW(CA2W(std::to_string(m_product->price()).c_str()));
+		weightEdit.SetWindowTextW(CA2W(std::to_string(m_product->weight()).c_str()));
+	}
 }
 
 void CNewProductDlg::OnOK()

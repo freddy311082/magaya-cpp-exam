@@ -92,7 +92,7 @@ public:
 	// Products
 	void addProduct(const ProductPtr& product) override;
 	void deleteProduct(const std::string& sku) override;
-	void updateProduct(const ProductPtr& product) override;
+	void updateProduct(const std::string& originalSku, const ProductPtr& product) override;
 	ProductPtr getProductBySKU(const std::string& sku) override;
 	ProductsList allProducts() override;
 

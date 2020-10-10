@@ -123,6 +123,17 @@ bool Service::existsProductSKU(const std::string& sku)
 	return m_dataSource->getProductBySKU(sku) != nullptr;
 }
 
+void Service::updateProduct(const std::string& originalSku, const Product& productUpdates)
+{
+	if (originalSku.empty())
+		throw std::invalid_argument("Invalid SKU. It cannot be empty.");
+
+	if (!productUpdates.isValid())
+		throw std::invalid_argument("This Product is not valid.");
+
+	return m_dataSource->updateProduct(originalSku, std::make_unique<Product>(productUpdates));
+}
+
 void Service::addOrder(const CreateOrderParams& orderParams)
 {
 	if (orderParams.customerEmail.empty())

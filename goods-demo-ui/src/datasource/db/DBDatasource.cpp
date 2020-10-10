@@ -266,12 +266,12 @@ void DBDataSource::deleteProduct(const std::string& sku)
 	}, sku);
 }
 
-void DBDataSource::updateProduct(const ProductPtr& product)
+void DBDataSource::updateProduct(const std::string& originalSku, const ProductPtr& product)
 {
-	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	runDbQuery([](ref<RootDB> root, const std::string& originalSku, const ProductPtr& product)
 	{
-		modify(root)->updateProduct(ProductMapping::toDbModel(*product));
-	}, product);
+		modify(root)->updateProduct(originalSku.c_str(), ProductMapping::toDbModel(*product));
+	}, originalSku, product);
 }
 
 ProductPtr DBDataSource::getProductBySKU(const std::string& sku)
@@ -419,11 +419,6 @@ void DBDataSource::deleteOrder(uint64_t number, const std::string& customerEmail
 		if (orderDb == nullptr)
 			throw std::invalid_argument("Order not found.");
 
-		// updating products use counter
-		// for ([[maybe_unused]] auto& [_, productDb]: root->productsBySKU(orderDb->allProductSKUsPerItem()))
-		// {
-		// 	modify(productDb)->unregisterUse();
-		// }
 
 		for (const auto& sku: orderDb->allProductSKUsPerItem())
 		{

@@ -38,7 +38,7 @@ public:
 	// Products
 	void addProduct(ref<ProductDB> product);
 	void deleteProduct(ref<ProductDB> product);
-	void updateProduct(ref<ProductDB> product);
+	void updateProduct(const wstring_t& originalSku, ref<ProductDB> product);
 	ref<ProductDB> getProductBySKU(const wstring_t& sku) const;
 	ProductDbList allProducts() const;
 	ProductDbHashTable productsBySKU(const std::list<wstring_t>& skuList) const;

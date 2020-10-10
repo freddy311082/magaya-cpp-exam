@@ -24,5 +24,7 @@ public:
 	real8 quantity() const { return m_quantity; }
 	wstring_t productSKU() const { return m_productSKU; }
 	ref<set_member> key() const { return m_key;}
+
+	void updateProductSku(const wstring_t& newSku) { m_productSKU = newSku; }
 };
 

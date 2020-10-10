@@ -42,10 +42,8 @@ public:
 	ref<OrderItemDB> addItem(const wstring_t& productSKU, real8 quantity);
 	void deleteItem(const wstring_t& productSKU, real8 quantity);
 	std::list<wstring_t> allProductSKUsPerItem() const;
-	std::unordered_set<std::string> allProductSKUsUsed() const;
+	void updateSku(const wstring_t& originalSku, const wstring_t& newSku);
 	
-	
-
 	~OrderDB() = default;
 	METACLASS_DECLARATIONS(OrderDB, object);
 };

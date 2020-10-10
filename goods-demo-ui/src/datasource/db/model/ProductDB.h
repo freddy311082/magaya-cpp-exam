@@ -27,6 +27,7 @@ public:
 	real8 cost(real8 quantity) const;
 	void registerUse() { m_timesUsed++; }
 	void unregisterUse() { m_timesUsed--; }
+	void generateKey();
 
 	static ref<ProductDB> create(const wstring_t& sku,
 		const wstring_t& description,

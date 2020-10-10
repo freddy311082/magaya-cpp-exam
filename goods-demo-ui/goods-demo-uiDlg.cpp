@@ -74,7 +74,8 @@ BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(WM_USER_CUSTOMER_CREATED, &CgoodsdemouiDlg::OnCustomerAddedMessage)
-	ON_MESSAGE(WM_USER_NEW_ORDER_CREATED, &CgoodsdemouiDlg::OnNewOrderCreated)
+	ON_MESSAGE(WM_USER_ADDED_OR_DELETED_ORDER, &CgoodsdemouiDlg::OnNewOrderCreated)
+	ON_MESSAGE(WM_USER_PRODUCT_UPDATED, &CgoodsdemouiDlg::OnProductUpdated)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CgoodsdemouiDlg::OnTcnSelchangeTab1)
 	ON_COMMAND(ID_FILE_OPENDBCONFIGFILE, &CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked)
 END_MESSAGE_MAP()
@@ -207,6 +208,12 @@ LRESULT CgoodsdemouiDlg::OnNewOrderCreated(WPARAM wParam, LPARAM lParam)
 {
 	m_productsPage.reloadProductList();
 	m_customersPage.reloadCustomersList();
+	return 0;
+}
+
+LRESULT CgoodsdemouiDlg::OnProductUpdated(WPARAM wParam, LPARAM lParam)
+{
+	m_ordersPage.reloadOrders();
 	return 0;
 }
 

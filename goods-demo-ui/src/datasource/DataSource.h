@@ -31,7 +31,7 @@ public:
 	// Products
 	virtual void addProduct(const ProductPtr& product)  = 0;
 	virtual void deleteProduct(const std::string& sku)  = 0;
-	virtual void updateProduct(const ProductPtr& product)  = 0;
+	virtual void updateProduct(const std::string& originalSku, const ProductPtr& product)  = 0;
 	virtual ProductPtr getProductBySKU(const std::string& sku)  = 0;
 	virtual ProductsList allProducts()  = 0;
 
