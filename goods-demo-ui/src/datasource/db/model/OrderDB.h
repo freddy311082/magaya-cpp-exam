@@ -4,7 +4,7 @@
 #include "datetime.h"
 #include "ShippingAddressDB.h"
 #include "src/utils/usings.h"
-#include <unordered_map>
+#include <unordered_set>
 
 
 
@@ -41,7 +41,8 @@ public:
 								const ShippingAddressDB& shippingAddress);
 	ref<OrderItemDB> addItem(const wstring_t& productSKU, real8 quantity);
 	void deleteItem(const wstring_t& productSKU, real8 quantity);
-	std::list<wstring_t> allProductSKUs() const;
+	std::list<wstring_t> allProductSKUsPerItem() const;
+	std::unordered_set<std::string> allProductSKUsUsed() const;
 	
 	
 

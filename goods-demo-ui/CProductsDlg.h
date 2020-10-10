@@ -7,12 +7,12 @@ class CProductsDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CProductsDlg)
 	void showAllProducts();
-	void reloadProductList();
 
 public:
 	CProductsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CProductsDlg();
 	void enableUI();
+	void reloadProductList();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -27,7 +27,7 @@ protected:
 public:
 	afx_msg void OnAddProductBtnClicked();
 	afx_msg void OnDeleteProductBtnClicked();
-	CListCtrl m_productsListCtrl;
+	CListCtrl productsListCtrl;
 	CButton addButton;
 	CButton deleteButton;
 };

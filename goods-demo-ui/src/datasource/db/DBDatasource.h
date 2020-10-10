@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include <unordered_set>
 
 #include "src/datasource/DataSource.h"
 #include "src/datasource/db/model/RootDB.h"
@@ -82,7 +83,7 @@ public:
 	void testConnection() override;
 	// Customers
 	void addCustomer(const CustomerPtr& customer) override;
-	void updateCustomer(const CustomerPtr& customer) override;
+	void updateCustomer(const std::string& email, const CustomerPtr& customer) override;
 	void deleteCustomer(const std::string& email) override;
 	CustomersList allCustomers() override;
 	CustomerPtr getCustomerByEmail(const std::string& email) override;
@@ -100,6 +101,8 @@ public:
 	uint64_t getNextOrderNumber() override;
 	OrdersList allOrdersByCustomer(const std::string& customerEmail) override;
 	OrderPtr getOrder(uint64_t number, const std::string& customerEmail) override;
+	void deleteOrder(uint64_t number, const std::string& customerEmail) override;
+	
 	~DBDataSource();
 };
 

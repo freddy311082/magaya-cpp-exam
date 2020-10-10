@@ -12,7 +12,8 @@ CustomerDB::CustomerDB(const wstring_t&	name,
 	m_name(name),
 	m_phone(phone),
 	m_email(email),
-	m_shippingAddress(shippingAddress)
+	m_shippingAddress(shippingAddress),
+	m_numberOfOrders(0)
 {
 	char* _name = m_name.getChars();
 	m_key = set_member::create(this, _name);
@@ -35,7 +36,8 @@ field_descriptor& CustomerDB::describe_components()
 		FIELD(m_email),
 		FIELD(m_key),
 		FIELD(m_shippingAddress),
-		FIELD(m_orders);
+		FIELD(m_orders),
+		FIELD(m_numberOfOrders);
 }
 
 void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wstring_t& email,
@@ -50,6 +52,7 @@ void CustomerDB::update(const wstring_t& name, const wstring_t& phone, const wst
 void CustomerDB::addOrder(ref<OrderDB> order)
 {
 	modify(m_orders)->insert(order->key());
+	m_numberOfOrders++;
 }
 
 ref<OrderDB> CustomerDB::getOrder(nat8 orderNumber) const
@@ -91,7 +94,19 @@ OrdersDBList CustomerDB::allOrders() const
 
 bool CustomerDB::canBeDeleted() const
 {
-	return m_orders->empty();
+	if (m_orders->empty())
+	{
+		assert(m_numberOfOrders == 0);
+		return true;
+	}
+
+	return false;
+}
+
+void CustomerDB::deleteOrder(ref<OrderDB> order)
+{
+	modify(m_orders)->remove(order->key());
+	m_numberOfOrders--;
 }
 
 

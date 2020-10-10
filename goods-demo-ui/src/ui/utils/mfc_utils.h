@@ -4,7 +4,10 @@
 #include <afxwin.h>
 #include <afxcmn.h>
 
-#define WM_USER_CUSTOMER_CREATE WM_USER + 100
+
+#define WM_USER_NUMBER_START WM_USER + 100
+#define WM_USER_CUSTOMER_CREATED WM_USER_NUMBER_START
+#define WM_USER_NEW_ORDER_CREATED WM_USER_NUMBER_START + 1
 
 std::string getStdStrFromCEdit(const CEdit& edit);
 int getIntFromCEdit(const CEdit& edit);
@@ -14,6 +17,7 @@ void addRowToListCtrl(CListCtrl& listCtrl,
 	const std::string& itemKey,
 	const std::vector<std::string>& items);
 int getSelectedRow(const CListCtrl& listCtrl);
+std::string getTextFroListCtrl(const CListCtrl& listCtrl, int row, int col);
 void setValueToCEdit(CEdit& edit, int value);
 void setValueToCEdit(CEdit& edit, double value);
 void setValueToCEdit(CEdit& edit, const std::string& value);

@@ -25,7 +25,6 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -36,6 +35,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnNewOrderCreated(WPARAM wParam, LPARAM lParam);
 	void Init();
 	DECLARE_MESSAGE_MAP()
 public:

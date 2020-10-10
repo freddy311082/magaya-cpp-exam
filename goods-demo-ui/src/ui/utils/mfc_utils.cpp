@@ -57,6 +57,13 @@ int getSelectedRow(const CListCtrl& listCtrl)
 	return listCtrl.GetNextSelectedItem(pos);
 }
 
+std::string getTextFroListCtrl(const CListCtrl& listCtrl, int row, int col)
+{
+	CString text = listCtrl.GetItemText(row, col);
+	std::string  result{ CW2A(text) };
+	return result;
+}
+
 void setValueToCEdit(CEdit& edit, int value)
 {
 	setValueToCEdit(edit, std::to_string(value));

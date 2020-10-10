@@ -37,6 +37,7 @@ public:
 	CListCtrl orderItemsListCtrl;
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
 	CButton newOrderButton;
+	CButton deleteOrder;
+	afx_msg void OnDeleteOrderBtnClicked();
 };

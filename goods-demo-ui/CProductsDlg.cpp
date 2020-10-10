@@ -22,19 +22,20 @@ void CProductsDlg::showAllProducts()
 	int i = 0;
 	for (const auto& product : products)
 	{
-		addRowToListCtrl(m_productsListCtrl,
+		addRowToListCtrl(productsListCtrl,
 			product->sku(),
 			{ product->sku(),
 				product->description(),
 				std::to_string(product->price()),
-				std::to_string(product->weight())
+				std::to_string(product->weight()),
+				std::to_string(product->timesUsed())
 			});
 	}
 }
 
 void CProductsDlg::reloadProductList()
 {
-	m_productsListCtrl.DeleteAllItems();
+	productsListCtrl.DeleteAllItems();
 	showAllProducts();
 }
 
@@ -58,16 +59,23 @@ void CProductsDlg::setEnableUI(bool value)
 {
 	addButton.EnableWindow(value);
 	deleteButton.EnableWindow(value);
+	productsListCtrl.EnableWindow(value);
 }
 
 void CProductsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST1, m_productsListCtrl);
-	initListCtrl(m_productsListCtrl, { "SKU", "Description", "Price", "Weight" });
+	DDX_Control(pDX, IDC_LIST1, productsListCtrl);
 	DDX_Control(pDX, IDC_BUTTON1, addButton);
 	DDX_Control(pDX, IDC_BUTTON2, deleteButton);
-
+	
+	initListCtrl(productsListCtrl, 
+		{
+			"SKU",
+			"Description",
+			"Price",
+			"Weight",
+			"Times Used" });
 	setEnableUI(false);
 }
 
@@ -105,14 +113,16 @@ void CProductsDlg::OnDeleteProductBtnClicked()
 {
 	try
 	{
-		int index = getSelectedRow(m_productsListCtrl);
+		int index = getSelectedRow(productsListCtrl);
 		if (index == -1)
 			throw std::invalid_argument("No product selected. Please, select one.");
-		
-		auto text = m_productsListCtrl.GetItemText(index, 0);
-		std::string sku = CW2A(text);
-		Service::instance().deleteProduct(sku);
-		reloadProductList();
+
+		if (AfxMessageBox(_T("Ar you sure that you want to delete this Product?"), 
+			MB_YESNO | MB_ICONQUESTION) == IDYES)
+		{
+			Service::instance().deleteProduct(getTextFroListCtrl(productsListCtrl, index, 0));
+			reloadProductList();
+		}
 	}
 	catch (const std::exception& error)
 	{

@@ -42,7 +42,7 @@ void RootDB::addCustomer(ref<CustomerDB> customer)
 	if (getCustomerByEmail(customer->email()) != nullptr ||
 		getCustomerByPhone(customer->phone()) != nullptr)
 		throw std::invalid_argument("This customer already exists.");
-	
+
 	modify(m_customers)->insert(customer->key());
 }
 
@@ -61,10 +61,57 @@ void RootDB::deleteCustomer(const wstring_t& email)
 
 ref<CustomerDB> RootDB::getCustomer(const std::stringstream& query) const
 {
-		
 	result_set_cursor cursor;
 	m_customers->filter(cursor, query.str().c_str());
 	return cursor.next();
+}
+
+std::string RootDB::buildProdutSKUsQueryFrom(const std::list<wstring_t>& skuList) const
+{
+	std::stringstream query;
+
+	bool firstLoop = true;
+	for (const wstring_t& sku : skuList)
+	{
+		query << (firstLoop ? "" : " or ");
+		query << "m_sku='" << sku.getChars() << "'";
+		firstLoop = false;
+	}
+
+	return query.str();
+}
+
+std::string RootDB::buildProdutSKUsQueryFrom(const std::unordered_set<std::string>& skuSets) const
+{
+	std::stringstream query;
+
+	bool firstLoop = true;
+	for (const std::string& sku : skuSets)
+	{
+		query << (firstLoop ? "" : " or ");
+		query << "m_sku='" << sku << "'";
+		firstLoop = false;
+	}
+
+	return query.str();
+}
+
+ProductDbHashTable RootDB::productsFromQuery(const std::string& query) const
+{
+	ProductDbHashTable result;
+
+	result_set_cursor cursor;
+	m_products->filter(cursor, query.c_str());
+
+	auto productRef = cursor.next();
+	while (!productRef.is_nil())
+	{
+		ref<ProductDB> productDb = productRef;
+		result[productDb->sku().getChars()] = productDb;
+		productRef = cursor.next();
+	}
+
+	return result;
 }
 
 ref<CustomerDB> RootDB::getCustomerByEmail(const wstring_t& email) const
@@ -81,14 +128,31 @@ ref<CustomerDB> RootDB::getCustomerByPhone(const wstring_t& phone) const
 	return getCustomer(query);
 }
 
-void RootDB::updateCustomer(ref<CustomerDB> customer)
+void RootDB::updateCustomer(const wstring_t& email,  ref<CustomerDB> customerUpdates)
 {
-	auto cust = getCustomerByEmail(customer->email());
+	auto currentCust = getCustomerByEmail(email);
 
-	if (cust == nullptr)
+	if (currentCust == nullptr)
 		throw std::invalid_argument("Customer not found.");
 
-	modify(cust)->update(cust->name(), customer->phone(), customer->email(), customer->shippingAddress());
+	std::stringstream query;
+	query << "(m_email='" << customerUpdates->email().getChars() << "' or " <<
+		"m_phone='" << customerUpdates->phone().getChars() << 
+		"') and (m_email <> '" << currentCust->email().getChars() << 
+		"' and m_phone <> '" << currentCust->phone().getChars() << "')";
+	
+	if (getCustomer(query) != nullptr)
+	{
+		throw std::invalid_argument("Customer cannot be updated. The new Phone or Email values already exist.");
+	}
+
+	
+	modify(currentCust)->update(
+		customerUpdates->name(), 
+		customerUpdates->phone(), 
+		customerUpdates->email(), 
+		customerUpdates->shippingAddress()
+	);
 }
 
 CustomersDbList RootDB::allCustomers() const
@@ -140,32 +204,16 @@ ProductDbList RootDB::allProducts() const
 	return result;
 }
 
-ProductDbHashTable RootDB::productsBySKU(const std::list<wstring_t>& skuList) const
+ProductDbHashTable RootDB::productsBySKU(const std::list<wstring_t>& SKUs) const
 {
-	ProductDbHashTable result;
-	std::stringstream query;
-	bool firstLoop = true;
+	std::string query = buildProdutSKUsQueryFrom(SKUs);
+	return productsFromQuery(query);
+}
 
-	// building the query string
-	for (const wstring_t& sku: skuList)
-	{
-		query << (firstLoop ? "" : " || ");
-		query << "m_sku='" << sku.getChars() << "'";
-		firstLoop = false;
-	}
-	
-	result_set_cursor cursor;
-	m_products->filter(cursor, query.str().c_str());
-
-	auto productRef = cursor.next();
-	while (!productRef.is_nil())
-	{
-		ref<ProductDB> productDb = productRef;
-		result[productDb->sku().getChars()] = productDb;
-		productRef = cursor.next();
-	}
-
-	return result;
+ProductDbHashTable RootDB::productsBySKU(const std::unordered_set<std::string>& SKUs) const
+{
+	std::string query = buildProdutSKUsQueryFrom(SKUs);
+	return productsFromQuery(query);
 }
 
 bool RootDB::hasProductBeenOrdered(const wstring_t& sku) const
@@ -183,9 +231,8 @@ ref<OrderDB> RootDB::createOrder(
 	const ShippingAddressDB& shippingAddress)
 {
 	nat8 orderNumber = modify(m_config)->nextOrderNumber();
-	std::time_t tNow = std::time(nullptr);	
-	return  OrderDB::create(orderNumber, dbDateTime(tNow), paymentType, shippingAddress);
-	
+	std::time_t tNow = std::time(nullptr);
+	return OrderDB::create(orderNumber, dbDateTime(tNow), paymentType, shippingAddress);
 }
 
 OrdersDBList RootDB::allOrdersFromCustomer(const wstring_t& customerEmail) const
@@ -207,12 +254,12 @@ OrdersDBList RootDB::allOrdersFromCustomer(const wstring_t& customerEmail) const
 OrderItemsDBProdPairList RootDB::orderItemDBPairs(ref<OrderDB> orderDb) const
 {
 	OrderItemsDBProdPairList result;
-	
-	auto orderProducts = productsBySKU(orderDb->allProductSKUs());
 
-	for (const auto& item: orderDb->items())
-		result.push_back({ orderProducts[item->productSKU().getChars()], item });
-	
+	auto orderProducts = productsBySKU(orderDb->allProductSKUsPerItem());
+
+	for (const auto& item : orderDb->items())
+		result.push_back({orderProducts[item->productSKU().getChars()], item});
+
 	return result;
 }
 

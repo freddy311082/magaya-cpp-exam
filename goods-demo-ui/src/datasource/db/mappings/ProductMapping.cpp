@@ -17,5 +17,6 @@ ProductPtr ProductMapping::toModel(const ref<ProductDB>& producrDb)
 	return std::make_unique<Product>(sku, 
 									 description,
 									 producrDb->price(),
-									 producrDb->weight());
+									 producrDb->weight(),
+									 producrDb->timesUsed());
 }

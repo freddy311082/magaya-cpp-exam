@@ -6,3 +6,9 @@ enum class PaymentType
 	CHECK = 2,
 	OTHER  = 3
 };
+
+enum class DialogMode
+{
+	CREATE_NEW_MODE,
+	UPDATE_MODE
+};

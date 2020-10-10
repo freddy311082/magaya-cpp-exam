@@ -21,7 +21,7 @@ public:
 
 	// Customers
 	virtual void addCustomer(const CustomerPtr& customer)  = 0;
-	virtual void updateCustomer(const CustomerPtr& customer)  = 0;
+	virtual void updateCustomer(const std::string& email, const CustomerPtr& customerUpdates)  = 0;
 	virtual void deleteCustomer(const std::string& email)  = 0;
 	virtual CustomersList allCustomers()  = 0;
 	virtual CustomerPtr getCustomerByEmail(const std::string& email) = 0;
@@ -40,6 +40,8 @@ public:
 	virtual uint64_t getNextOrderNumber() = 0;
 	virtual OrdersList allOrdersByCustomer(const std::string& customerEmail) = 0;
 	virtual OrderPtr getOrder(uint64_t number, const std::string& customerEmail) = 0;
+	virtual void deleteOrder(uint64_t number, const std::string& customerEmail) = 0;
+	
 	virtual ~DataSource() = default;
 };
 

@@ -152,3 +152,22 @@ OrdersList Service::allOrdersFromCustomer(const std::string& email)
 
 	return m_dataSource->allOrdersByCustomer(email);
 }
+
+void Service::deleteOrder(uint64_t number, const std::string& customerEmail)
+{
+	if (customerEmail.empty())
+		throw std::invalid_argument("Invalid customer email.");
+
+	m_dataSource->deleteOrder(number, customerEmail);
+}
+
+void Service::updateCustomer(const std::string& customerEmail, const Customer& customerUpdates)
+{
+	if (customerEmail.empty())
+		throw std::invalid_argument("Invalid customer email");
+
+	if (!customerUpdates.isValid())
+		throw std::invalid_argument("Customer updates are not valid.");
+
+	m_dataSource->updateCustomer(customerEmail, std::make_unique<Customer>(customerUpdates));
+}

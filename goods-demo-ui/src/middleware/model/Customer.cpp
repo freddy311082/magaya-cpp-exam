@@ -5,11 +5,12 @@
 using namespace std;
 
 Customer::Customer(const std::string& name, const std::string& phone, const std::string& email,
-                   const ShippingAddress& shippingAddress)
+                   const ShippingAddress& shippingAddress, uint32_t numberOfOrders)
 	: m_name(name),
 	m_phone(phone),
 	m_email(email),
-	m_shippingAddress(shippingAddress)
+	m_shippingAddress(shippingAddress),
+	m_numberOfOrders(numberOfOrders)
 {
 }
 

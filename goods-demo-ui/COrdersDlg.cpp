@@ -49,6 +49,7 @@ void COrdersDlg::setEnableUI(bool value)
 	customersCombobox.EnableWindow(value);
 	ordersListCtrl.EnableWindow(value);
 	orderItemsListCtrl.EnableWindow(value);
+	deleteOrder.EnableWindow(value);
 }
 
 void COrdersDlg::enableUI()
@@ -103,9 +104,7 @@ void COrdersDlg::showOrderItems(int index)
 	{
 		try
 		{
-			CString numberValue = ordersListCtrl.GetItemText(index, 0);
-			std::string numberStd = CW2A(numberValue);
-			int64_t number = std::stoll(numberStd);
+			int64_t number = std::stoll(getTextFroListCtrl(ordersListCtrl, index, 0));
 		
 			CString emailCStr;
 			customersCombobox.GetWindowTextW(emailCStr);
@@ -156,18 +155,33 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, ordersListCtrl);
 	DDX_Control(pDX, IDC_LIST2, orderItemsListCtrl);
 	DDX_Control(pDX, IDC_BUTTON1, newOrderButton);
-	initListCtrl(ordersListCtrl, { "Order Number", "Customer Email", "Date Time", "Payment Type", "Total" });
-	initListCtrl(orderItemsListCtrl, { "Number", "Product SKU", "Product Name", "Quantity", "Cost" });
-
+	DDX_Control(pDX, IDC_BUTTON2, deleteOrder);
+	
+	initListCtrl(ordersListCtrl, 
+		{
+			"Order Number",
+			"Customer Email",
+			"Date Time",
+			"Payment Type",
+			"Total"
+		});
+	initListCtrl(orderItemsListCtrl, 
+		{
+			"Number",
+			"Product SKU",
+			"Product Name",
+			"Quantity",
+			"Cost"
+		});
 	setEnableUI(false);
 }
 
 
 BEGIN_MESSAGE_MAP(COrdersDlg, CDialogEx)
-	ON_MESSAGE(WM_USER_CUSTOMER_CREATE, &COrdersDlg::OnCustomerAddedMessage)
 	ON_BN_CLICKED(IDC_BUTTON1, &COrdersDlg::OnNewOrderBtnClicked)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &COrdersDlg::OnCbnSelchangeCombo1)
 	ON_NOTIFY(NM_CLICK, IDC_LIST1, &COrdersDlg::OnNMClickList1)
+	ON_BN_CLICKED(IDC_BUTTON2, &COrdersDlg::OnDeleteOrderBtnClicked)
 END_MESSAGE_MAP()
 
 
@@ -189,6 +203,7 @@ void COrdersDlg::OnNewOrderBtnClicked()
 		{
 			Service::instance().addOrder(*orderParams);
 			reloadOrders();
+			[[maybe_unused]] auto _ =GetParent()->GetParent()->SendMessage(WM_USER_NEW_ORDER_CREATED, NULL, NULL);
 		}
 	}
 	catch (const std::exception& error)
@@ -236,7 +251,33 @@ void COrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-LRESULT COrdersDlg::OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam)
+
+void COrdersDlg::OnDeleteOrderBtnClicked()
 {
-	return 0;
+	int index = getSelectedRow(ordersListCtrl);
+
+	try
+	{
+		if (index == -1)
+			throw std::invalid_argument("You must select an order. Please, select one and try again.");
+
+		if (AfxMessageBox(_T("Are you sure that you want to remove this Order?"), 
+			MB_YESNO | MB_ICONQUESTION) == IDYES)
+		{
+			CString emailCStr;
+			customersCombobox.GetWindowTextW(emailCStr);
+			std::string customerEmail = CW2A(emailCStr);
+
+			uint64_t number = std::stoll(getTextFroListCtrl(ordersListCtrl, index, 0));
+
+			Service::instance().deleteOrder(number, customerEmail);
+			reloadOrders();
+			[[maybe_unused]] auto _ = GetParent()->GetParent()->SendMessage(WM_USER_NEW_ORDER_CREATED, NULL, NULL);
+		}
+	}
+	catch (const std::exception& error)
+	{
+		CA2W msg(error.what());
+		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+	}
 }

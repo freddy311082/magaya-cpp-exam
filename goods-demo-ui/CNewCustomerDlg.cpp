@@ -55,24 +55,28 @@ void CNewCustomerDlg::validateBy(ValidateType type)
 
 CNewCustomerDlg::CNewCustomerDlg(
 	std::shared_ptr<Customer> customerObj,
+	DialogMode mode,
 	CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_NEW_CUSTOMER_DIALOG, pParent), m_customer(customerObj)
+	: CDialogEx(IDD_NEW_CUSTOMER_DIALOG, pParent),
+	m_customer(customerObj), m_mode(mode)
 {
 }
 
 void CNewCustomerDlg::OnOK()
 {
-	m_customer->setName(getStdStrFromCEdit(nameEdit));
-	m_customer->setEmail(getStdStrFromCEdit(emailEdit));
-	m_customer->setPhone(getStdStrFromCEdit(phoneEdit));
-
-	std::string streetAndNumber{ getStdStrFromCEdit(streetAndNumberEdit) };
-	std::string city{ getStdStrFromCEdit(cityEdit) };
-	std::string state{ getStdStrFromCEdit(stateEdit) };
-	std::string country{ getStdStrFromCEdit(countryEdit) };
+	
 	
 	try
 	{
+		m_customer->setName(getStdStrFromCEdit(nameEdit));
+		m_customer->setEmail(getStdStrFromCEdit(emailEdit));
+		m_customer->setPhone(getStdStrFromCEdit(phoneEdit));
+
+		std::string streetAndNumber{ getStdStrFromCEdit(streetAndNumberEdit) };
+		std::string city{ getStdStrFromCEdit(cityEdit) };
+		std::string state{ getStdStrFromCEdit(stateEdit) };
+		std::string country{ getStdStrFromCEdit(countryEdit) };
+		
 		m_customer->setShippingAddress(ShippingAddress(
 			streetAndNumber,
 			city,
@@ -122,25 +126,37 @@ void CNewCustomerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT6, stateEdit);
 	DDX_Control(pDX, IDC_EDIT7, countryEdit);
 	DDX_Control(pDX, IDC_EDIT8, zipCodeEdit);
+
+	if (m_mode == DialogMode::UPDATE_MODE)
+	{
+		nameEdit.SetWindowTextW(CA2W(m_customer->name().c_str()));
+		emailEdit.SetWindowTextW(CA2W(m_customer->email().c_str()));
+		phoneEdit.SetWindowTextW(CA2W(m_customer->phone().c_str()));
+		streetAndNumberEdit.SetWindowTextW(CA2W(m_customer->shippingAddress().streetAndNumber().c_str()));
+		cityEdit.SetWindowTextW(CA2W(m_customer->shippingAddress().city().c_str()));
+		stateEdit.SetWindowTextW(CA2W(m_customer->shippingAddress().state().c_str()));
+		countryEdit.SetWindowTextW(CA2W(m_customer->shippingAddress().country().c_str()));
+		zipCodeEdit.SetWindowTextW(CA2W(std::to_string(m_customer->shippingAddress().zipCode()).c_str()));
+	}
 }
 
 
 BEGIN_MESSAGE_MAP(CNewCustomerDlg, CDialogEx)
-	ON_BN_CLICKED(IDC_BUTTON1, &CNewCustomerDlg::OnValidateEmailCliecked)
-	ON_BN_CLICKED(IDC_BUTTON2, &CNewCustomerDlg::OnValidateEmailClicked)
+	ON_BN_CLICKED(IDC_BUTTON1, &CNewCustomerDlg::OnValidateEmailClicked)
+	ON_BN_CLICKED(IDC_BUTTON2, &CNewCustomerDlg::OnValidatePhoneClicked)
 END_MESSAGE_MAP()
 
 
 // CNewCustomerDlg message handlers
 
 
-void CNewCustomerDlg::OnValidateEmailCliecked()
+void CNewCustomerDlg::OnValidateEmailClicked()
 {
 	validateBy(ValidateType::EMAIL);
 }
 
 
-void CNewCustomerDlg::OnValidateEmailClicked()
+void CNewCustomerDlg::OnValidatePhoneClicked()
 {
 	validateBy(ValidateType::PHONE);
 }

@@ -84,7 +84,13 @@ void CNewOrderDlg::DoDataExchange(CDataExchange* pDX)
 
 	initPaymentTypeCombobox();
 	loadProductsInCombobox();
-	initListCtrl(itemsCtrlList, { "Product SKU", "Product Name", "Quantity", "Cost" });
+	initListCtrl(itemsCtrlList, 
+		{
+			"Product SKU",
+			"Product Name",
+			"Quantity",
+			"Cost"
+		});
 }
 
 void CNewOrderDlg::OnOK()
@@ -136,14 +142,8 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 	}
 	
-		
-
-	
-
 	quantityEdit.GetWindowTextW(text);
-	
 }
-
 
 void CNewOrderDlg::OnCbnSelchangeCombo1()
 {

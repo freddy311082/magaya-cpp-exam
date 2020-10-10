@@ -21,5 +21,6 @@ CustomerPtr CustomerMapping::toModel(const ref<CustomerDB>& customerDb)
 		customerDb->name().getChars(),
 		customerDb->phone().getChars(),
 		customerDb->email().getChars(),
-		shippingAddr);
+		shippingAddr,
+		customerDb->numberOfOrders());
 }

@@ -3,12 +3,15 @@
 #include <memory>
 #include <string>
 #include "src/middleware/model/Customer.h"
+#include "src/utils/enums.h"
 
 // CNewCustomerDlg dialog
 
 class CNewCustomerDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CNewCustomerDlg)
+
+	DialogMode m_mode;
 
 	enum class ValidateType
 	{
@@ -20,7 +23,8 @@ class CNewCustomerDlg : public CDialogEx
 	
 public:
 	CNewCustomerDlg(
-		std::shared_ptr<Customer> customerObj, 
+		std::shared_ptr<Customer> customerObj,
+		DialogMode mode = DialogMode::CREATE_NEW_MODE,
 		CWnd* pParent = nullptr);   // standard constructor
 
 	BOOL DestroyWindow() override;
@@ -48,6 +52,6 @@ public:
 	CEdit stateEdit;
 	CEdit countryEdit;
 	CEdit zipCodeEdit;
-	afx_msg void OnValidateEmailCliecked();
 	afx_msg void OnValidateEmailClicked();
+	afx_msg void OnValidatePhoneClicked();
 };

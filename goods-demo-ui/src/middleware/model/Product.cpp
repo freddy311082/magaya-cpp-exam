@@ -4,8 +4,8 @@
 
 using namespace std;
 
-Product::Product(const std::string& sku, std::string& description, double price, double weight)
-	: m_sku(sku), m_description(description), m_price(price), m_weight(weight)
+Product::Product(const std::string& sku, std::string& description, double price, double weight, uint32_t timeUsed)
+	: m_sku(sku), m_description(description), m_price(price), m_weight(weight), m_timesUsed(timeUsed)
 {
 }
 
@@ -18,8 +18,8 @@ std::string Product::info() const
 		"Description: " << m_description << endl <<
 		"Price: " << m_price << endl <<
 		"Weight: " << m_weight << endl <<
+		"Time Used: " << m_timesUsed << endl <<
 		"****************";
-	
 	
 	return ss.str();
 }

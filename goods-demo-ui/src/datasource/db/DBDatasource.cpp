@@ -146,7 +146,7 @@ DBDataSource::~DBDataSource()
 {
 	try
 	{
-		dbClose();
+		// dbClose();
 	}
 	catch (...)
 	{
@@ -186,12 +186,12 @@ void DBDataSource::addCustomer(const CustomerPtr& customer)
 	}, customer);
 }
 
-void DBDataSource::updateCustomer(const CustomerPtr& customer)
+void DBDataSource::updateCustomer(const std::string& email, const CustomerPtr& customer)
 {
-	runDbQuery([](ref<RootDB> root, const CustomerPtr& customer)
+	runDbQuery([](ref<RootDB> root, const std::string& email,  const CustomerPtr& customer)
 	{
-		modify(root)->updateCustomer(CustomerMapping::toDbModel(*customer));
-	}, customer);
+		modify(root)->updateCustomer(email.c_str(), CustomerMapping::toDbModel(*customer));
+	}, email, customer);
 }
 
 void DBDataSource::deleteCustomer(const std::string& email)
@@ -404,4 +404,37 @@ OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmai
 	}, number, customerEmail, result);
 	
 	return result;
+}
+
+void DBDataSource::deleteOrder(uint64_t number, const std::string& customerEmail)
+{
+	runDbQuery([](ref<RootDB> root, uint64_t number, const std::string& customerEmail)
+	{
+		auto customerDb = root->getCustomerByEmail(customerEmail.c_str());
+
+		if (customerDb == nullptr)
+			throw std::invalid_argument("Invalid email address. Customer not found.");
+
+		auto orderDb = customerDb->getOrder(number);
+		if (orderDb == nullptr)
+			throw std::invalid_argument("Order not found.");
+
+		// updating products use counter
+		// for ([[maybe_unused]] auto& [_, productDb]: root->productsBySKU(orderDb->allProductSKUsPerItem()))
+		// {
+		// 	modify(productDb)->unregisterUse();
+		// }
+
+		for (const auto& sku: orderDb->allProductSKUsPerItem())
+		{
+			auto productDb = root->getProductBySKU(sku);
+
+			if (productDb != nullptr)
+				modify(productDb)->unregisterUse();
+		}
+
+
+		modify(customerDb)->deleteOrder(orderDb);
+		
+	}, number, customerEmail);
 }
