@@ -73,9 +73,12 @@ BEGIN_MESSAGE_MAP(CgoodsdemouiDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_MESSAGE(WM_USER_CUSTOMER_CREATED, &CgoodsdemouiDlg::OnCustomerAddedMessage)
+
+	ON_MESSAGE(WM_USER_CUSTOMER_LIST_UPDATED, &CgoodsdemouiDlg::OnCustomerAddedMessage)
 	ON_MESSAGE(WM_USER_ADDED_OR_DELETED_ORDER, &CgoodsdemouiDlg::OnNewOrderCreated)
 	ON_MESSAGE(WM_USER_PRODUCT_UPDATED, &CgoodsdemouiDlg::OnProductUpdated)
+	ON_MESSAGE(WM_USER_ENABLE_OR_DISABLE_CREATE_ORDER, &CgoodsdemouiDlg::OnUpdateCreateOrderState)
+
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CgoodsdemouiDlg::OnTcnSelchangeTab1)
 	ON_COMMAND(ID_FILE_OPENDBCONFIGFILE, &CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked)
 END_MESSAGE_MAP()
@@ -200,6 +203,7 @@ LRESULT CgoodsdemouiDlg::OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam)
 	{
 		CustomersList customers{ m_customersPage.consumeTemporalCustList() };
 		m_ordersPage.loadCustomers(customers);
+		OnUpdateCreateOrderState(wParam, lParam);
 	}
 	return 0;
 }
@@ -214,6 +218,16 @@ LRESULT CgoodsdemouiDlg::OnNewOrderCreated(WPARAM wParam, LPARAM lParam)
 LRESULT CgoodsdemouiDlg::OnProductUpdated(WPARAM wParam, LPARAM lParam)
 {
 	m_ordersPage.reloadOrders();
+	return 0;
+}
+
+LRESULT CgoodsdemouiDlg::OnUpdateCreateOrderState(WPARAM wParam, LPARAM lParam)
+{
+	if (m_productsPage.isEmpty() || m_customersPage.isEmpty())
+		m_ordersPage.disableCreateOrder();
+	else
+		m_ordersPage.enableCreateOrder();
+
 	return 0;
 }
 
@@ -237,9 +251,10 @@ void CgoodsdemouiDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CgoodsdemouiDlg::enableUI()
 {
+	m_ordersPage.enableUI();
 	m_customersPage.enableUI();
 	m_productsPage.enableUI();
-	m_ordersPage.enableUI();
+	
 }
 
 void CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked()
@@ -264,3 +279,4 @@ void CgoodsdemouiDlg::OnFileOpenDbConfigFileMenuClicked()
 			AfxMessageBox(_T("Invalid GOODS config file. Please, check its content and try again."), MB_OK | MB_ICONERROR);
 	}
 }
+

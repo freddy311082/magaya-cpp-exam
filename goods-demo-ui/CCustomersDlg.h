@@ -16,6 +16,7 @@ public:
 	CCustomersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CCustomersDlg();
 	void enableUI();
+	bool isEmpty() const;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

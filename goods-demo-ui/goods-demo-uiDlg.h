@@ -37,6 +37,7 @@ protected:
 	afx_msg LRESULT OnCustomerAddedMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnNewOrderCreated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnProductUpdated(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnUpdateCreateOrderState(WPARAM wParam, LPARAM lParam);
 	void Init();
 	DECLARE_MESSAGE_MAP()
 public:

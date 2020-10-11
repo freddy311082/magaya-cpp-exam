@@ -20,6 +20,8 @@ public:
 	void loadCustomers(CustomersList& customers);
 	void setEnableUI(bool value);
 	void enableUI();
+	void enableCreateOrder();
+	void disableCreateOrder();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -38,6 +40,6 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
 	CButton newOrderButton;
-	CButton deleteOrder;
+	CButton deleteOrderButton;
 	afx_msg void OnDeleteOrderBtnClicked();
 };

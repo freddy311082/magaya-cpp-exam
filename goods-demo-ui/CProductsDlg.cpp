@@ -32,6 +32,10 @@ void CProductsDlg::showAllProducts()
 				std::to_string(product->timesUsed())
 			});
 	}
+
+	[[maybe_unused]] auto _ = GetParent()->GetParent()->SendMessage(
+		WM_USER_ENABLE_OR_DISABLE_CREATE_ORDER, 0, 0
+	);
 }
 
 std::shared_ptr<Product> CProductsDlg::getProductObjFromListCtrl(int row)
@@ -50,6 +54,11 @@ void CProductsDlg::reloadProductList()
 {
 	productsListCtrl.DeleteAllItems();
 	showAllProducts();
+}
+
+bool CProductsDlg::isEmpty()
+{
+	return productsListCtrl.GetItemCount() == 0;
 }
 
 CProductsDlg::CProductsDlg(CWnd* pParent /*=nullptr*/)

@@ -45,16 +45,25 @@ void COrdersDlg::loadCustomers(CustomersList& customers)
 
 void COrdersDlg::setEnableUI(bool value)
 {
-	newOrderButton.EnableWindow(value);
 	customersCombobox.EnableWindow(value);
 	ordersListCtrl.EnableWindow(value);
 	orderItemsListCtrl.EnableWindow(value);
-	deleteOrder.EnableWindow(value);
+	deleteOrderButton.EnableWindow(value);
 }
 
 void COrdersDlg::enableUI()
 {
 	setEnableUI(true);
+}
+
+void COrdersDlg::enableCreateOrder()
+{
+	newOrderButton.EnableWindow(true);
+}
+
+void COrdersDlg::disableCreateOrder()
+{
+	newOrderButton.EnableWindow(false);
 }
 
 void COrdersDlg::reloadOrders()
@@ -155,7 +164,7 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, ordersListCtrl);
 	DDX_Control(pDX, IDC_LIST2, orderItemsListCtrl);
 	DDX_Control(pDX, IDC_BUTTON1, newOrderButton);
-	DDX_Control(pDX, IDC_BUTTON2, deleteOrder);
+	DDX_Control(pDX, IDC_BUTTON2, deleteOrderButton);
 	
 	initListCtrl(ordersListCtrl, 
 		{
@@ -174,6 +183,7 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 			"Cost"
 		});
 	setEnableUI(false);
+	disableCreateOrder();
 }
 
 
@@ -231,9 +241,6 @@ void COrdersDlg::OnCbnSelchangeCombo1()
 	}
 }
 
-
-
-
 void COrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	if (ordersListCtrl.GetSelectedCount() > 0)
@@ -258,23 +265,25 @@ void COrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
 
 void COrdersDlg::OnDeleteOrderBtnClicked()
 {
-	int index = getSelectedRow(ordersListCtrl);
+	std::vector<int> indexesToDelete = getAllSelectedRows(ordersListCtrl);
 
 	try
 	{
-		if (index == -1)
+		if (indexesToDelete.empty())
 			throw std::invalid_argument("You must select an order. Please, select one and try again.");
 
-		if (AfxMessageBox(_T("Are you sure that you want to remove this Order?"), 
+		if (AfxMessageBox(_T("Are you sure that you want to remove all selected Orders?"), 
 			MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
 			CString emailCStr;
 			customersCombobox.GetWindowTextW(emailCStr);
 			std::string customerEmail = CW2A(emailCStr);
 
-			uint64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
-
-			Service::instance().deleteOrder(number, customerEmail);
+			for (int index: indexesToDelete)
+			{
+				uint64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
+				Service::instance().deleteOrder(number, customerEmail);
+			}
 			reloadOrders();
 			[[maybe_unused]] auto _ = GetParent()->GetParent()->SendMessage(WM_USER_ADDED_OR_DELETED_ORDER, NULL, NULL);
 		}

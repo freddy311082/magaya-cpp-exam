@@ -30,6 +30,11 @@ void CCustomersDlg::enableUI()
 	setEnableUI(true);
 }
 
+bool CCustomersDlg::isEmpty() const
+{
+	return customerListCtrl.GetItemCount() == 0;
+}
+
 void CCustomersDlg::InitCustomerListCtrl()
 {
 	reloadCustomersList();
@@ -124,7 +129,7 @@ void CCustomersDlg::reloadCustomersList()
 
 		m_temporalCustomerList = std::move(customerList);
 
-		[[maybe_unused]] auto _ =GetParent()->GetParent()->SendMessage(WM_USER_CUSTOMER_CREATED,
+		[[maybe_unused]] auto _ =GetParent()->GetParent()->SendMessage(WM_USER_CUSTOMER_LIST_UPDATED,
 			NULL,
 			NULL
 		);
@@ -166,7 +171,7 @@ void CCustomersDlg::OnDeleteCustomerBtnClicked()
 			throw std::invalid_argument("No customer selected. Please, select at least one.");
 		
 				
-		if (AfxMessageBox(_T("Ar you sure that you want to delete this customer?"),
+		if (AfxMessageBox(_T("Ar you sure that you want to delete all selected Customer?"),
 			MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
 			for (int index : indexesToDelete)
@@ -207,9 +212,7 @@ void CCustomersDlg::OnHdnItemdblclickList1(NMHDR *pNMHDR, LRESULT *pResult)
 		{
 			CA2W msg(error.what());
 			AfxMessageBox(msg, MB_OK | MB_ICONERROR);
-		}
-
-		
+		}		
 	}
 	
 	*pResult = 0;

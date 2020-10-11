@@ -17,6 +17,7 @@ public:
 	virtual ~CProductsDlg();
 	void enableUI();
 	void reloadProductList();
+	bool isEmpty();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

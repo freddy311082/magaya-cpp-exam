@@ -19,6 +19,7 @@ class CNewOrderDlg : public CDialogEx
 	void loadProductsFromDB();
 	void loadProductsInCombobox();
 	void initPaymentTypeCombobox();
+	void reloadItems();
 
 public:
 	CNewOrderDlg(std::shared_ptr<CreateOrderParams> order , CWnd* pParent = nullptr);   // standard constructor
@@ -44,4 +45,5 @@ public:
 	CEdit weightEdit;
 	CComboBox paymentTypeCombobox;
 	afx_msg void OnCbnSelchangeCombo1();
+	afx_msg void OnDeleteOrderItemClicked();
 };

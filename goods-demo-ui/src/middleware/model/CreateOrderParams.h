@@ -22,4 +22,6 @@ struct CreateOrderParams
 	PaymentType paymentType;
 	ShippingAddress shippingAddress;
 	OrderItemsListParam items;
+
+	//void deleteItem()
 };

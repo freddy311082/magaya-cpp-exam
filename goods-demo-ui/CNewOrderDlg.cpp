@@ -50,16 +50,29 @@ void CNewOrderDlg::loadProductsInCombobox()
 
 void CNewOrderDlg::initPaymentTypeCombobox()
 {
-	// CASH = 1,
-	// CREDIT_CARD = 2,
-	// CHECK = 3,
-	// OTHER = 4
 	paymentTypeCombobox.AddString(CA2W("Cash"));
 	paymentTypeCombobox.AddString(CA2W("Credit Card"));
 	paymentTypeCombobox.AddString(CA2W("Check"));
 	paymentTypeCombobox.AddString(CA2W("Other"));
 
 	paymentTypeCombobox.SetCurSel(0);
+}
+
+void CNewOrderDlg::reloadItems()
+{
+	itemsCtrlList.DeleteAllItems();
+
+	m_totalCost = 0;
+	for (const auto& orderItem: m_orderParams->items)
+	{
+		double cost =m_products[orderItem.productSKU]->cost(orderItem.quantity);
+		addRowToListCtrl(itemsCtrlList, "", {
+			orderItem.productSKU,
+			m_products[orderItem.productSKU]->description(),
+			std::to_string(orderItem.quantity),
+			std::to_string(cost)
+		});
+	}
 }
 
 
@@ -102,6 +115,7 @@ void CNewOrderDlg::OnOK()
 BEGIN_MESSAGE_MAP(CNewOrderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CNewOrderDlg::OnAddOrderItemBtnClicked)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CNewOrderDlg::OnCbnSelchangeCombo1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CNewOrderDlg::OnDeleteOrderItemClicked)
 END_MESSAGE_MAP()
 
 
@@ -126,8 +140,7 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 
 		m_orderParams->items.push_back({ quantity, m_products[productSKU]->sku() });
 		
-		std::string s;
-		addRowToListCtrl(itemsCtrlList,  s , {
+		addRowToListCtrl(itemsCtrlList,  "" , {
 			m_products[productSKU]->sku(),
 			m_products[productSKU]->description(),
 			std::to_string(quantity),
@@ -135,6 +148,7 @@ void CNewOrderDlg::OnAddOrderItemBtnClicked()
 		});
 
 		setValueToCEdit(totalEdit, m_totalCost);
+		setValueToCEdit(quantityEdit, "");
 	}
 	catch (const std::exception& error)
 	{
@@ -152,4 +166,27 @@ void CNewOrderDlg::OnCbnSelchangeCombo1()
 	std::string skuKey{ CW2A(text) };
 	text = m_products[skuKey]->description().c_str();
 	productNameEdit.SetWindowTextW(text);
+}
+
+
+void CNewOrderDlg::OnDeleteOrderItemClicked()
+{
+	std::vector<int> selectexIndexes = getAllSelectedRows(itemsCtrlList);
+	int selectedIndexPos = 0, i = 0;
+	
+	m_orderParams->items.erase(std::remove_if(
+		m_orderParams->items.begin(),
+		m_orderParams->items.end(),
+		[&]([[maybe_unused]]auto& _)
+		{
+			if (selectedIndexPos < selectexIndexes.size() && selectexIndexes[selectedIndexPos] == i++)
+			{
+				selectedIndexPos++;
+				return true;
+			}
+
+			return false;
+		}
+	), m_orderParams->items.end());
+	reloadItems();
 }
