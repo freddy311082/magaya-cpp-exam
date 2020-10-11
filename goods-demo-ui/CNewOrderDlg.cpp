@@ -8,8 +8,8 @@
 #include "src/middleware/Service.h"
 #include "src/utils/helper_functions.h"
 #include "src/ui/utils/mfc_utils.h"
-
-
+#include <unordered_set>
+#include <string>
 
 
 // CNewOrderDlg dialog
@@ -94,16 +94,21 @@ void CNewOrderDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, itemsCtrlList);
 	DDX_Control(pDX, IDC_EDIT3, productNameEdit);
 	DDX_Control(pDX, IDC_COMBO2, paymentTypeCombobox);
+	DDX_Control(pDX, IDC_EDIT4, customerLabel);
 
 	initPaymentTypeCombobox();
 	loadProductsInCombobox();
-	initListCtrl(itemsCtrlList, 
+	initListCtrl(itemsCtrlList,
 		{
 			"Product SKU",
 			"Product Name",
 			"Quantity",
 			"Cost"
 		});
+	std::string text{};
+	CA2W labelText{ m_orderParams->customerEmail.c_str() };
+	customerLabel.SetWindowTextW(labelText);
+	
 }
 
 void CNewOrderDlg::OnOK()
@@ -111,11 +116,11 @@ void CNewOrderDlg::OnOK()
 	CDialogEx::OnOK();
 }
 
-
 BEGIN_MESSAGE_MAP(CNewOrderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CNewOrderDlg::OnAddOrderItemBtnClicked)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CNewOrderDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CNewOrderDlg::OnDeleteOrderItemClicked)
+	ON_CBN_SELCHANGE(IDC_COMBO2, &CNewOrderDlg::OnCbnSelchangeCombo2)
 END_MESSAGE_MAP()
 
 
@@ -189,4 +194,20 @@ void CNewOrderDlg::OnDeleteOrderItemClicked()
 		}
 	), m_orderParams->items.end());
 	reloadItems();
+}
+
+
+void CNewOrderDlg::OnCbnSelchangeCombo2()
+{
+	CString text;
+	paymentTypeCombobox.GetWindowTextW(text);
+	std::string strPaymentTypeValue = CW2A(text);
+	std::unordered_map<std::string, PaymentType> paymentTypeMap = {
+		{"Cash", PaymentType::CASH},
+		{"Credit Card", PaymentType::CREDIT_CARD},
+		{"Check", PaymentType::CHECK},
+		{"Other", PaymentType::OTHER}
+	};
+
+	m_orderParams->paymentType = paymentTypeMap[strPaymentTypeValue];
 }

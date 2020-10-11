@@ -36,7 +36,7 @@ private:
 	
 
 	template <typename Func, typename... Args>
-	void runDbQuery(Func&& func, Args&&... args)
+	void executeDbQuery(Func&& func, Args&&... args)
 	{
 		addTransaction();
 		try
@@ -102,6 +102,7 @@ public:
 	OrdersList allOrdersByCustomer(const std::string& customerEmail) override;
 	OrderPtr getOrder(uint64_t number, const std::string& customerEmail) override;
 	void deleteOrder(uint64_t number, const std::string& customerEmail) override;
+	OrdersList allOrders() override;
 	
 	~DBDataSource();
 };

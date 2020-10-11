@@ -34,5 +34,6 @@ public:
 	OrdersList allOrdersFromCustomer(const std::string& email);
 	void deleteOrder(uint64_t number, const std::string& customerEmail);
 	void updateCustomer(const std::string& customerEmail, const Customer& customerUpdates);
+	OrdersList allOrders() const;
 };
 

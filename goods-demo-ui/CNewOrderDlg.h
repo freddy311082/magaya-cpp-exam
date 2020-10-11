@@ -16,6 +16,7 @@ class CNewOrderDlg : public CDialogEx
 	std::shared_ptr<CreateOrderParams> m_orderParams;
 	double m_totalCost;
 	
+	
 	void loadProductsFromDB();
 	void loadProductsInCombobox();
 	void initPaymentTypeCombobox();
@@ -46,4 +47,6 @@ public:
 	CComboBox paymentTypeCombobox;
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnDeleteOrderItemClicked();
+	afx_msg void OnCbnSelchangeCombo2();
+	CEdit customerLabel;
 };

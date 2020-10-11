@@ -180,7 +180,7 @@ void DBDataSource::dbConnect()
 
 void DBDataSource::addCustomer(const CustomerPtr& customer)
 {
-	runDbQuery([](ref<RootDB> root,  const CustomerPtr& customer)
+	executeDbQuery([](ref<RootDB> root,  const CustomerPtr& customer)
 	{
 		modify(root)->addCustomer(CustomerMapping::toDbModel(*customer));
 	}, customer);
@@ -188,7 +188,7 @@ void DBDataSource::addCustomer(const CustomerPtr& customer)
 
 void DBDataSource::updateCustomer(const std::string& email, const CustomerPtr& customer)
 {
-	runDbQuery([](ref<RootDB> root, const std::string& email,  const CustomerPtr& customer)
+	executeDbQuery([](ref<RootDB> root, const std::string& email,  const CustomerPtr& customer)
 	{
 		modify(root)->updateCustomer(email.c_str(), CustomerMapping::toDbModel(*customer));
 	}, email, customer);
@@ -196,7 +196,7 @@ void DBDataSource::updateCustomer(const std::string& email, const CustomerPtr& c
 
 void DBDataSource::deleteCustomer(const std::string& email)
 {	
-	runDbQuery([](ref<RootDB> root, const std::string& email)->void
+	executeDbQuery([](ref<RootDB> root, const std::string& email)->void
 	{
 		modify(root)->deleteCustomer(email.c_str());
 	}, email);
@@ -205,7 +205,7 @@ void DBDataSource::deleteCustomer(const std::string& email)
 CustomersList DBDataSource::allCustomers()
 {
 	CustomersList result;
-	runDbQuery([](ref<RootDB> root, CustomersList& allCustomers)
+	executeDbQuery([](ref<RootDB> root, CustomersList& allCustomers)
 	{
 		for (const auto& customerDb: root->allCustomers())
 		{
@@ -219,7 +219,7 @@ CustomersList DBDataSource::allCustomers()
 CustomerPtr DBDataSource::getCustomerByEmail(const std::string& email)
 {
 	CustomerPtr customer;
-	runDbQuery([](ref<RootDB> root, const std::string& email, CustomerPtr& customer)
+	executeDbQuery([](ref<RootDB> root, const std::string& email, CustomerPtr& customer)
 	{
 		auto customerDb = root->getCustomerByEmail(email.c_str());
 		customer = customerDb.is_nil() ? nullptr : CustomerMapping::toModel(customerDb);
@@ -231,7 +231,7 @@ CustomerPtr DBDataSource::getCustomerByEmail(const std::string& email)
 CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
 {
 	CustomerPtr customer;
-	runDbQuery([](ref<RootDB> root, const std::string& phone, CustomerPtr& customer)
+	executeDbQuery([](ref<RootDB> root, const std::string& phone, CustomerPtr& customer)
 	{
 		auto customerDb = root->getCustomerByPhone(phone.c_str());
 		customer = customerDb.is_nil() ? nullptr : CustomerMapping::toModel(customerDb);
@@ -243,7 +243,7 @@ CustomerPtr DBDataSource::getCustomerByPhone(const std::string& phone)
 
 void DBDataSource::addProduct(const ProductPtr& product)
 {
-	runDbQuery([](ref<RootDB> root, const ProductPtr& product)
+	executeDbQuery([](ref<RootDB> root, const ProductPtr& product)
 	{
 		auto productDb = ProductMapping::toDbModel(*product);
 		modify(root)->addProduct(productDb);
@@ -252,7 +252,7 @@ void DBDataSource::addProduct(const ProductPtr& product)
 
 void DBDataSource::deleteProduct(const std::string& sku)
 {
-	runDbQuery([](ref<RootDB> root, const std::string& sku)
+	executeDbQuery([](ref<RootDB> root, const std::string& sku)
 	{
 		auto product =root->getProductBySKU(sku.c_str());
 
@@ -268,7 +268,7 @@ void DBDataSource::deleteProduct(const std::string& sku)
 
 void DBDataSource::updateProduct(const std::string& originalSku, const ProductPtr& product)
 {
-	runDbQuery([](ref<RootDB> root, const std::string& originalSku, const ProductPtr& product)
+	executeDbQuery([](ref<RootDB> root, const std::string& originalSku, const ProductPtr& product)
 	{
 		modify(root)->updateProduct(originalSku.c_str(), ProductMapping::toDbModel(*product));
 	}, originalSku, product);
@@ -277,7 +277,7 @@ void DBDataSource::updateProduct(const std::string& originalSku, const ProductPt
 ProductPtr DBDataSource::getProductBySKU(const std::string& sku)
 {
 	ProductPtr result;
-	runDbQuery([](ref<RootDB> root, const std::string& sku, ProductPtr& result)
+	executeDbQuery([](ref<RootDB> root, const std::string& sku, ProductPtr& result)
 	{
 		auto productDb = root->getProductBySKU(sku.c_str());
 
@@ -293,7 +293,7 @@ ProductsList DBDataSource::allProducts()
 {
 	ProductsList result;
 
-	runDbQuery([](ref<RootDB> root, ProductsList& result)
+	executeDbQuery([](ref<RootDB> root, ProductsList& result)
 	{
 		for (const auto& productDb: root->allProducts())
 		{
@@ -315,7 +315,7 @@ void DBDataSource::registerProductUse(const OrderItemsDBProdPairList& oiProdPair
 OrderPtr DBDataSource::registerOrder(const CreateOrderParams& orderParams)
 {
 	OrderPtr order;
-	runDbQuery([](
+	executeDbQuery([](
 		ref<RootDB> root, 
 		const CreateOrderParams& params,
 		DBDataSource* ds,
@@ -357,7 +357,7 @@ uint64_t DBDataSource::getNextOrderNumber()
 {
 	uint64_t result = 0;
 
-	runDbQuery([](ref<RootDB> root, uint64_t& result)
+	executeDbQuery([](ref<RootDB> root, uint64_t& result)
 	{
 		result = modify(root)->nextOrderNumber();
 	}, result);
@@ -369,7 +369,7 @@ OrdersList DBDataSource::allOrdersByCustomer(const std::string& customerEmail)
 {
 	OrdersList result;
 
-	runDbQuery([&](ref<RootDB> root, OrdersList& orders)
+	executeDbQuery([&](ref<RootDB> root, OrdersList& orders)
 	{
 		ref<CustomerDB> customerDb = root->getCustomerByEmail(customerEmail.c_str());
 		if (customerDb.is_nil())
@@ -393,7 +393,7 @@ OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmai
 {
 	OrderPtr result;
 
-	runDbQuery([](ref<RootDB> root, uint64_t number, 
+	executeDbQuery([](ref<RootDB> root, uint64_t number, 
 		const std::string& customerEmail, OrderPtr& result)
 	{
 		ref<OrderDB> orderDb = root->getOrder(number, customerEmail.c_str());
@@ -408,7 +408,7 @@ OrderPtr DBDataSource::getOrder(uint64_t number, const std::string& customerEmai
 
 void DBDataSource::deleteOrder(uint64_t number, const std::string& customerEmail)
 {
-	runDbQuery([](ref<RootDB> root, uint64_t number, const std::string& customerEmail)
+	executeDbQuery([](ref<RootDB> root, uint64_t number, const std::string& customerEmail)
 	{
 		auto customerDb = root->getCustomerByEmail(customerEmail.c_str());
 
@@ -432,4 +432,23 @@ void DBDataSource::deleteOrder(uint64_t number, const std::string& customerEmail
 		modify(customerDb)->deleteOrder(orderDb);
 		
 	}, number, customerEmail);
+}
+
+OrdersList DBDataSource::allOrders()
+{
+	OrdersList result;
+
+	executeDbQuery([](ref<RootDB> root, OrdersList& result)
+	{
+		for (auto custDb: root->allCustomers())
+		{
+			for (auto orderDb: custDb->allOrders())
+				result.push_back(OrderMapping::toModel(
+					orderDb, 
+					root->orderItemDBPairs(orderDb),
+					custDb->email().getChars()));
+		}
+	},result);
+
+	return result;
 }

@@ -23,17 +23,32 @@ void COrdersDlg::loadCustomers(CustomersList& customers)
 {
 	try
 	{
+		CString currentText;
+		customersCombobox.GetWindowTextW(currentText);
+		
 		customersCombobox.ResetContent();
 		m_customers.clear();
 		listToVector(customers, m_customers);
 
+		int i = 0;
+		bool foundIt = false;
 		for (const auto& customer : m_customers)
 		{
 			CA2W email(customer->email().c_str());
 			customersCombobox.AddString(email);
+
+			if (foundIt)
+				continue;
+			if (email == currentText)
+			{
+				foundIt = true;
+				continue;
+			}
+			
+			i++;
 		}
 
-		customersCombobox.SetCurSel(0);
+		customersCombobox.SetCurSel(i < customers.size() ? i : 0);		
 		reloadOrders();
 	}
 	catch (const std::exception& error)
@@ -66,37 +81,51 @@ void COrdersDlg::disableCreateOrder()
 	newOrderButton.EnableWindow(false);
 }
 
-void COrdersDlg::reloadOrders()
+void COrdersDlg::loadOrdersIntoCtrlList(const OrdersList& orders)
 {
 	ordersListCtrl.DeleteAllItems();
-	orderItemsListCtrl.DeleteAllItems();
+	for (const auto& order: orders)
+	{
+		std::tm tvalue = order->datetime();
+		std::stringstream dtValue;
+		dtValue << std::put_time(&tvalue, "%Y-%b-%d %H:%M:%S");
+		addRowToListCtrl(ordersListCtrl,
+		                 std::to_string(order->number()),
+		                 {
+			                 std::to_string(order->number()),
+			                 order->customeEmail(),
+			                 dtValue.str(),
+			                 to_string(static_cast<PaymentType>(order->paymentType())),
+			                 std::to_string(order->totalValue())					
+		                 });
+	}
+}
 
-	if (customersCombobox.GetCurSel() == CB_ERR)
-		return;
-
+void COrdersDlg::reloadOrders()
+{
 	try
 	{
-		CString text;
-		customersCombobox.GetWindowTextW(text);
-		std::string email = CW2A(text);
-		auto orders = Service::instance().allOrdersFromCustomer(email);
-		
+		ordersListCtrl.DeleteAllItems();
+		orderItemsListCtrl.DeleteAllItems();
 
-		for (const auto& order: orders)
+		if (customersCombobox.GetCurSel() == CB_ERR)
+			return;
+
+		OrdersList orders;
+		if (showAllOrdersCheckBox.GetCheck())
 		{
-			std::tm tvalue = order->datetime();
-			std::stringstream dtValue;
-			dtValue << std::put_time(&tvalue, "%Y-%b-%d %H:%M:%S");
-			addRowToListCtrl(ordersListCtrl,
-				std::to_string(order->number()),
-				{
-					std::to_string(order->number()),
-					order->customeEmail(),
-					dtValue.str(),
-					to_string(static_cast<PaymentType>(order->paymentType())),
-					std::to_string(order->totalValue())					
-				});
+			orders = Service::instance().allOrders();
 		}
+		else
+		{
+			CString text;
+			customersCombobox.GetWindowTextW(text);
+			std::string email = CW2A(text);
+			orders = Service::instance().allOrdersFromCustomer(email);
+		}
+		
+		
+		loadOrdersIntoCtrlList(orders);
 	}
 	catch (const std::exception& error)
 	{
@@ -115,9 +144,7 @@ void COrdersDlg::showOrderItems(int index)
 		{
 			int64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
 		
-			CString emailCStr;
-			customersCombobox.GetWindowTextW(emailCStr);
-			std::string email{ CW2A(emailCStr) };
+			std::string email = getTextFromListCtrl(ordersListCtrl, selectedRow, 1);
 ;
 			OrderPtr order = Service::instance().getOrder(number, email);
 
@@ -165,8 +192,8 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST2, orderItemsListCtrl);
 	DDX_Control(pDX, IDC_BUTTON1, newOrderButton);
 	DDX_Control(pDX, IDC_BUTTON2, deleteOrderButton);
-	
-	initListCtrl(ordersListCtrl, 
+
+	initListCtrl(ordersListCtrl,
 		{
 			"Order Number",
 			"Customer Email",
@@ -174,7 +201,7 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 			"Payment Type",
 			"Total"
 		});
-	initListCtrl(orderItemsListCtrl, 
+	initListCtrl(orderItemsListCtrl,
 		{
 			"Number",
 			"Product SKU",
@@ -184,6 +211,7 @@ void COrdersDlg::DoDataExchange(CDataExchange* pDX)
 		});
 	setEnableUI(false);
 	disableCreateOrder();
+	DDX_Control(pDX, IDC_CHECK1, showAllOrdersCheckBox);
 }
 
 
@@ -192,6 +220,7 @@ BEGIN_MESSAGE_MAP(COrdersDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &COrdersDlg::OnCbnSelchangeCombo1)
 	ON_NOTIFY(NM_CLICK, IDC_LIST1, &COrdersDlg::OnNMClickList1)
 	ON_BN_CLICKED(IDC_BUTTON2, &COrdersDlg::OnDeleteOrderBtnClicked)
+	ON_BN_CLICKED(IDC_CHECK1, &COrdersDlg::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
 
@@ -228,11 +257,14 @@ void COrdersDlg::OnCbnSelchangeCombo1()
 {
 	try
 	{
-		int index = customersCombobox.GetCurSel();
-		if (index == CB_ERR)
-			throw std::invalid_argument("No customer selected.");
+		if (!showAllOrdersCheckBox.GetCheck())
+		{
+			int index = customersCombobox.GetCurSel();
+			if (index == CB_ERR)
+				throw std::invalid_argument("No customer selected.");
 
-		reloadOrders();
+			reloadOrders();
+		}
 	}
 	catch (const std::exception& error)
 	{
@@ -275,12 +307,9 @@ void COrdersDlg::OnDeleteOrderBtnClicked()
 		if (AfxMessageBox(_T("Are you sure that you want to remove all selected Orders?"), 
 			MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
-			CString emailCStr;
-			customersCombobox.GetWindowTextW(emailCStr);
-			std::string customerEmail = CW2A(emailCStr);
-
 			for (int index: indexesToDelete)
 			{
+				std::string customerEmail = getTextFromListCtrl(ordersListCtrl, index, 1);
 				uint64_t number = std::stoll(getTextFromListCtrl(ordersListCtrl, index, 0));
 				Service::instance().deleteOrder(number, customerEmail);
 			}
@@ -292,5 +321,23 @@ void COrdersDlg::OnDeleteOrderBtnClicked()
 	{
 		CA2W msg(error.what());
 		AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+	}
+}
+
+
+void COrdersDlg::OnBnClickedCheck1()
+{
+	try
+	{
+		if (showAllOrdersCheckBox.GetCheck())
+		{
+			loadOrdersIntoCtrlList(Service::instance().allOrders());
+		}
+		else
+			reloadOrders();
+	}
+	catch (const std::exception& error)
+	{
+		
 	}
 }

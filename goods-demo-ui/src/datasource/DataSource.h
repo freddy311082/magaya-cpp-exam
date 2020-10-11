@@ -41,6 +41,7 @@ public:
 	virtual OrdersList allOrdersByCustomer(const std::string& customerEmail) = 0;
 	virtual OrderPtr getOrder(uint64_t number, const std::string& customerEmail) = 0;
 	virtual void deleteOrder(uint64_t number, const std::string& customerEmail) = 0;
+	virtual OrdersList allOrders() = 0;
 	
 	virtual ~DataSource() = default;
 };

@@ -34,6 +34,6 @@ public:
 	Product() = default;
 	Product(const Product& product) = default;
 
-	double cost(double quantity) const { return quantity * m_weight / m_price; }
+	double cost(double quantity) const { return quantity * m_price / m_weight; }
 	bool isValid() const;
 };

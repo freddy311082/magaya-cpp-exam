@@ -182,3 +182,8 @@ void Service::updateCustomer(const std::string& customerEmail, const Customer& c
 
 	m_dataSource->updateCustomer(customerEmail, std::make_unique<Customer>(customerUpdates));
 }
+
+OrdersList Service::allOrders() const
+{
+	return m_dataSource->allOrders();
+}

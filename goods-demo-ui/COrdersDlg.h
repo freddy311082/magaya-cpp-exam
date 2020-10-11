@@ -14,6 +14,7 @@ class COrdersDlg : public CDialogEx
 	std::vector<CustomerPtr> m_customers;
 	void reloadOrders();
 	void showOrderItems(int index);
+	
 public:
 	COrdersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~COrdersDlg();
@@ -22,8 +23,9 @@ public:
 	void enableUI();
 	void enableCreateOrder();
 	void disableCreateOrder();
+	void loadOrdersIntoCtrlList(const OrdersList& orders);
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ORDERS_DIALOG };
 #endif
@@ -42,4 +44,6 @@ public:
 	CButton newOrderButton;
 	CButton deleteOrderButton;
 	afx_msg void OnDeleteOrderBtnClicked();
+	afx_msg void OnBnClickedCheck1();
+	CButton showAllOrdersCheckBox;
 };
